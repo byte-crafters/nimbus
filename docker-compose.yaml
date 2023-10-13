@@ -6,8 +6,9 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    env_file:
-      - ./backend/postgres.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_vol:/var/lib/postgresql/data
     
@@ -17,8 +18,9 @@ services:
     restart: always
     ports:
       - "8888:80"
-    env_file:
-      - ./backend/postgres_gui.env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${POSTGRES_GUI_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_GUI_PASSWORD}
     volumes:
       - pgadmin_vol:/var/lib/pgadmin
   
