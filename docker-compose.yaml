@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  db:
+    image: postgres
+    container_name: postgres_container
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./backend/postgres.env
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: postgres_gui_container
+    restart: always
+    ports:
+      - "8888:80"
+    env_file:
+      - ./backend/postgres_gui.env
+    volumes:
+      - pgadmin_vol:/var/lib/pgadmin
+  
+  mongo:
+    image: nimbus/mongo
+    container_name: mongo_container
+    env_file:
+      - ./backend/mongo.env
+    build:
+      context: ./backend
+      dockerfile: ./rs.Dockerfile
+    restart: always 
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_gui_container
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+      - ./backend/mongo_gui.env
+      
+volumes:
+  pgadmin_vol:
+  postgres_vol:

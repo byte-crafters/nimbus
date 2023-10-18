@@ -2,11 +2,21 @@
     "name": "nimbus-backend",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "tsc -p tsconfig.json",
+        "start": "node index.js",
+        "postgres:prisma": "prisma generate --schema prisma/schema.main.postgresql.prisma && prisma migrate dev --schema ./prisma/schema.main.postgresql.prisma --name init",
+        "app:run": "tsc ./app/app.ts && node ./app/app.js",
+        "mongo:prisma": "prisma db push --schema ./prisma/schema.files-tree.mongo.prisma",
+        "test:run": "tsc ./app/test/push_data_to_db.ts && node ./app/test/push_data_to_db.js"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC"
+    "dependencies": {
+        "@prisma/client": "^5.4.1",
+        "fastify": "^4.23.2",
+        "prisma": "^5.4.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20.8.3",
+        "typescript": "^5.2.2"
+    }
 }
