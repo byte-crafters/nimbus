@@ -7,7 +7,8 @@
         "app:run": "tsc ./app/app.ts && node ./app/app.js",
         "mongo:prisma": "prisma db push --schema ./prisma/schema.files-tree.mongo.prisma",
         "test:run": "tsc ./app/test/push_data_to_db.ts && node ./app/test/push_data_to_db.js",
-        "test:run-all": "jest"
+        "test:run-all": "jest",
+        "lint:run": "eslint ."
     },
     "dependencies": {
         "@prisma/client": "^5.4.1",
@@ -17,6 +18,9 @@
     "devDependencies": {
         "@types/jest": "^29.5.6",
         "@types/node": "^20.8.3",
+        "@typescript-eslint/eslint-plugin": "^6.8.0",
+        "@typescript-eslint/parser": "^6.8.0",
+        "eslint": "^8.51.0",
         "jest": "^29.7.0",
         "ts-jest": "^29.1.1",
         "typescript": "^5.2.2"
