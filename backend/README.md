@@ -1,5 +1,24 @@
 # nimbus-backend
 
+## Installation
+
+```bash
+$ npm install
+```
+
+## Running the app
+
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
+```
+
 ## Запуск сервера
 
 1. Останавливаем вс контейнеры
@@ -20,3 +39,18 @@
 
 1. Запуск проверки
 `npm run lint:run`
+
+
+
+## Test
+
+```bash
+# unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
+```
