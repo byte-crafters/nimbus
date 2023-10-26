@@ -5,9 +5,11 @@ services:
     container_name: postgres_container
     restart: always
     ports:
-      - "5432:5432"
+      - 5432:5432
+    # env_file:
+    #   - ./backend/postgres.env
     environment:
-      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_vol:/var/lib/postgresql/data
@@ -18,9 +20,11 @@ services:
     restart: always
     ports:
       - "8888:80"
+    # env_file:
+    #   - ./backend/postgres_gui.env
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${POSTGRES_GUI_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_GUI_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
       - pgadmin_vol:/var/lib/pgadmin
   
@@ -30,8 +34,14 @@ services:
     # env_file:
     #   - ./backend/mongo.env
     environment:
+      MONGO_ADMIN_USERNAME: ${MONGO_ADMIN_USERNAME}
+      MONGO_ADMIN_PASSWORD: ${MONGO_ADMIN_PASSWORD}
+      MONGO_GUI_USERNAME: ${MONGO_GUI_USERNAME}
+      MONGO_GUI_PASSWORD: ${MONGO_GUI_PASSWORD}
+
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD}
+      MONGO_INITDB_DATABASE: dev_tree_db
     build:
       context: ./backend
       dockerfile: ./rs.Dockerfile
