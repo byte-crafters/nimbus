@@ -1,3 +1,5 @@
 prisma/generated/
 secrets/
 *.env
+node_modules/
+dist/
