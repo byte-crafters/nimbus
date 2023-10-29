@@ -42,7 +42,17 @@ services:
       - 8081:8081
     env_file:
       - ./backend/mongo_gui.env
+  
+  nimbus-redis:
+    image: redis:7.0.14
+    container_name: nimbus_redis_container
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_vol:/data
+
       
 volumes:
   pgadmin_vol:
   postgres_vol:
+  redis_vol:
