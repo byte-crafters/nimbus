@@ -1,0 +1,79 @@
+name: Nimbus CI/CD + Testing
+run-name: ${{ github.actor }} is running CI/CD 🚀
+on: 
+    [push]
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+            sparse-checkout: |
+                ./backend
+
+      - name: Run docker containers    
+        env: 
+            POSTGRES_USER: ${{ secrets.POSTGRES_USER }}  
+            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  
+            PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
+            PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+            
+            MONGO_ADMIN_USERNAME: ${{ secrets.MONGO_ADMIN_USERNAME }}
+            MONGO_ADMIN_PASSWORD: ${{ secrets.MONGO_ADMIN_PASSWORD }}
+            MONGO_GUI_USERNAME: ${{ secrets.MONGO_GUI_USERNAME }}
+            MONGO_GUI_PASSWORD: ${{ secrets.MONGO_GUI_PASSWORD }}
+            MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ADMIN_USERNAME }}
+            MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ADMIN_PASSWORD }}
+            MONGO_INITDB_DATABASE: dev_tree_db
+        run: | 
+          docker compose down -v && docker compose up -d --build
+
+      - name: Sleep for 20 sec
+        run: | 
+          sleep 20s
+
+      - name: Install dependencies
+        run: |
+          cd ./backend && npm install
+      
+      - name: Applying migrations (postgresql)   
+        env: 
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: cd ./backend && npm run postgres:prisma
+
+      - name: Applying migrations (mongo)   
+        env: 
+            MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
+        run: cd ./backend && npm run mongo:prisma
+
+      - name: Running tests
+        env: 
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
+        run: cd ./backend && npm run test:run-all
+
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+#   nimbus-run-unit-tests:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out repository code
+#         uses: actions/checkout@v4
+#         with:
+#             sparse-checkout: |
+#                 ./backend
+#       - run: docker compose up -d --build -d && sleep 30
+
+#   nimbus-run-e2e-tests:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out repository code
+#         uses: actions/checkout@v4
+#         with:
+#             sparse-checkout: |
+#                 ./backend
+#       - run: docker compose up -d --build -d && sleep 30

@@ -5,7 +5,7 @@ WORKDIR /
 RUN mkdir -p /var/lib/mongo/
 RUN mkdir -p /etc/mongo/keys
 
-COPY ./mongod.conf /etc/mongo/mongod.conf
+# COPY ./mongod.conf /etc/mongo/mongod.conf
 
 COPY ./scripts /usr/local/bin/
 
