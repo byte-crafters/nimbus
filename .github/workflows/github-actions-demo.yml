@@ -50,11 +50,17 @@ jobs:
             MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
         run: cd ./backend && npm run mongo:prisma
 
-      - name: Running tests
+      - name: Running unit tests
         env: 
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
         run: cd ./backend && npm run test:run-all
+
+      - name: Running end-to-end tests
+        env: 
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
+        run: cd ./backend && npm run test:e2e
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
