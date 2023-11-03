@@ -1,12 +1,14 @@
 import { Controller, Get, VERSION_NEUTRAL, Version } from '@nestjs/common';
+import { Public } from '../auth/decorator';
 
 @Controller({
-  version: VERSION_NEUTRAL,
+    version: VERSION_NEUTRAL,
 })
 export class AppServiceController {
-  @Get('health')
-  @Version(VERSION_NEUTRAL)
-  healthCheck() {
-    return 'alive';
-  }
+    @Public()
+    @Get('health')
+    @Version(VERSION_NEUTRAL)
+    healthCheck() {
+        return 'alive';
+    }
 }
