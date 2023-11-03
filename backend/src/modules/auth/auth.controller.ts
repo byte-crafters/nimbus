@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
+import { Public } from './decorator';
 
 export type SignInDto = {
     username: string;
@@ -16,6 +17,7 @@ export class AuthController {
         private authService: AuthService
     ) { }
 
+    @Public()
     @Post('login')
     signIn(@Body() signInDto: SignInDto) {
         return this.authService.signIn(signInDto.username, signInDto.password);
@@ -27,6 +29,7 @@ export class AuthController {
         return req.user;
     }
 
+    @Public()
     @Get('register')
     register(): string {
         return 'register';
