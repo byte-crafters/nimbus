@@ -65,7 +65,16 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongo_container
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_GUI_USERNAME}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_GUI_PASSWORD}
+
+  nimbus-redis:
+    image: redis:7.0.14
+    container_name: nimbus_redis_container
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_vol:/data
       
 volumes:
   pgadmin_vol:
   postgres_vol:
+  redis_vol:
