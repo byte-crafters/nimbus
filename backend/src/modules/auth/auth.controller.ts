@@ -8,6 +8,11 @@ export type SignInDto = {
     password: string;
 };
 
+export type RegisterDTO = {
+    username: string;
+    password: string;
+};
+
 @Controller({
     version: '1',
     path: 'auth',
@@ -31,7 +36,7 @@ export class AuthController {
 
     @Public()
     @Get('register')
-    register(): string {
-        return 'register';
+    register(@Body() registerDto: RegisterDTO) {
+        return this.authService.register(registerDto.username, registerDto.password);
     }
 }

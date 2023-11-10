@@ -9,6 +9,11 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
+    async register(username: string, password: string) {
+        const user = await this.usersService.create(username, password);
+        return user;
+    }
+
     async signIn(username: string, pass: string): Promise<any> {
         const user = await this.usersService.findOne(username);
 
