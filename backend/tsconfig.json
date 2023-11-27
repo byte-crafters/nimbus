@@ -17,6 +17,8 @@
         "strictBindCallApply": false,
         "forceConsistentCasingInFileNames": false,
         "noFallthroughCasesInSwitch": false,
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
         "paths": {
             "@src/*": [
                 "src/*"
@@ -32,6 +34,9 @@
             ],
             "@tests/*": [
                 "tests/*"
+            ],
+            "@prsm/*": [
+                "prisma/*"
             ]
         }
     }

@@ -1,9 +1,9 @@
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
-import { JwtService, JwtModule } from '@nestjs/jwt';
-import { UsersModule } from '../users/users.module';
-import { jwtConstants } from './constants';
-import { AuthService } from './auth.service';
+import { UsersModule } from '@modules/users/users.module';
+import { AuthController } from '@modules/auth/auth.controller';
+import { AuthService, AUTH_SERVICE } from '@modules/auth/auth.service';
+import { jwtConstants } from '@modules/auth/constants';
 
 describe('AuthController', () => {
     let controller: AuthController;
@@ -18,7 +18,10 @@ describe('AuthController', () => {
                     signOptions: { expiresIn: '60s' },
                 })
             ],
-            providers: [AuthService],
+            providers: [{
+                provide: AUTH_SERVICE,
+                useClass: AuthService
+            }],
             controllers: [AuthController],
         }).compile();
 

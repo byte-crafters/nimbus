@@ -1,5 +1,5 @@
 import { Controller, Get, VERSION_NEUTRAL, Version } from '@nestjs/common';
-import { Public } from '../auth/decorator';
+import { Public } from '@modules/auth/auth.decorator';
 
 @Controller({
     version: VERSION_NEUTRAL,

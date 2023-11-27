@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
-import { Public } from './decorator';
+import { Body, Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@modules/auth/auth.guard';
+import { AUTH_SERVICE, IAuthService } from '@modules/auth/auth.service';
+import { Public } from '@modules/auth/auth.decorator';
 
 export type SignInDto = {
     username: string;
@@ -14,7 +14,7 @@ export type SignInDto = {
 })
 export class AuthController {
     constructor(
-        private authService: AuthService
+        @Inject(AUTH_SERVICE) private authService: IAuthService
     ) { }
 
     @Public()
