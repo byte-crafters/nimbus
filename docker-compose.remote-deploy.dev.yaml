@@ -6,8 +6,6 @@ services:
     restart: always
     ports:
       - 5432:5432
-    # env_file:
-    #   - ./backend/postgres.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -20,8 +18,6 @@ services:
     restart: always
     ports:
       - "8888:80"
-    # env_file:
-    #   - ./backend/postgres_gui.env
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
@@ -31,8 +27,6 @@ services:
   mongo:
     image: nimbus/mongo
     container_name: mongo_container
-    # env_file:
-    #   - ./backend/mongo.env
     environment:
       MONGO_ADMIN_USERNAME: ${MONGO_ADMIN_USERNAME}
       MONGO_ADMIN_PASSWORD: ${MONGO_ADMIN_PASSWORD}
@@ -55,8 +49,6 @@ services:
     restart: always
     ports:
       - 8081:8081
-    # env_file:
-    #   - ./backend/mongo_gui.env
     environment:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: true
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ADMIN_USERNAME}

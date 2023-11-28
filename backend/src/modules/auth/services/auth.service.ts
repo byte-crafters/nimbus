@@ -1,15 +1,20 @@
+import { UsersService } from '@modules/user/services/users.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 
+export interface IAuthService {
+    register(username: string, password: string): Promise<any>;
+    signIn(username: string, pass: string): Promise<any>;
+}
+
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService
     ) { }
 
-    async register(username: string, password: string) {
+    async register(username: string, password: string): Promise<any> {
         const user = await this.usersService.create(username, password);
         return user;
     }

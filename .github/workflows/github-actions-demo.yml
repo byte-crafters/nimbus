@@ -30,7 +30,7 @@ jobs:
             MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ADMIN_PASSWORD }}
             MONGO_INITDB_DATABASE: dev_tree_db
         run: | 
-          docker compose down -v && docker compose up -d --build
+          docker compose -f docker-compose.remote-deploy.dev.yaml down -v && docker compose -f docker-compose.remote-deploy.dev.yaml up -d --build
 
       - name: Sleep for 20 sec
         run: | 
@@ -63,23 +63,3 @@ jobs:
         run: cd ./backend && npm run test:e2e
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
-
-#   nimbus-run-unit-tests:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Check out repository code
-#         uses: actions/checkout@v4
-#         with:
-#             sparse-checkout: |
-#                 ./backend
-#       - run: docker compose up -d --build -d && sleep 30
-
-#   nimbus-run-e2e-tests:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Check out repository code
-#         uses: actions/checkout@v4
-#         with:
-#             sparse-checkout: |
-#                 ./backend
-#       - run: docker compose up -d --build -d && sleep 30

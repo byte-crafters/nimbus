@@ -1,6 +1,7 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
-import { User } from './User';
+import { User } from '../models/User';
 import bcrypt from 'bcrypt'
+
 
 export const mockUsersCollection = [
     new User({ password: '123', username: 'one' }),
