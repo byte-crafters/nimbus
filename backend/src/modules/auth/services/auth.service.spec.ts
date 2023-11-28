@@ -1,11 +1,12 @@
+import { UsersModule } from '@modules/user/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersModule } from '../users/users.module';
-import { AuthService } from './auth.service';
+import { TYPES, authServiceDefaultProvider } from '@src/dependencies/providers';
 import { jwtConstants } from './constants';
+import { IAuthService } from './auth.service';
 
 describe('AuthService', () => {
-    let service: AuthService;
+    let service: IAuthService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -17,10 +18,10 @@ describe('AuthService', () => {
                     signOptions: { expiresIn: '60s' },
                 })
             ],
-            providers: [AuthService],
+            providers: [authServiceDefaultProvider],
         }).compile();
 
-        service = module.get<AuthService>(AuthService);
+        service = module.get<IAuthService>(TYPES.AUTH_SERVICE);
     });
 
     it('should be defined', () => {

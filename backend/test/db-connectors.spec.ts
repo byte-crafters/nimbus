@@ -1,5 +1,5 @@
-import { PrismaClient as MongoClient } from '../prisma/generated/prisma-mongo-client-js';
-import { PrismaClient as PostgresClient } from '../prisma/generated/prisma-postgres-client-js';
+import { PrismaClient as MongoClient } from '@prsm/generated/prisma-mongo-client-js';
+import { PrismaClient as PostgresClient } from '@prsm/generated/prisma-postgres-client-js';
 
 describe('Test db connectors', () => {
   test('Test Postgres connector: find by email', async () => {

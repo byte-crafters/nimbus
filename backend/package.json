@@ -8,7 +8,7 @@
     "scripts": {
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-        "start": "nest start",
+        "start": "nest start --exec 'node -r tsconfig-paths/register -r ts-node/register ./src/main.ts'",
         "start:dev": "nest start --watch",
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
@@ -18,13 +18,14 @@
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+        "test:run": "tsc ./app/test/push_data_to_db.ts && node ./app/test/push_data_to_db.js",
+        "test:run-all": "jest --config ./jest.config.ts",
         "test:e2e": "jest --config ./test/jest-e2e.json",
         "be:start:b": "nest start -b swc",
-        "postgres:prisma": "prisma generate --schema prisma/schema.main.postgresql.prisma && prisma migrate dev --schema ./prisma/schema.main.postgresql.prisma --name init",
         "app:run": "tsc ./app/app.ts && node ./app/app.js",
         "mongo:prisma": "prisma db push --schema ./prisma/schema.files-tree.mongo.prisma",
-        "test:run": "tsc ./app/test/push_data_to_db.ts && node ./app/test/push_data_to_db.js",
-        "test:run-all": "jest",
+        "postgres:prisma": "prisma generate --schema prisma/schema.main.postgresql.prisma && prisma migrate dev --schema ./prisma/schema.main.postgresql.prisma --name init",
+        "postgres:prisma:migrate": "prisma migrate dev --schema ./prisma/schema.main.postgresql.prisma --name init",
         "lint:run": "eslint .",
         "services:local:up": "docker compose -f ../docker-compose.local-deploy.dev.yaml up -d --build",
         "services:local:down": "docker compose -f ../docker-compose.local-deploy.dev.yaml down -v",
@@ -76,7 +77,7 @@
             "json",
             "ts"
         ],
-        "rootDir": "./",
+        "rootDir": "./src",
         "testRegex": ".*\\.spec\\.ts$",
         "transform": {
             "^.+\\.(t|j)s$": "ts-jest"
