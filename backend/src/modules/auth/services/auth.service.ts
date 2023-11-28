@@ -1,14 +1,11 @@
+import { UsersService } from '@modules/user/services/users.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '@modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 
 export interface IAuthService {
     register(username: string, password: string): Promise<any>;
     signIn(username: string, pass: string): Promise<any>;
 }
-
-export const AUTH_SERVICE = Symbol('IAuthService');
-// export const AUTH_SERVICE = 'IAuthService';
 
 @Injectable()
 export class AuthService implements IAuthService {

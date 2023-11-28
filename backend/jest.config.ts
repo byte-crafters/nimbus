@@ -21,6 +21,7 @@ const jestConfig: JestConfigWithTsJest = {
     moduleDirectories: ["node_modules", "<rootDir>"],
     moduleNameMapper: {
         "@modules/(.*)": "<rootDir>/modules/$1",
+        "@src/(.*)": "<rootDir>/$1",
     }
 };
 

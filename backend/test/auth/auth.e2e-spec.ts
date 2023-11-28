@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '@modules/app/app.module';
-import { User } from '@modules/users/User';
+import { User } from '@modules/user/models/User';
 
 describe('AppServiceController (e2e)', () => {
     let app: INestApplication;
