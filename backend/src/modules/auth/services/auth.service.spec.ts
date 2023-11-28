@@ -1,9 +1,10 @@
 import { UsersModule } from '@modules/user/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TYPES, authServiceDefaultProvider } from '@src/dependencies/providers';
-import { jwtConstants } from './constants';
+import { authServiceDefaultProvider, userServiceDefaultProvider } from '@src/dependencies/providers';
 import { IAuthService } from './auth.service';
+import { jwtConstants } from './constants';
+import { TYPES } from '@src/dependencies/di';
 
 describe('AuthService', () => {
     let service: IAuthService;
@@ -18,7 +19,7 @@ describe('AuthService', () => {
                     signOptions: { expiresIn: '60s' },
                 })
             ],
-            providers: [authServiceDefaultProvider],
+            providers: [authServiceDefaultProvider, userServiceDefaultProvider],
         }).compile();
 
         service = module.get<IAuthService>(TYPES.AUTH_SERVICE);

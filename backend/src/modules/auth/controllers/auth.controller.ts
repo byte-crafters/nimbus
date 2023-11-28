@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { TYPES } from '@src/dependencies/providers';
+import { TYPES } from '@src/dependencies/di';
 import { IAuthService } from '../services/auth.service';
 import { Public } from '../services/auth.decorator';
 import { AuthGuard } from '../services/auth.guard';

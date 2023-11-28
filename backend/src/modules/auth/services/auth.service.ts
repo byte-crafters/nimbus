@@ -1,6 +1,7 @@
-import { UsersService } from '@modules/user/services/users.service';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { IUserService } from '@modules/user/services/users.service';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { TYPES } from '@src/dependencies/di';
 
 export interface IAuthService {
     register(username: string, password: string): Promise<any>;
@@ -10,7 +11,7 @@ export interface IAuthService {
 @Injectable()
 export class AuthService implements IAuthService {
     constructor(
-        private usersService: UsersService,
+        @Inject(TYPES.USER_SERVICE) private usersService: IUserService,
         private jwtService: JwtService
     ) { }
 

@@ -1,7 +1,7 @@
 import { UsersModule } from '@modules/user/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { authServiceDefaultProvider } from '@src/dependencies/providers';
+import { authServiceDefaultProvider, userServiceDefaultProvider } from '@src/dependencies/providers';
 import { AuthController } from './auth.controller';
 import { jwtConstants } from '../services/constants';
 
@@ -18,7 +18,7 @@ describe('AuthController', () => {
                     signOptions: { expiresIn: '60s' },
                 })
             ],
-            providers: [authServiceDefaultProvider],
+            providers: [authServiceDefaultProvider, userServiceDefaultProvider],
             controllers: [AuthController],
         }).compile();
 

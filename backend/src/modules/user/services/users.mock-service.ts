@@ -1,16 +1,15 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
-import { User } from '../models/User';
+import { Injectable, NotImplementedException } from "@nestjs/common";
+import { User } from "../models/User";
 import bcrypt from 'bcrypt';
-import { mockUsersCollection } from './users.mock-service';
+import { IUserService } from "./users.service";
 
-export interface IUserService {
-    create(username: string, password: string): Promise<User>;
-    findOne(username: string): Promise<User | undefined>;
-    findAll(): Promise<User[] | null>
-}
+export const mockUsersCollection = [
+    new User({ password: '123', username: 'one' }),
+    new User({ password: 'qwe', username: 'two' })
+];
 
 @Injectable()
-export class UsersService implements IUserService {
+export class MockUsersService implements IUserService{
     async create(username: string, password: string) {
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, salt);

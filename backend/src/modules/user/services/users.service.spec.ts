@@ -1,15 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService, mockUsersCollection } from './users.service';
+import { MockUsersService, mockUsersCollection } from './users.mock-service';
+import { IUserService } from './users.service';
+import { TYPES } from '@src/dependencies/di';
 
 describe('UsersService', () => {
-    let usersService: UsersService;
+    let usersService: IUserService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [UsersService],
+            providers: [{
+                provide: TYPES.USER_SERVICE,
+                useClass: MockUsersService
+            }],
         }).compile();
 
-        usersService = module.get<UsersService>(UsersService);
+        usersService = module.get<IUserService>(TYPES.USER_SERVICE);
     });
 
     it('should be defined', () => {
