@@ -1,0 +1,41 @@
+version: 0.2
+
+env:
+  secrets-manager:
+    POSTGRES_USER: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:POSTGRES_USER
+    POSTGRES_PASSWORD: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:POSTGRES_PASSWORD
+    PGADMIN_DEFAULT_EMAIL: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:PGADMIN_DEFAULT_EMAIL
+    PGADMIN_DEFAULT_PASSWORD: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:PGADMIN_DEFAULT_PASSWORD
+    MONGO_ADMIN_USERNAME: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_ADMIN_USERNAME
+    MONGO_ADMIN_PASSWORD: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_ADMIN_PASSWORD
+    MONGO_GUI_USERNAME: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_GUI_USERNAME
+    MONGO_GUI_PASSWORD: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_GUI_PASSWORD
+    MONGO_INITDB_ROOT_USERNAME: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_ADMIN_USERNAME
+    MONGO_INITDB_ROOT_PASSWORD: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_ADMIN_PASSWORD
+    MONGO_DATABASE_URL: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_DATABASE_URL
+    DATABASE_URL: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:DATABASE_URL
+phases:
+  install:
+    commands:
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+      - yum install net-tools -y
+  pre_build:
+    commands:
+      - docker build -t helloworld . --file ./backend/hello.Dockerfile
+  build:
+    commands:
+      - docker images
+      - docker run helloworld
+      - docker-compose --file docker-compose.remote-deploy.dev.yaml down -v && docker-compose --file docker-compose.remote-deploy.dev.yaml up -d --build
+      - cd ./backend
+      - sleep 20s
+      - netstat -tulpn | grep LISTEN
+      - docker ps
+      - npm install
+      - npm run postgres:prisma
+      - npm run mongo:prisma
+      - npm run test:run-all
+      - npm run test:e2e
+      - echo "🍏 This job's status is SUCCESSFULL."
+      

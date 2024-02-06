@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  db:
+  postgres:
     image: postgres
     container_name: postgres_container
     restart: always
@@ -28,13 +28,12 @@ services:
     image: nimbus/mongo
     container_name: mongo_container
     environment:
-      MONGO_ADMIN_USERNAME: ${MONGO_ADMIN_USERNAME}
-      MONGO_ADMIN_PASSWORD: ${MONGO_ADMIN_PASSWORD}
+      MONGO_ADMIN_USERNAME: root
+      MONGO_ADMIN_PASSWORD: root
       MONGO_GUI_USERNAME: ${MONGO_GUI_USERNAME}
       MONGO_GUI_PASSWORD: ${MONGO_GUI_PASSWORD}
-
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: dev_tree_db
     build:
       context: ./backend
@@ -70,3 +69,6 @@ volumes:
   pgadmin_vol:
   postgres_vol:
   redis_vol:
+
+# networks:
+#   my-network:
