@@ -38,10 +38,10 @@ phases:
       - npm run test:run-all
       - npm run test:e2e
       - echo "🍏 This job's status is SUCCESSFULL."
-artifacts:
-  files:
-    - '**/*'
-  base-directory: base_dir
-  name: nimbus-build-artifact-name
-  discard-paths: no
+# artifacts:
+#   files:
+#     - '**/*'
+#   base-directory: base_dir
+#   name: nimbus-build-artifact-name
+#   discard-paths: no
       
