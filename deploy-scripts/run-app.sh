@@ -1,6 +1,8 @@
 #!/bin/bash
 
-pwd
+# pwd
+echo "--1"
 ls $pwd
-cd ./backend
+echo "--2"
+# cd ./backend
 docker-compose --file docker-compose.deploy.dev start caddy_reverse_proxy
