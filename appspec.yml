@@ -5,6 +5,6 @@ files:
     destination: /var/nimbus-app/
 hooks:
   AfterInstall:
-    - location: ./run-app.sh
+    - location: deploy-scripts/run-app.sh
       timeout: 300
       runas: root
