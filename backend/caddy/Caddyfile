@@ -1,4 +1,4 @@
-localhost {
+ec2-16-171-135-191.eu-north-1.compute.amazonaws.com {
     root * /code/static
     file_server
 }
