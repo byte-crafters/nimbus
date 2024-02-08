@@ -9,6 +9,7 @@ echo "2. start docker containers"
     && docker-compose --file docker-compose.deploy.staging.yaml up -d
 cd backend
 echo $USER
+./before-install.sh
 echo "3. run npm install"
 node --version
 npm --version
