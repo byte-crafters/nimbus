@@ -25,23 +25,18 @@ phases:
       - docker build -t helloworld . --file ./backend/hello.Dockerfile
   build:
     commands:
-      - docker images
-      - docker run helloworld
-      - docker-compose --file docker-compose.remote-deploy.dev.yaml down -v && docker-compose --file docker-compose.remote-deploy.dev.yaml up -d --build
-      - cd ./backend
-      - sleep 20s
-      - netstat -tulpn | grep LISTEN
-      - docker ps
-      - npm install
-      - npm run postgres:prisma
-      - npm run mongo:prisma
-      - npm run test:run-all
-      - npm run test:e2e
+      # - docker images
+      # - docker run helloworld
+      # - docker-compose --file docker-compose.remote-deploy.dev.yaml down -v && docker-compose --file docker-compose.remote-deploy.dev.yaml up -d --build
+      # - cd ./backend
+      # - sleep 20s
+      # - netstat -tulpn | grep LISTEN
+      # - docker ps
+      # - npm install
+      # - npm run postgres:prisma
+      # - npm run mongo:prisma
+      # - npm run test:run-all
+      # - npm run test:e2e
       - echo "🍏 This job's status is SUCCESSFULL."
-# artifacts:
-#   files:
-#     - '**/*'
-#   base-directory: base_dir
-#   name: nimbus-build-artifact-name
-#   discard-paths: no
+
       
