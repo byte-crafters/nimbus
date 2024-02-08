@@ -12,5 +12,5 @@ echo $USER
 echo "3. run npm install"
 # node --version
 # npm --version
-sudo npm install
-sudo npm run start
+npm install
+npm run start
