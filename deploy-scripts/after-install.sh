@@ -11,12 +11,12 @@ echo $USER
 # ./before-install.sh
 
 # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-# . ~/.nvm/nvm.sh
-# nvm install --lts
+. ~/.nvm/nvm.sh
+nvm install --lts
 
 cd backend
 echo "3. run npm install"
-# node --version
-# npm --version
+node --version
+npm --version
 npm install
 npm run start
