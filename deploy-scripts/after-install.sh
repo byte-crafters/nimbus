@@ -10,7 +10,7 @@ echo "2. start docker containers"
 cd backend
 echo $USER
 echo "3. run npm install"
-# node --version
-# npm --version
+node --version
+npm --version
 npm install
 npm run start
