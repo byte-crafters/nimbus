@@ -18,6 +18,7 @@ cd backend
 echo "3. run npm install"
 # node --version
 npm --version
+npm install --global yarn
 echo "4. start"
 # npm install
 npm run start
