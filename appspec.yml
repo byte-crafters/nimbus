@@ -4,11 +4,11 @@ files:
   - source: /
     destination: /var/nimbus-app/
 hooks:
-  BeforeInstall:
-    - location: deploy-scripts/before-install.sh
-      timeout: 300
-      runas: root
+  # BeforeInstall:
+  #   - location: deploy-scripts/before-install.sh
+  #     timeout: 300
+  #     runas: ec2-user
   AfterInstall:
     - location: deploy-scripts/after-install.sh
       timeout: 300
-      runas: root
+      runas: ec2-user
