@@ -16,7 +16,8 @@ nvm install --lts
 
 cd backend
 echo "3. run npm install"
-node --version
+# node --version
 npm --version
-npm install
+echo "4. start"
+# npm install
 npm run start
