@@ -19,6 +19,9 @@ echo "3. run npm install"
 # node --version
 npm --version
 npm install --global yarn
-echo "4. start"
+echo "4. install"
+yarn --version
+yarn install
+echo "5. start"
 # npm install
 npm run start
