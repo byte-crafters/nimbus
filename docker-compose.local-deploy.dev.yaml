@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   caddy_reverse_proxy:
+    container_name: caddy_reverse_proxy_container
     image: caddy:alpine
     restart: always
     ports:

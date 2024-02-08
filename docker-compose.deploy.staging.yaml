@@ -8,7 +8,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./backend/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./backend/caddy/deploy-staging.Caddyfile:/etc/caddy/Caddyfile
       - ./backend/caddy/static:/code/static
       - caddy_data:/data
       - caddy_config:/config

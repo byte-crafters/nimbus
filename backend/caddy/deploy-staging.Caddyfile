@@ -1,0 +1,10 @@
+ec2-16-171-135-191.eu-north-1.compute.amazonaws.com {
+    root * /var/www/html
+    file_server
+    
+    reverse_proxy /api/* localhost:3000 
+   	
+    log {
+		output file /code/access.log
+	}
+}
