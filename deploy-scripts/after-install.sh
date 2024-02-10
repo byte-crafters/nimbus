@@ -24,4 +24,6 @@ yarn --version
 yarn install
 echo "5. start"
 # npm install
-yarn run start
+yarn run start $
+echo "6. DONE"
+exit 0
