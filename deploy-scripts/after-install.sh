@@ -3,10 +3,7 @@ echo "start"
 cd /var/nimbus-app/
 echo "1. load env vars "
 ./secondary/load-envs.sh
-echo "2. start docker containers"
-\
-    docker-compose --file docker-compose.deploy.staging.yaml down -v \
-    && docker-compose --file docker-compose.deploy.staging.yaml up -d
+
 echo $USER
 # ./before-install.sh
 
@@ -26,5 +23,10 @@ echo "5. start"
 # npm install
 npm install pm2 -g
 yarn run start:pm2
+
+echo "2. start docker containers"
+\
+    docker-compose --file docker-compose.deploy.staging.yaml down -v \
+    && docker-compose --file docker-compose.deploy.staging.yaml up -d
 echo "6. DONE"
 exit 0
