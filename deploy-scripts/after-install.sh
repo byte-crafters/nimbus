@@ -18,11 +18,12 @@ npm --version
 npm install --global yarn
 echo "4. install"
 yarn --version
-yarn install
+# yarn install
 echo "5. start"
-# npm install
+npm install
 npm install pm2 -g
-yarn run start:pm2
+# yarn run start:pm2
+npm run start:pm2
 
 echo "2. start docker containers"
 \
