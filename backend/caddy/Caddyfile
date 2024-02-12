@@ -40,13 +40,13 @@
 #     reverse_proxy localhost:3000
 # }
 
-ec2-13-60-17-223.eu-north-1.compute.amazonaws.com {
-    root * /code/static
-    file_server
+# ec2---------------13-60-17-223.eu-north-1.compute.amazonaws.com {
+#     root * /code/static
+#     file_server
     
-    reverse_proxy /api/* localhost:3000 
+#     reverse_proxy /api/* localhost:3000 
    	
-    log {
-		output file /code/access.log
-	}
-}
+#     log {
+# 		output file /code/access.log
+# 	}
+# }
