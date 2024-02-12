@@ -24,6 +24,7 @@ yarn --version
 yarn install
 echo "5. start"
 # npm install
-yarn run start $
+npm install pm2 -g
+yarn run start:pm2
 echo "6. DONE"
 exit 0
