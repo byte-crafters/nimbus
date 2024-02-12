@@ -2,7 +2,6 @@ ec2-13-60-17-223.eu-north-1.compute.amazonaws.com {
     root * /code/static
     file_server
     
-    
     reverse_proxy /api/* localhost:3000 {
         transport http {
             tls
