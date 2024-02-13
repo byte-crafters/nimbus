@@ -21,24 +21,23 @@ echo $USER
 
 cd backend
 echo "3. run npm install"
-# node --version
+
+node --version
 npm --version
+
 npm install --global yarn
 echo "4. install"
 yarn --version
 yarn install
 echo "5. start"
-# npm install
-npm install pm2 -g
 
+npm install pm2 -g
 pm2 stop main
 pm2 delete main
 rm -rf ./backend/dist
 
 yarn run build
 yarn run start:pm2
-
-# npm run start:pm2
 
 echo "6. DONE"
 # exit 0
