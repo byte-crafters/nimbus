@@ -33,6 +33,9 @@ npm install pm2 -g
 
 pm2 stop main
 pm2 delete main
+rm -rf ./backend/dist
+
+yarn run build
 yarn run start:pm2
 
 # npm run start:pm2
