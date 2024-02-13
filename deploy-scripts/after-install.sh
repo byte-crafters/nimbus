@@ -41,4 +41,4 @@ yarn run build
 yarn run start:pm2
 
 echo "6. DONE"
-exit 1
+exit 0
