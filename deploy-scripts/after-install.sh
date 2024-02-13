@@ -10,6 +10,8 @@ echo "2. start docker containers"
     docker-compose --file docker-compose.deploy.staging.yaml down -v \
     && docker-compose --file docker-compose.deploy.staging.yaml up -d
 
+sleep 10s
+
 echo $USER
 # ./before-install.sh
 
@@ -28,7 +30,11 @@ yarn install
 echo "5. start"
 # npm install
 npm install pm2 -g
+
+pm2 stop main
+pm2 delete main
 yarn run start:pm2
+
 # npm run start:pm2
 
 echo "6. DONE"
