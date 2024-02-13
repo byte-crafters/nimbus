@@ -17,7 +17,7 @@ echo $USER
 
 # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 # . ~/.nvm/nvm.sh
-# nvm install --lts
+nvm install --lts
 
 cd backend
 echo "3. run npm install"
