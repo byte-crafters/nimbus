@@ -14,8 +14,8 @@ echo $USER
 # ./before-install.sh
 
 # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-. ~/.nvm/nvm.sh
-nvm install --lts
+# . ~/.nvm/nvm.sh
+# nvm install --lts
 
 cd backend
 echo "3. run npm install"
@@ -24,12 +24,12 @@ npm --version
 npm install --global yarn
 echo "4. install"
 yarn --version
-# yarn install
+yarn install
 echo "5. start"
-npm install
+# npm install
 npm install pm2 -g
-# yarn run start:pm2
-npm run start:pm2
+yarn run start:pm2
+# npm run start:pm2
 
 echo "6. DONE"
-exit 0
+# exit 0
