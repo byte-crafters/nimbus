@@ -16,7 +16,7 @@ echo $USER
 # ./before-install.sh
 
 # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-# . ~/.nvm/nvm.sh
+. ~/.nvm/nvm.sh
 nvm install --lts
 
 cd backend
