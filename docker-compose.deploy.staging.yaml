@@ -13,6 +13,15 @@ services:
       - caddy_data:/data
       - caddy_config:/config
 
+  nimbus-api:
+    image: nimbus/api
+    container_name: nimbus-api
+    ports:
+      - "3000:3000"
+    build:
+      context: ./backend
+      dockerfile: build_api.Dockerfile
+      
   postgres:
     image: postgres
     container_name: postgres_container

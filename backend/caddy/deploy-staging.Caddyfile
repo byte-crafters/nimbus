@@ -1,14 +1,89 @@
+# ec2-13-60-17-223.eu-north-1.compute.amazonaws.com {
+#     root * /code/static
+#     file_server
+
+#     reverse_proxy /api/* 127.0.0.1:3000 {
+#         transport http {
+#             tls_insecure_skip_verify
+#         }
+#     }
+
+#     log {
+# 		output file /code/access.log
+# 	}
+# }
+
 ec2-13-60-17-223.eu-north-1.compute.amazonaws.com {
-    # root * /code/static
-    # file_server
-    
-    reverse_proxy 127.0.0.1:3000 {
-        transport http {
-            tls_insecure_skip_verify
-        }
-    }
-   	
-    log {
-		output file /code/access.log
+	# root * /code/static
+	# file_server
+
+	# reverse_proxy /api/* nimbus_api:3000 {
+	# reverse_proxy 172.21.0.6:3000 {
+
+
+	# route {
+	# 	uri strip_prefix /api
+	# 	reverse_proxy /api nimbus-api:3000
+	# }
+
+	# working for health
+	# handle_path /api/* {
+	# 	reverse_proxy nimbus-api:3000
+	# }
+
+	# handle /api/health {
+	# 	uri strip_prefix /prefix
+	# 	reverse_proxy /api/health nimbus-api:3000/health
+	# }
+
+
+	# working for health
+	# route /api/* {
+	# 	uri strip_prefix /api
+	# 	reverse_proxy nimbus-api:3000
+	# }
+
+
+	# working for health
+	route /api/health {
+		uri strip_prefix /api
+		reverse_proxy nimbus-api:3000
+	}
+
+	route /api/* {
+		reverse_proxy nimbus-api:3000
+	}
+
+	# route /api/health {
+	# 	reverse_proxy nimbus-api:3000/health
+	# }
+
+	# route /api {
+	# 	reverse_proxy nimbus-api:3000/api
+	# }
+
+
+	# route /api/v1
+
+	# handle /api/* {
+	# 	uri strip_prefix /api
+	# 	reverse_proxy / nimbus-api:3000
+	# }
+
+	# reverse_proxy nimbus-api:3000
+
+	# reverse_proxy /api/health nimbus-api:3000/health
+
+	# working /api/ request -> swagger
+	# reverse_proxy /api/* nimbus-api:3000
+
+	# reverse_proxy /api/* nimbus-api:3000 {
+	# 	transport http {
+	# 		tls_insecure_skip_verify
+	# 	}
+	# }
+
+	log {
+		output file /code/logs/access.log
 	}
 }

@@ -1,0 +1,10 @@
+FROM node:alpine3.19
+
+EXPOSE 3000:3000
+
+COPY ./ ./var/nimbus-api/
+WORKDIR /var/nimbus-api/
+
+RUN npm run build
+
+CMD [ "npm", "run", "start:prod" ]
