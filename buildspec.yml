@@ -26,7 +26,7 @@ phases:
   build:
     commands:
       - docker images
-      - docker run helloworld
+      # - docker run helloworld
       - docker-compose --file docker-compose.build.staging.yaml down -v
       - docker-compose --file docker-compose.build.staging.yaml up -d --build
       - cd ./backend
