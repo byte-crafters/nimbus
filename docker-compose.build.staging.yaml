@@ -16,7 +16,7 @@ services:
   # create container for building nest app
   nimbus-api:
     image: nimbus/api
-    container_name: nimbus_api
+    container_name: nimbus-api
     ports:
       - "3000:3000"
     build:
