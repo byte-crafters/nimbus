@@ -14,20 +14,28 @@ env:
     MONGO_INITDB_ROOT_PASSWORD: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_ADMIN_PASSWORD
     MONGO_DATABASE_URL: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:MONGO_DATABASE_URL
     DATABASE_URL: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:DATABASE_URL
+    AWS_DEFAULT_REGION: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:AWS_DEFAULT_REGION
+    AWS_ACCOUNT_ID: arn:aws:secretsmanager:eu-north-1:913580947034:secret:nimbus-db-credentials-979fRl:AWS_ACCOUNT_ID
 phases:
   install:
     commands:
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
       - yum install net-tools -y
-  # pre_build:
-  #   commands:
-  #     - docker build -t helloworld . --file ./backend/hello.Dockerfile
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      # - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 913580947034.dkr.ecr.eu-north-1.amazonaws.com
   build:
     commands:
       - docker images
       # - docker run helloworld
       - docker-compose --file docker-compose.build.staging.yaml down -v
+      - echo 'Started building nimbus-api'
+      - docker compose -f docker-compose.build.staging.yaml build nimbus-api --no-cache
+      - docker images
+      # - docker tag _____ 913580947034.dkr.ecr.eu-north-1.amazonaws.com/nimbus-image-registry:nimbus_api-latest
+      - echo 'Ended building nimbus-api and pushed to ECR'
       - docker-compose --file docker-compose.build.staging.yaml up -d --build
       - cd ./backend
       - sleep 10s
