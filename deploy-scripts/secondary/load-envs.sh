@@ -10,6 +10,8 @@ MONGO_INITDB_ROOT_USERNAME=$(aws secretsmanager get-secret-value --secret-id nim
 MONGO_INITDB_ROOT_PASSWORD=$(aws secretsmanager get-secret-value --secret-id nimbus-db-credentials --query SecretString --output text | jq -r '."MONGO_INITDB_ROOT_PASSWORD"')
 MONGO_DATABASE_URL=$(aws secretsmanager get-secret-value --secret-id nimbus-db-credentials --query SecretString --output text | jq -r '."MONGO_DATABASE_URL"')
 DATABASE_URL=$(aws secretsmanager get-secret-value --secret-id nimbus-db-credentials --query SecretString --output text | jq -r '."DATABASE_URL"')
+AWS_DEFAULT_REGION=$(aws secretsmanager get-secret-value --secret-id nimbus-db-credentials --query SecretString --output text | jq -r '."AWS_DEFAULT_REGION"')
+AWS_ACCOUNT_ID=$(aws secretsmanager get-secret-value --secret-id nimbus-db-credentials --query SecretString --output text | jq -r '."AWS_ACCOUNT_ID"')
 
 export POSTGRES_USER=$POSTGRES_USER
 export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -23,3 +25,5 @@ export MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
 export MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
 export MONGO_DATABASE_URL=$MONGO_DATABASE_URL
 export DATABASE_URL=$DATABASE_URL
+export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID
