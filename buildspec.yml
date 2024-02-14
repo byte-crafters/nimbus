@@ -20,23 +20,22 @@ phases:
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
       - yum install net-tools -y
-  pre_build:
-    commands:
-      - docker build -t helloworld . --file ./backend/hello.Dockerfile
+  # pre_build:
+  #   commands:
+  #     - docker build -t helloworld . --file ./backend/hello.Dockerfile
   build:
     commands:
-      # - docker images
-      # - docker run helloworld
-      # - docker-compose --file docker-compose.remote-deploy.dev.yaml down -v && docker-compose --file docker-compose.remote-deploy.dev.yaml up -d --build
-      # - cd ./backend
-      # - sleep 20s
-      # - netstat -tulpn | grep LISTEN
-      # - docker ps
-      # - npm install
-      # - npm run postgres:prisma
-      # - npm run mongo:prisma
-      # - npm run test:run-all
-      # - npm run test:e2e
+      - docker images
+      - docker run helloworld
+      - docker-compose --file docker-compose.build.staging.yaml down -v
+      - docker-compose --file docker-compose.build.staging.yaml up -d --build
+      - cd ./backend
+      - sleep 10s
+      - netstat -tulpn | grep LISTEN
+      - docker ps
+      - docker exec -it nimbus-api npm install
+      - docker exec -it nimbus-api npm run postgres:prisma
+      - docker exec -it nimbus-api npm run mongo:prisma
+      - docker exec -it nimbus-api npm run test:run-all
+      - docker exec -it nimbus-api npm run test:e2e
       - echo "🍏 This job's status is SUCCESSFULL."
-
-      
