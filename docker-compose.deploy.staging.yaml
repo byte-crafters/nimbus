@@ -14,6 +14,7 @@ services:
       - caddy_config:/config
 
   nimbus-api:
+    # image: nimbus/api
     image: $AWS_ACCOUNT_ID.dkr.ecr.eu-north-1.amazonaws.com/nimbus-image-registry:nimbus_api-latest
     container_name: nimbus-api
     ports:
