@@ -15,7 +15,7 @@ services:
 
   nimbus-api:
     # image: nimbus/api
-    image: $AWS_ACCOUNT_ID.dkr.ecr.eu-north-1.amazonaws.com/nimbus-image-registry:nimbus_api-latest
+    image: 913580947034.dkr.ecr.eu-north-1.amazonaws.com/nimbus-image-registry:nimbus_api-latest
     container_name: nimbus-api
     ports:
       - "3000:3000"
