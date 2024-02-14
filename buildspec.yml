@@ -33,9 +33,9 @@ phases:
       - sleep 10s
       - netstat -tulpn | grep LISTEN
       - docker ps
-      - docker exec -it nimbus-api sh -c "npm install"
-      - docker exec -it nimbus-api npm run postgres:prisma
-      - docker exec -it nimbus-api npm run mongo:prisma
-      - docker exec -it nimbus-api npm run test:run-all
-      - docker exec -it nimbus-api npm run test:e2e
+      - docker exec nimbus-api npm install
+      - docker exec nimbus-api npm run postgres:prisma
+      - docker exec nimbus-api npm run mongo:prisma
+      - docker exec nimbus-api npm run test:run-all
+      - docker exec nimbus-api npm run test:e2e
       - echo "🍏 This job's status is SUCCESSFULL."
