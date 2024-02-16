@@ -27,6 +27,7 @@ phases:
   #     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   build:
     commands:
+      - make --version
       - docker images
       # - docker run helloworld
       - docker-compose --file docker-compose.build.staging.yaml down -v

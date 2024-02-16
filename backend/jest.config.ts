@@ -10,7 +10,12 @@ const jestConfig: JestConfigWithTsJest = {
     rootDir: "./src",
     testRegex: ".*\\.spec\\.ts$",
     transform: {
-        "^.+\\.(t|j)s$": "ts-jest"
+        "^.+\\.(t|j)s$": [
+            "ts-jest",
+            {
+                tsconfig: './tsconfig.test.json',
+            }
+        ]
     },
     collectCoverageFrom: [
         "**/*.(t|j)s"
@@ -22,6 +27,7 @@ const jestConfig: JestConfigWithTsJest = {
     moduleNameMapper: {
         "@modules/(.*)": "<rootDir>/modules/$1",
         "@src/(.*)": "<rootDir>/$1",
+        "@prsm/(.*)": "<rootDir>/../prisma/$1",
     }
 };
 
