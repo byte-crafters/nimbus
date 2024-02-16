@@ -1,3 +1,5 @@
+.PHONY : deploy-application-start deploy-application-start-mongo deploy-application-start-services
+
 local-up:
 	docker compose --file docker-compose.local-deploy.dev.yaml up -d --build 
 	docker ps
@@ -31,6 +33,11 @@ local-test-db:
 # deploy
 
 deploy-application-start:
+	deploy-application-start-mongo
+	sleep 10s
+	deploy-application-start-services
+
+deploy-application-start-2:
 	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
 
 deploy-application-start-mongo:
