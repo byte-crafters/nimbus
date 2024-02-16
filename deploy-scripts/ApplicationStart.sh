@@ -32,5 +32,15 @@ export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
 export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID
 
 # make deploy-application-start
-make deploy-application-start
+# make deploy-application-start
+
+docker-compose --file docker-compose.deploy.staging.yaml up mongo -d --build
+sleep 30s
+docker-compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
+docker-compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
+docker-compose --file docker-compose.deploy.staging.yaml up postgres -d --build
+docker-compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
+docker-compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
+
+
 exit 0
