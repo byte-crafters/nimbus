@@ -61,9 +61,9 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: dev_tree_db
-    build:
-      context: ./backend
-      dockerfile: ./rs.Dockerfile
+    # build:
+    #   context: ./backend
+    #   dockerfile: ./rs.Dockerfile
     restart: always 
     ports:
       - 27017:27017
