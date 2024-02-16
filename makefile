@@ -31,7 +31,8 @@ local-test-db:
 # deploy
 
 deploy-application-start:
-	. ./deploy-scripts/secondary/load-envs.sh
+	. ./.env.deploy
+	# . ./deploy-scripts/secondary/load-envs.sh
 	# docker-compose --file docker-compose.deploy.staging.yaml up -d --build
 	printenv
 	echo $(POSTGRES_USER)
