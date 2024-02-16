@@ -32,6 +32,20 @@ local-test-db:
 
 deploy-application-start:
 	. ./deploy-scripts/secondary/load-envs.sh
+	echo $POSTGRES_USER
+	echo $POSTGRES_PASSWORD
+	echo $PGADMIN_DEFAULT_EMAIL
+	echo $PGADMIN_DEFAULT_PASSWORD
+	echo $MONGO_ADMIN_USERNAME
+	echo $MONGO_ADMIN_PASSWORD
+	echo $MONGO_GUI_USERNAME
+	echo $MONGO_GUI_PASSWORD
+	echo $MONGO_INITDB_ROOT_USERNAME
+	echo $MONGO_INITDB_ROOT_PASSWORD
+	echo $MONGO_DATABASE_URL
+	echo $DATABASE_URL
+	echo $AWS_DEFAULT_REGION
+	echo $AWS_ACCOUNT_ID
 	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
 	exit 0
 
