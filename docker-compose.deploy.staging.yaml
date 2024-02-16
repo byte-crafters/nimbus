@@ -26,17 +26,17 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       MONGO_DATABASE_URL: ${MONGO_DATABASE_URL}    
       
-  # postgres:
-  #   image: postgres
-  #   container_name: postgres_container
-  #   restart: always
-  #   ports:
-  #     - 5432:5432
-  #   environment:
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #   volumes:
-  #     - postgres_vol:/var/lib/postgresql/data
+  postgres:
+    image: postgres
+    container_name: postgres_container
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
     
   # pgadmin:
   #   image: dpage/pgadmin4
