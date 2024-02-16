@@ -31,7 +31,7 @@ local-test-db:
 # deploy
 
 deploy-application-start:
-	source ./deploy-scripts/secondary/load-envs.sh
+	. ./deploy-scripts/secondary/load-envs.sh
 	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
 	exit 1
 
