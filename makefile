@@ -31,25 +31,25 @@ local-test-db:
 # deploy
 
 deploy-application-start:
-	. ./.env.deploy
+	# . ./.env.deploy
 	# . ./deploy-scripts/secondary/load-envs.sh
 	# docker-compose --file docker-compose.deploy.staging.yaml up -d --build
-	printenv
-	echo $(POSTGRES_USER)
-	echo $(POSTGRES_PASSWORD)
-	echo $(PGADMIN_DEFAULT_EMAIL)
-	echo $(PGADMIN_DEFAULT_PASSWORD)
-	echo $(MONGO_ADMIN_USERNAME)
-	echo $(MONGO_ADMIN_PASSWORD)
-	echo $(MONGO_GUI_USERNAME)
-	echo $(MONGO_GUI_PASSWORD)
-	echo $(MONGO_INITDB_ROOT_USERNAME)
-	echo $(MONGO_INITDB_ROOT_PASSWORD)
-	echo $(MONGO_DATABASE_URL)
-	echo $(DATABASE_URL)
-	echo $(AWS_DEFAULT_REGION)
-	echo $(AWS_ACCOUNT_ID)
-	exit 1
+	# printenv
+	# echo $(POSTGRES_USER)
+	# echo $(POSTGRES_PASSWORD)
+	# echo $(PGADMIN_DEFAULT_EMAIL)
+	# echo $(PGADMIN_DEFAULT_PASSWORD)
+	# echo $(MONGO_ADMIN_USERNAME)
+	# echo $(MONGO_ADMIN_PASSWORD)
+	# echo $(MONGO_GUI_USERNAME)
+	# echo $(MONGO_GUI_PASSWORD)
+	# echo $(MONGO_INITDB_ROOT_USERNAME)
+	# echo $(MONGO_INITDB_ROOT_PASSWORD)
+	# echo $(MONGO_DATABASE_URL)
+	# echo $(DATABASE_URL)
+	# echo $(AWS_DEFAULT_REGION)
+	# echo $(AWS_ACCOUNT_ID)
+	# exit 1
 
 deploy-application-stop:
 	docker-compose --file docker-compose.deploy.staging.yaml down -v 
