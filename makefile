@@ -32,27 +32,23 @@ local-test-db:
 
 # deploy
 
-deploy-application-start:
-	docker compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up postgres -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up mongo -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
+deploy-application-start: deploy-application-start deploy-application-start-mongo deploy-application-start-services
+	deploy-application-start-mongo
+	deploy-application-start-services
 
 deploy-application-start-2:
-	docker compose --file docker-compose.deploy.staging.yaml up -d --build
+	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
 
 deploy-application-start-mongo:
-	docker compose --file docker-compose.deploy.staging.yaml up mongo -d --build
-	sleep 10s
+	docker-compose --file docker-compose.deploy.staging.yaml up mongo -d --build
 
 deploy-application-start-services:
-	docker compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up postgres -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
-	docker compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
+	docker-compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
+	docker-compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
+	docker-compose --file docker-compose.deploy.staging.yaml up postgres -d --build
+	docker-compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
+	docker-compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
 
 deploy-application-stop:
 	docker-compose --file docker-compose.deploy.staging.yaml down -v 
+
