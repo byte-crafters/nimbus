@@ -38,7 +38,6 @@ deploy-application-start:
 	docker compose --file docker-compose.deploy.staging.yaml up postgres -d --build
 	docker compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
 	docker compose --file docker-compose.deploy.staging.yaml up mongo -d --build
-	# docker compose --file docker-compose.deploy.staging.yaml up mongo-express -d --build
 	docker compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
 
 deploy-application-start-2:
@@ -53,7 +52,6 @@ deploy-application-start-services:
 	docker compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
 	docker compose --file docker-compose.deploy.staging.yaml up postgres -d --build
 	docker compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
-	# docker compose --file docker-compose.deploy.staging.yaml up mongo-express -d --build
 	docker compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
 
 deploy-application-stop:
