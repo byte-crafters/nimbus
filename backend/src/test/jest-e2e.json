@@ -11,9 +11,12 @@
         "^.+\\.(t|j)s$": "ts-jest"
     },
     "preset": "ts-jest",
-    "moduleDirectories": ["node_modules", "<rootDir>"],
+    "moduleDirectories": [
+        "node_modules",
+        "<rootDir>"
+    ],
     "moduleNameMapper": {
-        "@modules/(.*)": "<rootDir>/../src/modules/$1",
-        "@src/(.*)": "<rootDir>../src/$1"
+        "@modules/(.*)": "<rootDir>/../../src/modules/$1",
+        "@src/(.*)": "<rootDir>../../src/$1"
     }
 }
