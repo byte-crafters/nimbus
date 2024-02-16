@@ -32,5 +32,5 @@ export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
 export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID
 
 # make deploy-application-start
-make deploy-application-start-mongo
+make deploy-application-start
 exit 0

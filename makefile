@@ -30,11 +30,13 @@ local-test-db:
 
 # deploy
 
+deploy-application-start:
+	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
 
 deploy-application-start-mongo:
 	docker-compose --file docker-compose.deploy.staging.yaml up mongo -d --build
-	
-deploy-application-start:
+
+deploy-application-start-services:
 	docker-compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
 	docker-compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
 	docker-compose --file docker-compose.deploy.staging.yaml up postgres -d --build
