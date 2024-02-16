@@ -27,3 +27,14 @@ local-test-db:
 	docker exec nimbus-api npm run postgres:prisma
 	docker exec nimbus-api npm run mongo:prisma
 	docker exec nimbus-api npx jest --config ./jest.config.ts 
+
+# deploy
+
+deploy-application-start:
+	source ./deploy-scripts/secondary/load-envs.sh
+	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
+	exit 1
+
+deploy-application-stop:
+	docker-compose --file docker-compose.deploy.staging.yaml down -v 
+	exit 0
