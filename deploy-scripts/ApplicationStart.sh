@@ -37,7 +37,8 @@ export AWS_DEFAULT_REGION=NIMBUS_AWS_DEFAULT_REGION
 export AWS_ACCOUNT_ID=NIMBUS_AWS_ACCOUNT_ID
 
 
-export
-printenv
+echo $POSTGRES_USER
+# export
+# printenv
 exit 1
 # make deploy-application-start
