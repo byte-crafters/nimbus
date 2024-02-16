@@ -21,7 +21,7 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:run": "tsc ./app/test/push_data_to_db.ts && node ./app/test/push_data_to_db.js",
         "test:run-all": "jest --config ./jest.config.ts",
-        "test:e2e": "jest --config ./test/jest-e2e.json",
+        "test:e2e": "jest --config ./src/test/jest-e2e.json",
         "be:start:b": "nest start -b swc",
         "app:run": "tsc ./app/app.ts && node ./app/app.js",
         "mongo:prisma": "prisma db push --schema ./prisma/schema.files-tree.mongo.prisma",
