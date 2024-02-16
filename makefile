@@ -47,7 +47,7 @@ deploy-application-start:
 	echo $AWS_DEFAULT_REGION
 	echo $AWS_ACCOUNT_ID
 	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
-	exit 0
+	exit 1
 
 deploy-application-stop:
 	docker-compose --file docker-compose.deploy.staging.yaml down -v 
