@@ -33,4 +33,4 @@ export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID
 
 # make deploy-application-start
 make deploy-application-start
-exit 1
+exit 0
