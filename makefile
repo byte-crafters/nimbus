@@ -33,7 +33,7 @@ local-test-db:
 deploy-application-start:
 	. ./deploy-scripts/secondary/load-envs.sh
 	docker-compose --file docker-compose.deploy.staging.yaml up -d --build
-	exit 1
+	exit 0
 
 deploy-application-stop:
 	docker-compose --file docker-compose.deploy.staging.yaml down -v 
