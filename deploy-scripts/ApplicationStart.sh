@@ -34,6 +34,8 @@ export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID
 # make deploy-application-start
 # make deploy-application-start
 
+make local-clear
+
 docker-compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up postgres -d --build
