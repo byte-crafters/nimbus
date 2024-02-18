@@ -1,18 +1,23 @@
-ec2-16-171-165-225.eu-north-1.compute.amazonaws.com {
-	root * /code/static
-	file_server
-
-	# working for health
+ec2-51-20-42-110.eu-north-1.compute.amazonaws.com {
 	route /api/health {
 		uri strip_prefix /api
-		reverse_proxy nimbus-api:3000
+		reverse_proxy * nimbus-api:3000
+	}
+
+	route /api/docs/* {
+		uri strip_prefix /api
+		reverse_proxy * nimbus-api:3000
 	}
 
 	route /api/* {
-		reverse_proxy nimbus-api:3000
+		reverse_proxy * nimbus-api:3000
+	}
+
+	route /* {
+		reverse_proxy * nimbus-frontend:3000
 	}
 
 	log {
-		output file /code/logs/access.log
+		output file /code/logs/access.json
 	}
 }

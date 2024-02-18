@@ -34,17 +34,17 @@ export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID
 # make deploy-application-start
 # make deploy-application-start
 
-make local-clear
-
 docker-compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up postgres -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up mongo -d --build
+docker-compose --file docker-compose.deploy.staging.yaml up nimbus-frontend -d --build
 # docker-compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
 # docker-compose --file docker-compose.deploy.staging.yaml up mongo-express -d --build
 
-sleep 10s
+sleep 30s
 docker exec mongo_container mongosh -u root -p root --eval "rs.initiate();"
+docker stats --no-stream
 
 exit 0
