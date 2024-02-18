@@ -37,7 +37,7 @@ export AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID
 docker-compose --file docker-compose.deploy.staging.yaml up caddy_reverse_proxy -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up nimbus-api -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up postgres -d --build
-docker-compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
+# docker-compose --file docker-compose.deploy.staging.yaml up pgadmin -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up nimbus-redis -d --build
 docker-compose --file docker-compose.deploy.staging.yaml up mongo -d --build
 
