@@ -1,52 +1,17 @@
-# localhost {
-# 	root * /code/static
-# 	reverse_proxy /api/* /code/static
-# 	file_server
+localhost {
+	root * /code/static
+	file_server
 
-# 	log {
-# 		output file /code/access.log
-# 	}
+	route /api/health {
+		uri strip_prefix /api
+		reverse_proxy nimbus-api:3000
+	}
 
-# 	header /* {
-# 		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-# 		X-Xss-Protection "1; mode=block"
-# 		X-Content-Type-Options "nosniff"
-# 		X-Frame-Options "DENY"
-# 		Content-Security-Policy "upgrade-insecure-requests"
-# 		Referrer-Policy "strict-origin-when-cross-origin"
-# 		Cache-Control "public, max-age=15, must-revalidate"
-# 		Feature-Policy "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'self'; camera 'none'; encrypted-media 'none'; fullscreen 'self'; geolocation 'none'; gyroscope 'none';       magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture *; speaker 'none'; sync-xhr 'none'; usb 'none'; vr 'none'"
-# 		Server "No."
-# 	}
+	route /api/* {
+		reverse_proxy nimbus-api:3000
+	}
 
-# 	# reverse_proxy localhost:3000
-
-# 	# handle /api/health {
-# 	# 	reverse_proxy localhost:3000/health
-# 	# }
-
-# 	# handle {
-# 	# 	root * /code/static
-# 	# 	file_server
-# 	# }
-# }
-
-# ec2-16-171-135-191.eu-north-1.compute.amazonaws.com {
-#     root * /code/static
-#     file_server
-# }
-
-# ec2-16-171-135-191.eu-north-1.compute.amazonaws.com/api {
-#     reverse_proxy localhost:3000
-# }
-
-# ec2---------------13-60-17-223.eu-north-1.compute.amazonaws.com {
-#     root * /code/static
-#     file_server
-    
-#     reverse_proxy /api/* localhost:3000 
-   	
-#     log {
-# 		output file /code/access.log
-# 	}
-# }
+	log {
+		output file /code/logs/access.log
+	}
+}

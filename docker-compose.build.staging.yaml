@@ -51,7 +51,8 @@ services:
       - pgadmin_vol:/var/lib/pgadmin
   
   mongo:
-    image: nimbus/mongo
+    # image: nimbus/mongo
+    image: mongo:7.0.5
     container_name: mongo_container
     environment:
       MONGO_ADMIN_USERNAME: root

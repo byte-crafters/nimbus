@@ -1,10 +1,8 @@
 prisma/generated/
 secrets/
 *.env
-<<<<<<< HEAD
-dist/
-node_modules/
-=======
 node_modules/
 dist/
->>>>>>> dev
+caddy/data
+caddy/logs
+nginx/
