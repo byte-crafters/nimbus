@@ -26,6 +26,19 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       MONGO_DATABASE_URL: ${MONGO_DATABASE_URL}    
 
+  nimbus-frontend:
+    image: nimbus/frontend
+    container_name: nimbus_frontend_container
+    ports:
+      - "3001:3000"
+    # env_file:
+    #   - ./backend/api.env
+    # volumes:
+    #   - 
+    build:
+      context: ./frontend
+      dockerfile: build_frontend.Dockerfile
+
   postgres:
     image: postgres
     container_name: postgres_container

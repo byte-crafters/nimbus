@@ -32,6 +32,14 @@ local-test-db:
 
 # deploy
 
+deploy-clear:
+	docker container prune --force
+	docker image prune --force
+	docker volume prune --force
+
+deploy-clear-files:
+	sudo rm -rf /var/nimbus-app
+
 deploy-application-start: deploy-application-start deploy-application-start-mongo deploy-application-start-services
 	deploy-application-start-mongo
 	deploy-application-start-services

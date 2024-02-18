@@ -10,6 +10,7 @@ services:
     volumes:
       - ./backend/caddy/deploy-staging.Caddyfile:/etc/caddy/Caddyfile
       - ./backend/caddy/static:/code/static
+      - ./backend/caddy/logs:/code/logs
       - caddy_data:/data
       - caddy_config:/config
 
@@ -25,6 +26,15 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       MONGO_DATABASE_URL: ${MONGO_DATABASE_URL}    
+
+  nimbus-frontend:
+    image: nimbus_frontend_image
+    container_name: nimbus_frontend_container
+    ports:
+      - "3001:3000"
+    build:
+      context: ./frontend
+      dockerfile: build_frontend.Dockerfile
       
   postgres:
     image: postgres

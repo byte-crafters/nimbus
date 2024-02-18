@@ -27,6 +27,15 @@ services:
       context: ./backend
       dockerfile: build_api.Dockerfile
 
+  nimbus-frontend:
+    image: nimbus/frontend
+    container_name: nimbus_frontend_container
+    ports:
+      - "3001:3000"
+    build:
+      context: ./frontend
+      dockerfile: build_frontend.Dockerfile
+
   postgres:
     image: postgres
     container_name: postgres_container
