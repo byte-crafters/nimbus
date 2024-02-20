@@ -1,11 +1,23 @@
 .PHONY : deploy-application-start deploy-application-start-mongo deploy-application-start-services
 
-local-up:
-	docker compose --file docker-compose.local-deploy.dev.yaml up -d --build 
-	docker ps
+local-prepare-dev:
+	docker compose --file docker-compose.local.dev.yaml up caddy_reverse_proxy -d --build
+	docker compose --file docker-compose.local.dev.yaml up postgres -d --build
+	docker compose --file docker-compose.local.dev.yaml up pgadmin -d --build
+	docker compose --file docker-compose.local.dev.yaml up mongo -d --build
+	docker compose --file docker-compose.local.dev.yaml up mongo-express -d --build
+	docker compose --file docker-compose.local.dev.yaml up nimbus-redis -d --build 
+
+local-prepare-tests:
+	docker compose --file docker-compose.local.dev.yaml up caddy_reverse_proxy -d --build
+	docker compose --file docker-compose.local.dev.yaml up nimbus-api -d --build
+	docker compose --file docker-compose.local.dev.yaml up nimbus-frontend -d --build
+	docker compose --file docker-compose.local.dev.yaml up postgres -d --build
+	docker compose --file docker-compose.local.dev.yaml up mongo -d --build
+	docker compose --file docker-compose.local.dev.yaml up nimbus-redis -d --build
 
 local-down:
-	docker compose --file docker-compose.local-deploy.dev.yaml down -v
+	docker compose --file docker-compose.local.dev.yaml down -v
 	docker ps
 
 local-clear:
@@ -20,14 +32,18 @@ local-remove-nginx:
 local-check:
 	curl localhost:3000/health
 
-local-run-api-tests:
+# mongo breaks -> use new docker compose
+# multiple caddyfiles
+# parametrized make commands
+local-prepare-dbs:
+	# docker exec mongo_container mongosh -u root -p root --eval "rs.initiate();"
 	docker exec nimbus-api npm run postgres:prisma
 	docker exec nimbus-api npm run mongo:prisma
+
+local-run-api-tests:
 	docker exec nimbus-api npm run test:local:run-all
 
-local-test-db:
-	docker exec nimbus-api npm run postgres:prisma
-	docker exec nimbus-api npm run mongo:prisma
+local-run-db-test:
 	docker exec nimbus-api npx jest --config ./jest.config.ts 
 
 # deploy

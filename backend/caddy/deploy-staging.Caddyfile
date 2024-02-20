@@ -14,7 +14,7 @@ ec2-51-20-42-110.eu-north-1.compute.amazonaws.com {
 	}
 
 	route /* {
-		reverse_proxy * nimbus-frontend:3000
+		reverse_proxy * nimbus-frontend:4000
 	}
 
 	log {
