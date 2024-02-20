@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { TYPES } from '@src/dependencies/providers';
 import { IAuthService } from '../services/auth.service';
 import { Public } from '../services/auth.decorator';
 import { AuthGuard } from '../services/auth.guard';
+import { Response } from 'express';
 
 export type SignInDto = {
     username: string;
@@ -10,9 +11,9 @@ export type SignInDto = {
 };
 
 export interface IAuthController {
-    signIn(signInDto: SignInDto): Promise<string>;
+    signIn(signInDto: SignInDto, response: Response): Promise<Response>;
     getProfile(req: any): Promise<string>;
-    register(): Promise<string>
+    register(): Promise<string>;
 }
 
 @Controller({
@@ -26,8 +27,12 @@ export class AuthController implements IAuthController {
 
     @Public()
     @Post('login')
-    async signIn(@Body() signInDto: SignInDto) {
-        return this.authService.signIn(signInDto.username, signInDto.password);
+    async signIn(@Body() signInDto: SignInDto, @Res() response: Response) {
+        const accessToken = await this.authService.signIn(signInDto.username, signInDto.password);
+        response.cookie('access_token', accessToken.access_token, {
+            httpOnly: true
+        });
+        return response.send(accessToken);
     }
 
     @UseGuards(AuthGuard)

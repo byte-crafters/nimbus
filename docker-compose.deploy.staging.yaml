@@ -31,10 +31,14 @@ services:
     image: nimbus_frontend_image
     container_name: nimbus_frontend_container
     ports:
-      - "3001:3000"
+      - "4000:4000"
     build:
       context: ./frontend
       dockerfile: build_frontend.Dockerfile
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: ${NODE_TLS_REJECT_UNAUTHORIZED}
+      NIMBUS_API_HOST: ${NIMBUS_API_HOST}    
+      NEXT_PUBLIC_NIMBUS_API_HOST: ${NEXT_PUBLIC_NIMBUS_API_HOST}    
       
   postgres:
     image: postgres

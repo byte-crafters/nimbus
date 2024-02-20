@@ -1,0 +1,103 @@
+version: "3.8"
+services:
+  caddy_reverse_proxy:
+    container_name: caddy_reverse_proxy_container
+    image: caddy:alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    network_mode: "host"
+    volumes:
+      - ./backend/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./backend/caddy/static:/code/static
+      - ./backend/caddy/logs:/code/logs
+      - ./backend/caddy/data:/data/caddy
+      # - caddy_data:/data
+      - caddy_config:/config
+
+  # create container for building nest app
+  nimbus-api:
+    image: nimbus/api
+    container_name: nimbus-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/api.env
+    build:
+      context: ./backend
+      dockerfile: build_api.Dockerfile
+
+  nimbus-frontend:
+    image: nimbus/frontend
+    container_name: nimbus_frontend_container
+    ports:
+      - "4000:4000"
+    build:
+      context: ./frontend
+      dockerfile: build_frontend.Dockerfile
+
+  postgres:
+    image: postgres
+    container_name: postgres_container
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - ./backend/postgres.env
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: postgres_gui_container
+    restart: always
+    ports:
+      - "8888:80"
+    env_file:
+      - ./backend/postgres_gui.env
+    volumes:
+      - pgadmin_vol:/var/lib/pgadmin
+  
+  mongo:
+    image: nimbus/mongo
+    # image: mongo:7.0.5
+    container_name: mongo_container
+    env_file:
+      - ./backend/mongo.env
+    build:
+      context: ./backend
+      dockerfile: ./rs.Dockerfile
+    restart: always 
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_vol1:/etc/mongo/keys
+      - mongo_vol2:/var/lib/mongo
+    # command: ["mongod", "--replSet", "rs0"]
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_gui_container
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+      - ./backend/mongo_gui.env
+    
+  nimbus-redis:
+    image: redis:7.0.14
+    container_name: nimbus_redis_container
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_vol:/data
+      
+volumes:
+  pgadmin_vol:
+  postgres_vol:
+  redis_vol:
+  # caddy_data:
+  caddy_config:
+  mongo_vol1:
+  mongo_vol2:
