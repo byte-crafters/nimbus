@@ -2,6 +2,7 @@ import { IUserService, UsersService } from '@modules/user/services/users.service
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TYPES } from '@src/dependencies/providers';
+const fs = require('node:fs');
 
 export interface IAuthService {
     register(username: string, password: string): Promise<any>;
@@ -29,6 +30,25 @@ export class AuthService implements IAuthService {
         const result = {
             access_token: await this.jwtService.signAsync(payload)
         };
+
+
+        const folderName = '/var/nimbus-files/';
+        try {
+            if (!fs.existsSync(folderName)) {
+                fs.mkdirSync(folderName);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+
+        const folderNameUser = `/var/nimbus-files/${user.username}`;
+        try {
+            if (!fs.existsSync(folderNameUser)) {
+                fs.mkdirSync(folderNameUser);
+            }
+        } catch (err) {
+            console.error(err);
+        }
 
         return result;
     }

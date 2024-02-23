@@ -38,6 +38,7 @@ describe('Test db connectors', () => {
 
         await mongoClient.node.create({
             data: {
+                parentId: 'asdf',
                 name: testNodeDTO.name,
             },
         });
