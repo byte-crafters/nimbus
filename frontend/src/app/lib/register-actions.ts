@@ -3,11 +3,11 @@
 import { cookies } from 'next/headers';
 import { FormEvent } from 'react';
 
-export async function authenticate(login: string, password: string) {
+export async function register(login: string, password: string) {
 
     try {
         console.log(login, password);
-        const res: { access_token: string; } = await fetch(`${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/login`, {
+        const res: { access_token: string; } = await fetch(`${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/register`, {
             body: JSON.stringify({
                 username: login,
                 password: password
