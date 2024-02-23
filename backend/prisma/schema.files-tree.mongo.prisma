@@ -12,6 +12,8 @@ datasource mongo_db {
 }
 
 model Node {
-    id   String  @id @default(auto()) @map("_id") @mongo_db.ObjectId
-    name String?
+    id       String  @id @default(auto()) @map("_id") @mongo_db.ObjectId
+    name     String?
+    parentId String
+    // owner String | id
 }
