@@ -1,6 +1,6 @@
 prisma/generated/
 secrets/
-*.env
+*.env.production
 node_modules/
 dist/
 caddy/data

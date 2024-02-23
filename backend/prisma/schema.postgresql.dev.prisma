@@ -1,9 +1,10 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// when building for development, Nest searches for files in /dist, so for dev we need to change this value
 generator client {
     provider = "prisma-client-js"
-    output   = "./generated/prisma-postgres-client-js"
+    output   = "../dist/prisma/generated/prisma-postgres-client-js"
 }
 
 datasource postgres_db {
