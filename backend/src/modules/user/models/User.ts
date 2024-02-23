@@ -8,7 +8,7 @@ export type TCreateUserParams = {
 export class User {
     public password: string;
     public username: string;
-    public id: number;
+    public id: string;
 
     constructor(createUserParams: TCreateUserParams) {
         this.id = uuidv4();

@@ -10,10 +10,15 @@ export type SignInDto = {
     password: string;
 };
 
+export type RegisterDTO = {
+    username: string;
+    password: string;
+};
+
 export interface IAuthController {
     signIn(signInDto: SignInDto, response: Response): Promise<Response>;
-    getProfile(req: any): Promise<string>;
-    register(): Promise<string>;
+    register(registerDTO: RegisterDTO, response: Response): Promise<Response>;
+    getSelfProfile(req: any, response: Response): Promise<Response>;
 }
 
 @Controller({
@@ -30,20 +35,31 @@ export class AuthController implements IAuthController {
     async signIn(@Body() signInDto: SignInDto, @Res() response: Response) {
         const accessToken = await this.authService.signIn(signInDto.username, signInDto.password);
         response.cookie('access_token', accessToken.access_token, {
-            httpOnly: true
+            httpOnly: true,
+            expires: new Date(new Date().getTime() + 60 * 60 * 24)
         });
         return response.send(accessToken);
     }
 
     @UseGuards(AuthGuard)
     @Get('profile')
-    async getProfile(@Req() req: any) {
-        return req.user;
+    async getSelfProfile(@Req() req: any, @Res() response: Response) {
+        // return req.user;
+        const userProfile = await this.authService.getProfile(req.user.sub);
+
+        console.log(userProfile);
+        return response.send(userProfile);
+        // return userProfile;
     }
 
     @Public()
-    @Get('register')
-    async register() {
-        return 'register';
+    @Post('register')
+    async register(@Body() registerDTO: RegisterDTO, @Res() response: Response) {
+        const accessToken = await this.authService.register(registerDTO.username, registerDTO.password);
+        response.cookie('access_token', accessToken.access_token, {
+            httpOnly: true,
+            expires: new Date(new Date().getTime() + 60 * 60 * 24)
+        });
+        return response.send(accessToken);
     }
 }
