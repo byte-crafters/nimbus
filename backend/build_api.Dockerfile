@@ -9,6 +9,6 @@ COPY ./ /var/nimbus-api/
 WORKDIR /var/nimbus-api/
 
 RUN npm install
-RUN npm run build
+RUN npm run be:build
 
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "be:start:prod" ]
