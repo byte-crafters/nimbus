@@ -40,6 +40,7 @@ describe('Test db connectors', () => {
             data: {
                 parentId: 'asdf',
                 name: testNodeDTO.name,
+                owner: 'test-user'
             },
         });
 

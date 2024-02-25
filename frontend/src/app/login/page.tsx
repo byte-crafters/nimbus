@@ -1,17 +1,27 @@
 'use client';
-import React, { FormEvent, useRef } from 'react';
+import React, { FormEvent, useContext, useRef } from 'react';
 import { login } from '../lib/login-actions';
+import { ProfileContext, TSetUserProfileShort } from '../layout-page';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Auth() {
     const loginRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
+    const { loggedUser, setLoggedUser } = useContext<TSetUserProfileShort>(ProfileContext);
+    const router = useRouter();
+
     return (
         <>
             <h1>Login</h1>
-            <form onSubmit={(e: FormEvent<HTMLFormElement>) => {
+            <form onSubmit={async (e: FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
-                login(loginRef.current!.value, passwordRef.current!.value);
+                const userProfile = await login(loginRef.current!.value, passwordRef.current!.value);
+                if (userProfile.id !== null) {
+                    setLoggedUser?.(userProfile.id);
+                    router.push('/files');
+                }
             }}>
                 <div>
                     <div>
@@ -28,6 +38,7 @@ export default function Auth() {
                 </div>
                 <input type="submit" value="Login" />
             </form>
+            <Link href={'/register'}>Register</Link><br />
         </>
     );
 }

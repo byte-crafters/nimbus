@@ -33,6 +33,8 @@ export async function login(login: string, password: string) {
 
             console.log(getProfile);
             console.log(1);
+
+            return getProfile;
         }
     } catch (error: any) {
         if (error) {

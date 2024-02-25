@@ -2,6 +2,7 @@ import { IUserService, UsersService } from '@modules/user/services/users.service
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TYPES } from '@src/dependencies/providers';
+import { FileStructureService } from '@src/modules/files/file-structure.service';
 const fs = require('node:fs');
 
 export interface IAuthService {
@@ -14,6 +15,7 @@ export interface IAuthService {
 export class AuthService implements IAuthService {
     constructor(
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
+        @Inject(FileStructureService) private fileStructureService: FileStructureService,
         private jwtService: JwtService
     ) { }
 
@@ -32,23 +34,27 @@ export class AuthService implements IAuthService {
         };
 
 
-        const folderName = '/var/nimbus-files/';
-        try {
-            if (!fs.existsSync(folderName)) {
-                fs.mkdirSync(folderName);
-            }
-        } catch (err) {
-            console.error(err);
-        }
+        const s = await this.fileStructureService.createUserRootFolder(user.id);
+        console.log(s);
 
-        const folderNameUser = `/var/nimbus-files/${user.username}`;
-        try {
-            if (!fs.existsSync(folderNameUser)) {
-                fs.mkdirSync(folderNameUser);
-            }
-        } catch (err) {
-            console.error(err);
-        }
+
+        // const folderName = '/var/nimbus-files/';
+        // try {
+        //     if (!fs.existsSync(folderName)) {
+        //         fs.mkdirSync(folderName);
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        // }
+
+        // const folderNameUser = `/var/nimbus-files/${user.username}`;
+        // try {
+        //     if (!fs.existsSync(folderNameUser)) {
+        //         fs.mkdirSync(folderNameUser);
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        // }
 
         return result;
     }

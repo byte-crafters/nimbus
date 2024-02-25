@@ -3,7 +3,7 @@
 
 generator client {
     provider = "prisma-client-js"
-    output   = "./generated/prisma-mongo-client-js"
+    output   = "../dist/prisma/generated/prisma-mongo-client-js"
 }
 
 datasource mongo_db {

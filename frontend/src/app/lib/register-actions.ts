@@ -2,6 +2,7 @@
 'use client';
 import { cookies } from 'next/headers';
 import { FormEvent } from 'react';
+import { ProfileContext } from '../layout-page';
 
 export async function register(login: string, password: string) {
 
@@ -22,7 +23,7 @@ export async function register(login: string, password: string) {
 
 
         if (res.access_token) {
-            const getProfile = await fetch(`${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/profile`, {
+            const userProfile = await fetch(`${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/profile`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -31,8 +32,10 @@ export async function register(login: string, password: string) {
                 }
             }).then((response) => response.json());
 
-            console.log(getProfile);
+            console.log(userProfile);
             console.log(1);
+
+            return userProfile;
         }
     } catch (error: any) {
         if (error) {
