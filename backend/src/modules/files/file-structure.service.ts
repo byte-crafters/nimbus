@@ -20,25 +20,62 @@ export class FileStructureService implements FileStructureService {
     ) { }
 
     /** TODO Need to disallow some username symbols. */
-    createUserRootFolder(username: string): Promise<CreateUserRootFolderStructure> {
+    /** TODO Remake tests to pass userId */
+    async createUserRootFolder(userId: string): Promise<CreateUserRootFolderStructure> {
         const mongoClient = new MongoClient();
+
+        console.log(await mongoClient.node.findMany());
 
         return mongoClient.node.create({
             data: {
                 parentId: '',
-                name: username,
+                name: userId,
+                owner: userId
             },
         });
     }
 
-    createUserFolder(username: string, parentFolderId: string, name: string) {
+    getUserRootFolder(userId: string): Promise<any> {
         const mongoClient = new MongoClient();
+
+        return mongoClient.node.findFirst({
+            where: {
+                owner: userId
+            },
+        });
+    }
+
+    getChildrenFoldersOf(folderId: string) {
+        const mongoClient = new MongoClient();
+
+        return mongoClient.node.findMany({
+            where: {
+                parentId: folderId
+            },
+        });
+    }
+
+    async createUserFolder(userId: string, folderName: string, parentFolderId: string) {
+        const mongoClient = new MongoClient();
+
+        // console.log(await mongoClient.node.findMany());
 
         return mongoClient.node.create({
             data: {
                 parentId: parentFolderId,
-                name: name,
+                name: folderName,
+                owner: userId
             },
         });
     }
+
+    // getFolderChildren(parentFolderId: string): Promise<any> {
+    //     const mongoClient = new MongoClient();
+
+    //     return mongoClient.node.findFirst({
+    //         where: {
+    //             parentId: parentFolderId
+    //         },
+    //     });
+    // }
 }

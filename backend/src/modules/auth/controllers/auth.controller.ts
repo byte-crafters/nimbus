@@ -36,7 +36,8 @@ export class AuthController implements IAuthController {
         const accessToken = await this.authService.signIn(signInDto.username, signInDto.password);
         response.cookie('access_token', accessToken.access_token, {
             httpOnly: true,
-            expires: new Date(new Date().getTime() + 60 * 60 * 24)
+            // expires: new Date(new Date().getTime() + 60 * 60 * 24)
+            maxAge: 1000 * 60 * 60 * 24
         });
         return response.send(accessToken);
     }
@@ -58,7 +59,8 @@ export class AuthController implements IAuthController {
         const accessToken = await this.authService.register(registerDTO.username, registerDTO.password);
         response.cookie('access_token', accessToken.access_token, {
             httpOnly: true,
-            expires: new Date(new Date().getTime() + 60 * 60 * 24)
+            // expires: new Date(new Date().getTime() + 60 * 60 * 24)
+            maxAge: 1000 * 60 * 60 * 24
         });
         return response.send(accessToken);
     }

@@ -6,14 +6,16 @@ import { AuthGuard } from './services/auth.guard';
 import { authServiceDefaultProvider } from '@src/dependencies/providers';
 import { AuthController } from './controllers/auth.controller';
 import { jwtConstants } from './services/constants';
+import { FilesModule } from '../files/files.module';
 
 @Module({
     imports: [
         UsersModule,
+        FilesModule,
         JwtModule.register({
             global: true,
             secret: jwtConstants.secret,
-            signOptions: { expiresIn: '60s' },
+            signOptions: { expiresIn: '3600s' },
         }),
     ],
     controllers: [AuthController],
