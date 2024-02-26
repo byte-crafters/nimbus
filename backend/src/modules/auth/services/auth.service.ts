@@ -1,7 +1,6 @@
-import { IUserService, UsersService } from '@modules/user/services/users.service';
+import { IUserService } from '@modules/user/services/users.service';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TYPES } from '@src/dependencies/providers';
 import { FileStructureService } from '@src/modules/files/file-structure.service';
 const fs = require('node:fs');
 
@@ -20,9 +19,7 @@ export class AuthService implements IAuthService {
     ) { }
 
     async register(username: string, password: string): Promise<any> {
-        // throw new Error('Method not implemented.');
         const user = await this.usersService.createOne({ password, username });
-        // return user;
 
         const payload = {
             sub: user.id,
@@ -77,6 +74,7 @@ export class AuthService implements IAuthService {
 
     async getProfile(userId: string): Promise<any> {
         const user = await this.usersService.getUserProfile(userId);
-        return user;
+        const rootFolder = await this.fileStructureService.getUserRootFolder(userId);
+        return { user, rootFolder };
     }
 }

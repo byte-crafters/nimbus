@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { TYPES } from '@src/dependencies/providers';
-import { IAuthService } from '../services/auth.service';
+import { Response } from 'express';
 import { Public } from '../services/auth.decorator';
 import { AuthGuard } from '../services/auth.guard';
-import { Response } from 'express';
+import { IAuthService } from '../services/auth.service';
 
 export type SignInDto = {
     username: string;
@@ -36,7 +36,6 @@ export class AuthController implements IAuthController {
         const accessToken = await this.authService.signIn(signInDto.username, signInDto.password);
         response.cookie('access_token', accessToken.access_token, {
             httpOnly: true,
-            // expires: new Date(new Date().getTime() + 60 * 60 * 24)
             maxAge: 1000 * 60 * 60 * 24
         });
         return response.send(accessToken);
@@ -45,12 +44,8 @@ export class AuthController implements IAuthController {
     @UseGuards(AuthGuard)
     @Get('profile')
     async getSelfProfile(@Req() req: any, @Res() response: Response) {
-        // return req.user;
-        const userProfile = await this.authService.getProfile(req.user.sub);
-
-        console.log(userProfile);
-        return response.send(userProfile);
-        // return userProfile;
+        const { user: userProfile, rootFolder } = await this.authService.getProfile(req.user.sub);
+        return response.send({ ...userProfile, rootFolder });
     }
 
     @Public()
@@ -59,7 +54,6 @@ export class AuthController implements IAuthController {
         const accessToken = await this.authService.register(registerDTO.username, registerDTO.password);
         response.cookie('access_token', accessToken.access_token, {
             httpOnly: true,
-            // expires: new Date(new Date().getTime() + 60 * 60 * 24)
             maxAge: 1000 * 60 * 60 * 24
         });
         return response.send(accessToken);

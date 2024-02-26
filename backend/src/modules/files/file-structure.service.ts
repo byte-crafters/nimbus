@@ -1,6 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-import * as fs from 'node:fs/promises';
-import { FILES } from './constants';
+import { Injectable } from '@nestjs/common';
 import { PrismaClient as MongoClient } from '@prsm/generated/prisma-mongo-client-js';
 
 export type CreateUserRootFolderStructure = {
@@ -55,10 +53,18 @@ export class FileStructureService implements FileStructureService {
         });
     }
 
-    async createUserFolder(userId: string, folderName: string, parentFolderId: string) {
+    getFolderById(folderId: string) {
         const mongoClient = new MongoClient();
 
-        // console.log(await mongoClient.node.findMany());
+        return mongoClient.node.findFirst({
+            where: {
+                id: folderId
+            },
+        });
+    }
+
+    async createUserFolder(userId: string, folderName: string, parentFolderId: string) {
+        const mongoClient = new MongoClient();
 
         return mongoClient.node.create({
             data: {
@@ -68,14 +74,4 @@ export class FileStructureService implements FileStructureService {
             },
         });
     }
-
-    // getFolderChildren(parentFolderId: string): Promise<any> {
-    //     const mongoClient = new MongoClient();
-
-    //     return mongoClient.node.findFirst({
-    //         where: {
-    //             parentId: parentFolderId
-    //         },
-    //     });
-    // }
 }
