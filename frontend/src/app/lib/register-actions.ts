@@ -1,51 +1,21 @@
-// 'use server';
 'use client';
-import { cookies } from 'next/headers';
-import { FormEvent } from 'react';
-import { ProfileContext } from '../layout-page';
+import { TFolder, TGetUserProfile, fetcher } from '@/libs/request';
 
-export async function register(login: string, password: string) {
+export type TRegisterReturn = {
+    email: string;
+    id: string;
+    password: string;
+    rootFolder: TFolder,
+    username: string;
+};
 
-    try {
-        console.log(login, password);
-        const res: { access_token: string; } = await fetch(`${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/register`, {
-            body: JSON.stringify({
-                username: login,
-                password: password
-            }),
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then((response) => response.json());
+export async function register(login: string, password: string): Promise<TGetUserProfile | null> {
+    const res: { access_token: string; } = await fetcher.register(login, password);
 
-
-        if (res.access_token) {
-            const userProfile = await fetch(`${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/profile`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                }
-            }).then((response) => response.json());
-
-            console.log(userProfile);
-            console.log(1);
-
-            return userProfile;
-        }
-    } catch (error: any) {
-        if (error) {
-            switch (error.type) {
-                case 'CredentialsSignin':
-                    return 'Invalid credentials.';
-                default:
-                    return 'Something went wrong.';
-            }
-        }
-        throw error;
+    if (res.access_token) {
+        const userProfile = await fetcher.getUserProfile();
+        return userProfile;
     }
-};;
+
+    return null;
+}
