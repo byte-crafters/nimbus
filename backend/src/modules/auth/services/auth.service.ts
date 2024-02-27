@@ -14,6 +14,8 @@ export interface IAuthService {
     getProfile(userId: string): Promise<any>;
 }
 
+
+
 @Injectable()
 export class AuthService implements IAuthService {
     constructor(

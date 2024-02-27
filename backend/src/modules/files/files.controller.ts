@@ -11,22 +11,13 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateFolderDTO } from '@src/types/api/request';
+import { CreateFolderResult } from '@src/types/api/response';
 import { FileStructureService } from '../file-structure/file-structure.service';
 import { FileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
-import { createReadStream } from 'node:fs';
-import { join } from 'node:path';
-
-/** TODO Share somehow types between fe and be */
-export type CreateFolderDTO = {
-    folderName: string;
-    parentFolderId: string;
-};
-
-export type GetFolderChildren = {
-    parentFolderId: string;
-};
 
 export class TUploadFileDTO {
     folderId: string;
@@ -45,6 +36,12 @@ export class FilesController {
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
     ) { }
 
+    @ApiResponse({ status: 200, type: CreateFolderResult })
+    @ApiOperation({
+        summary: 'Create new folder.',
+        description: 'Creates new folder in specified directory.',
+    })
+    @ApiTags('files')
     @Post('folder')
     async createFolder(
         @Body() createFolderDTO: CreateFolderDTO,
@@ -73,6 +70,7 @@ export class FilesController {
         };
     }
 
+    @ApiTags('files')
     @Get('folder/:id')
     async getFolderChildren(@Req() request: any, @Param('id') id: string) {
         const parentFolderId = id;
@@ -100,7 +98,6 @@ export class FilesController {
          * Get names paths in usual names
          */
 
-
         return {
             parentFolder,
             folders: children,
@@ -109,8 +106,11 @@ export class FilesController {
         };
     }
 
+    @ApiTags('files')
     @Get('user/folder/root')
-    async getUserRootFolder(@Req() request: any) {
+    async getUserRootFolder(
+        @Req() request: any
+    ) {
         const userId = request.user.sub;
 
         const rootFolder =
