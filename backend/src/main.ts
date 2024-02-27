@@ -17,7 +17,6 @@ async function bootstrap() {
         .setTitle('Nimbus API')
         .setDescription('Nimbus API description')
         .setVersion('1.0')
-        .addTag('health-check')
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('docs', app, document);
