@@ -3,7 +3,7 @@
 
 # echo Connect code=$TRY_CONNECT_CODE
 # until [ $TRY_CONNECT_CODE -eq 0 ]
-# do 
+# do
 #     mongosh -u root -p root --eval "rs.initiate();"
 #     TRY_CONNECT_CODE=$?
 #     ((TRY_COUNT=TRY_COUNT+1))
@@ -12,7 +12,6 @@
 # done
 
 # echo "---DONE"
-
 
 sleep 10s
 mongosh -u root -p root --eval "rs.initiate();"

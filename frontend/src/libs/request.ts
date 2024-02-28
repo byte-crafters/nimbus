@@ -43,7 +43,7 @@ export type TGetUserProfile = {
 };
 
 export class Requester {
-    private host: string = process.env.NEXT_PUBLIC_NIMBUS_API_HOST ?? 'localhost';
+    private host: string = process.env.NEXT_PUBLIC_NIMBUS_API_HOST ?? '';
 
     register(login: string, password: string) {
         return fetch(`${this.host}/api/v1/auth/register`, {
