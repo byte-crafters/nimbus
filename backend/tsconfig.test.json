@@ -21,6 +21,8 @@
         "resolveJsonModule": true,
         // for testing
         "allowJs": true,
+        // to be able to use esm module import for node:path e.g.
+        "esModuleInterop": true,
         "paths": {
             "@src/*": [
                 "src/*"

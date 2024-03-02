@@ -9,7 +9,21 @@
             "request": "launch",
             "runtimeArgs": [
                 "run",
-                "be:start:local:dev"
+                "be:start:dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/backend",
+            "type": "node"
+        },
+        {
+            "name": "Debug backend tests (local)",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "be:test:dev"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [
