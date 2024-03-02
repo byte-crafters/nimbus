@@ -1,16 +1,27 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { User } from '../models/User';
-// import { PrismaClient as PostgresClient } from '../../../../prisma/generated/prisma-postgres-client-js';
 import { PrismaClient as PostgresClient } from '@prsm/generated/prisma-postgres-client-js';
-import { CreateUserDTO } from './mock.users.service';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateUserDTO } from './mock.users.service';
 
 export interface IUserService {
     findOne(username: string): Promise<User | undefined>;
     findAll(): Promise<User[] | null>;
-    createOne({ password, username }: CreateUserDTO): Promise<any>;
-    getUserProfile(userId: string): Promise<any>;
+    createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult>;
+    getUserProfile(userId: string): Promise<{
+        id: string;
+        email: string;
+        username: string;
+        password: string;
+    }>;
 }
+
+export type TCreateUserResult = {
+    id: string;
+    email: string;
+    username: string;
+    password: string;
+};
 
 @Injectable()
 export class UsersService implements IUserService {
@@ -30,7 +41,7 @@ export class UsersService implements IUserService {
         throw new NotImplementedException();
     }
 
-    async createOne({ password, username }: CreateUserDTO): Promise<any> {
+    async createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult> {
         const postgresClient = new PostgresClient();
 
 
@@ -52,7 +63,12 @@ export class UsersService implements IUserService {
         return db_user;
     }
 
-    async getUserProfile(userId: string): Promise<any> {
+    async getUserProfile(userId: string): Promise<{
+        id: string;
+        email: string;
+        username: string;
+        password: string;
+    }> {
         // const user = mockUsersCollection.find((user) => user.id.toString() === userId);
         const postgresClient = new PostgresClient();
 

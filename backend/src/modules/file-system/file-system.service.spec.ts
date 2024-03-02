@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fs from 'node:fs/promises';
 import path from 'path';
-import { FileSystemService } from '../file-system/file-system.service';
-import { FILES } from './constants';
+import { FILES } from '../files/constants';
+import { FileSystemService } from './file-system.service';
 
 describe('FileService', () => {
     let service: FileSystemService;
@@ -64,7 +64,9 @@ describe('FileService', () => {
                 expect(fs.access(folderPath))
                     .resolves
                     .toBeUndefined();
+                //
             });
+
     });
 
     afterEach(async () => {

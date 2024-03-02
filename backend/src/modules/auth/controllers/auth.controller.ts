@@ -27,7 +27,8 @@ export interface IAuthController {
 })
 export class AuthController implements IAuthController {
     constructor(
-        @Inject(TYPES.AUTH_SERVICE) private authService: IAuthService
+        @Inject(TYPES.AUTH_SERVICE) private authService: IAuthService,
+
     ) { }
 
     @Public()
