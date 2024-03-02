@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as fs from 'node:fs/promises';
-import { FILES } from './constants';
-import { CreateUserRootFolderStructure, FileStructureService } from './file-structure.service';
 import { PrismaClient as MongoClient } from '@prsm/generated/prisma-mongo-client-js';
 import { User } from '../user/models/User';
+import { CreateUserRootFolderStructure, FileStructureService } from './file-structure.service';
 
 describe('FileService', () => {
     let service: FileStructureService;
