@@ -1,5 +1,11 @@
-import { Body, Controller, Get, Inject, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Req, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileStructureService } from './file-structure.service';
+import { FileSystemService } from './file-system.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { Public } from '../auth/services/auth.decorator';
+import fs from 'node:fs/promises';
+import { FILES } from './constants';
+import path from 'node:path';
 
 
 /** TODO Share somehow types between fe and be */
@@ -65,5 +71,24 @@ export class FilesController {
             parentFolder: rootFolder,
             folders: children
         };
+    }
+
+    @Public()
+    @Post('upload')
+    @UseInterceptors(FilesInterceptor('files', 10))
+    uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
+        console.log(files);
+
+        files.forEach((file) => {
+            file.buffer;
+
+            fs.writeFile(path.join(FILES.FILES_PATH, 'image'), file.buffer)
+                .then(() => {
+                    console.log('Buffer has been written to file successfully');
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        });
     }
 }
