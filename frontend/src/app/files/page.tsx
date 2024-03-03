@@ -27,17 +27,23 @@ export default function FilesContainer() {
         } else {
             if (openedFolder) {
                 const folderId = openedFolder.id;
-                fetcher.getChildrenFolders(folderId).then(({ folders }) => setShowFolders(folders));
+                fetcher
+                    .getChildrenFolders(folderId)
+                    .then(({ folders }) => setShowFolders(folders));
             }
         }
     }, [loggedUser]);
 
     useEffect(() => {
         if (openedFolder === null) {
-            fetcher.getUserRootFolder().then(({ folders }) => setShowFolders(folders));
+            fetcher
+                .getUserRootFolder()
+                .then(({ folders }) => setShowFolders(folders));
         } else {
             const folderId = openedFolder.id;
-            fetcher.getChildrenFolders(folderId).then(({ folders }) => setShowFolders(folders));
+            fetcher
+                .getChildrenFolders(folderId)
+                .then(({ folders }) => setShowFolders(folders));
         }
     }, []);
 
@@ -48,51 +54,65 @@ export default function FilesContainer() {
             <h2>Current path: `{openedFolder?.id}`</h2>
             <br />
 
-            <button onClick={() => {
-                if (openedFolder) {
-                    const folderId = openedFolder.parentId;
-                    fetcher.getChildrenFolders(folderId).then(({ folders, parentFolder }) => {
-                        setShowFolders(folders);
-                        setOpenedFolder?.(parentFolder);
-                    });
-                }
-            }}>Get on upper level</button >
+            <button
+                onClick={() => {
+                    if (openedFolder) {
+                        const folderId = openedFolder.parentId;
+                        fetcher
+                            .getChildrenFolders(folderId)
+                            .then(({ folders, parentFolder }) => {
+                                setShowFolders(folders);
+                                setOpenedFolder?.(parentFolder);
+                            });
+                    }
+                }}
+            >
+                Get on upper level
+            </button>
 
-            <button onClick={() => {
-                const folderName = prompt('Folder name:');
+            <button
+                onClick={() => {
+                    const folderName = prompt('Folder name:');
 
-                if (folderName !== null) {
-                    const parentFolderId = openedFolder!.id;
+                    if (folderName !== null) {
+                        const parentFolderId = openedFolder!.id;
 
-                    fetcher.postCreateFolder(folderName, parentFolderId)
-                        .then(({ folders }) => {
-                            setShowFolders(folders);
-                        });
-                }
-
-            }}>Create folder</button>
+                        fetcher
+                            .postCreateFolder(folderName, parentFolderId)
+                            .then(({ folders }) => {
+                                setShowFolders(folders);
+                            });
+                    }
+                }}
+            >
+                Create folder
+            </button>
 
             <ul>
-                {
-                    showFoldersList.map((folder: TFolder) => {
-                        return (
-                            <li
-                                onClick={() => {
-                                    fetcher.getChildrenFolders(folder.id)
-                                        .then(({ folders }) => {
-                                            setShowFolders(folders);
-                                            setOpenedFolder?.(folder);
-                                        });
-                                }}
-                                id={`folder-item-${folder.id}`}
-                                key={folder.id}>./{folder.name} - {folder.id}</li>
-                        );
-                    })
-                }
+                {showFoldersList.map((folder: TFolder) => {
+                    return (
+                        <li
+                            onClick={() => {
+                                fetcher
+                                    .getChildrenFolders(folder.id)
+                                    .then(({ folders }) => {
+                                        setShowFolders(folders);
+                                        setOpenedFolder?.(folder);
+                                    });
+                            }}
+                            id={`folder-item-${folder.id}`}
+                            key={folder.id}
+                        >
+                            ./{folder.name} - {folder.id}
+                        </li>
+                    );
+                })}
             </ul>
 
-            <Link href={'/login'}>Login</Link><br />
-            <Link href={'/register'}>Register</Link><br />
+            <Link href={'/login'}>Login</Link>
+            <br />
+            <Link href={'/register'}>Register</Link>
+            <br />
         </>
     );
 }

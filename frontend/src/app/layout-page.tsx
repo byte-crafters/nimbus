@@ -1,11 +1,10 @@
-
 'use client';
 import { TFolder, fetcher } from '@/libs/request';
 import { useRouter } from 'next/navigation';
 import { createContext, useEffect, useState } from 'react';
 
 export type TSetUserProfileShort = {
-    loggedUser: string | null,
+    loggedUser: string | null;
     setLoggedUser: Function | null;
 };
 
@@ -17,11 +16,16 @@ export type TSetOpenedFolder = {
     setOpenedFolder: ((folder: TFolder) => any) | null;
 };
 
+export const ProfileContext = createContext<TSetUserProfileShort>({
+    loggedUser: null,
+    setLoggedUser: null,
+});
+export const PathContext = createContext<TSetOpenedFolder>({
+    openedFolder: null,
+    setOpenedFolder: null,
+});
 
-export const ProfileContext = createContext<TSetUserProfileShort>({ loggedUser: null, setLoggedUser: null });
-export const PathContext = createContext<TSetOpenedFolder>({ openedFolder: null, setOpenedFolder: null });
-
-export const Providers = ({ children }: { children: React.ReactNode; }) => {
+export const Providers = ({ children }: { children: React.ReactNode }) => {
     const [loggedUser, setLoggedUser] = useState<string | null>(null);
     const [openedFolder, setOpenedFolder] = useState<TFolder | null>(null);
 
@@ -30,13 +34,12 @@ export const Providers = ({ children }: { children: React.ReactNode; }) => {
     useEffect(() => {
         (async () => {
             if (loggedUser === null) {
-                fetcher.getUserProfile()
-                    .then((profile) => {
-                        console.log(profile);
-                        setLoggedUser(profile.id);
-                        setOpenedFolder(profile.rootFolder);
-                        router.push('/files');
-                    });
+                fetcher.getUserProfile().then((profile) => {
+                    console.log(profile);
+                    setLoggedUser(profile.id);
+                    setOpenedFolder(profile.rootFolder);
+                    router.push('/files');
+                });
             }
         })();
     }, []);
