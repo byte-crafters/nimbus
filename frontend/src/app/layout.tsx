@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { PathContext, ProfileContext, Providers } from './layout-page';
+import React from 'react';
 
 // import "./globals.css";
 
