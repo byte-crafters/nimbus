@@ -12,8 +12,17 @@ datasource mongo_db {
 }
 
 model Node {
-    id       String  @id @default(auto()) @map("_id") @mongo_db.ObjectId
+    id       String   @id @default(auto()) @map("_id") @mongo_db.ObjectId
     name     String?
     parentId String
     owner    String
+    path     String[]
+}
+
+model File {
+    id        String @id @default(auto()) @map("_id") @mongo_db.ObjectId
+    name      String
+    extension String
+    owner     String
+    folderId  String
 }

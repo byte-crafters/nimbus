@@ -6,3 +6,4 @@ dist/
 caddy/data
 caddy/logs
 nginx/
+@temp-*

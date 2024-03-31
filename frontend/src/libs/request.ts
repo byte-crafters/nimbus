@@ -1,3 +1,5 @@
+import { TFoldersList } from "@/app/files/page";
+
 export const METHODS = {
     GET: 'GET',
     POST: 'POST',
@@ -22,9 +24,11 @@ export type TFolder = {
 /**
  * Dont bind to method because it changes!
  */
-export type TGetChildrenFolders = {
+export type TGetChildren = {
     parentFolder: TFolder;
     folders: TFolder[];
+    files: TFile[];
+    currentPath: string[];
 };
 
 export type TPostCreateFolder = {
@@ -40,6 +44,20 @@ export type TGetUserRootFolderChildren = {
 export type TGetUserProfile = {
     rootFolder: TFolder;
     id: string;
+};
+
+export type TFile = {
+    extension: string;
+    folderId: string;
+    id: string;
+    name: string;
+    owner: string;
+};
+
+export type TUploadFilesResult = {
+    files: TFile[],
+    folders: TFoldersList,
+    currentFolder: TFolder;
 };
 
 export class Requester {
@@ -82,7 +100,7 @@ export class Requester {
         }).then(this.handleResponse);
     }
 
-    getChildrenFolders(folderId: string): Promise<TGetChildrenFolders> {
+    getChildren(folderId: string): Promise<TGetChildren> {
         return fetch(`${this.host}/api/v1/files/folder/${folderId}`, {
             method: METHODS.GET,
             credentials: 'include',
@@ -111,6 +129,20 @@ export class Requester {
         }).then(this.handleResponse);
     }
 
+    uploadFiles(data: FormData, folderId: string): Promise<TUploadFilesResult> {
+        data.append('folderId', folderId);
+
+        return fetch(`${this.host}/api/v1/files/upload`, {
+            method: METHODS.POST,
+            credentials: 'include',
+            body: data,
+            headers: {
+                [HEADER.Accept]: HEADERS_VALUE.JSON,
+            }
+        })
+            .then(this.handleResponse);
+    }
+
     private handleResponse = (response: Response) => {
         if (response.ok) {
             return response.json();
@@ -118,7 +150,7 @@ export class Requester {
             if (response.status === 502) {
                 console.error(502, response.statusText);
             }
-            throw new Error();
+            throw new Error(response.statusText);
         }
     };
 }

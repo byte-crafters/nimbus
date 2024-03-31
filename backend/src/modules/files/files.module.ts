@@ -1,17 +1,26 @@
 import { Module } from '@nestjs/common';
-import { FileSystemService } from './file-system.service';
-import { FileStructureService } from './file-structure.service';
+import { AuthModule } from '../auth/auth.module';
+import { FilesStructureModule } from '../file-structure/file-structure.module';
+import { FilesSystemModule } from '../file-system/file-system.module';
+import { UsersModule } from '../user/users.module';
+import { FileService } from './file.service';
 import { FilesController } from './files.controller';
 
 @Module({
-    controllers: [FilesController],
+    imports: [
+        AuthModule,
+        UsersModule,
+        FilesStructureModule,
+        FilesSystemModule
+    ],
+    controllers: [
+        FilesController
+    ],
     providers: [
-        FileSystemService,
-        FileStructureService
+        FileService
     ],
     exports: [
-        FileSystemService,
-        FileStructureService
+        FileService
     ]
 })
 export class FilesModule { }
