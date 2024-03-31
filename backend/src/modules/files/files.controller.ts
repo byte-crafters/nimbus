@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Inject, Param, Post, Req, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Req, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FileStructureService } from '../file-structure/file-structure.service';
 import { FileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
+import { createReadStream } from 'node:fs';
+import { join } from 'node:path';
 
 
 /** TODO Share somehow types between fe and be */
@@ -123,5 +125,49 @@ export class FilesController {
             folders: children,
             files: folderFiles
         };
+    }
+
+    @Post('remove/:fileId')
+    async removeFile(
+        @Req() request: any,
+        @Param('fileId') fileId: string
+    ) {
+        const userId = request.user.sub;
+
+        const { fileId: removedFileId, folderId } = await this.fileService.removeFile(fileId, userId);
+        const currentFolder = await this.fileStructureService.getFolderById(folderId);
+        const children = await this.fileStructureService.getChildrenFoldersOf(folderId);
+        const folderFiles = await this.fileStructureService.getChildrenFilesOf(folderId);
+
+        return {
+            currentFolder,
+            folders: children,
+            files: folderFiles
+        };
+    }
+
+    @Get('download/:fileId')
+    async getFile(
+        @Req() request: any,
+        @Param('fileId') fileId: string
+    ): Promise<any> {
+        const userId = request.user.sub;
+
+
+        const fileStream = await this.fileService.getFileStreamById(fileId, userId);
+
+        // console.log(process.cwd());
+        // const fileStream = createReadStream(join(process.cwd(), 'package.json'));
+        return new StreamableFile(fileStream);
+    }
+
+    @Get('info/:fileId')
+    async getFileInfo(
+        @Req() request: any,
+        @Param('fileId') fileId: string
+    ): Promise<any> {
+        const userId = request.user.sub;
+        const fileInfo = await this.fileService.getFileInfoById(fileId, userId);
+        return fileInfo
     }
 }

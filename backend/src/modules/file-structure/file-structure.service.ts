@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient as MongoClient } from '@prsm/generated/prisma-mongo-client-js';
+import { PrismaClient as MongoClient, Prisma } from '@prsm/generated/prisma-mongo-client-js';
+import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 
 export type CreateUserRootFolderStructure = {
     parentId: string,
@@ -71,6 +72,50 @@ export class FileStructureService implements IFileStructureService {
                 owner: userId
             }
         });
+    }
+
+    getFileById(fileId: string): Promise<TFile> {
+        try {
+            const mongoClient = new MongoClient();
+
+            return mongoClient.file.findUnique({
+                where: {
+                    id: fileId,
+                }
+            });
+        } catch (e: unknown) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
+                    throw new DbFileRecordDoesNotExist();
+                }
+            }
+
+            throw e;
+        }
+    }
+
+    removeFile(fileId: string): Promise<Pick<TFile, "folderId" | "id">> {
+        try {
+            const mongoClient = new MongoClient();
+
+            return mongoClient.file.delete({
+                where: {
+                    id: fileId,
+                },
+                select: {
+                    folderId: true,
+                    id: true
+                }
+            });
+        } catch (e: unknown) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
+                    throw new DbFileRecordDoesNotExist();
+                }
+            }
+
+            throw e;
+        }
     }
 
     // getFolderIdPath(folderId: string): string {

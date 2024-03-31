@@ -1,12 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
 import path from 'node:path';
-import { FileStructureService } from '../file-structure/file-structure.service';
+import { FileStructureService, TFile } from '../file-structure/file-structure.service';
 import { FileSystemService } from '../file-system/file-system.service';
 import { FILES } from './constants';
+import { createReadStream } from 'node:fs';
 
 export interface IFileService {
 
 }
+
+export type TRemoveFileResult = {
+    folderId: string;
+    fileId: string;
+};
+
+export type TGetFileResult = {
+    // folderId: string;
+    // fileId: string;
+};
 
 @Injectable()
 export class FileService implements IFileService {
@@ -30,5 +41,67 @@ export class FileService implements IFileService {
         const realFolderPath = this.getRealPath(userId);
         const realFilePath = path.join(realFolderPath, createdFile.id);
         this.fileSystem.writeFile(fileBuffer, realFilePath);
+    }
+
+    async getFileStreamById(
+        fileId: string,
+        userId: string
+    ): Promise<any> {
+        try {
+            /**
+             * TODO
+             * Run this code only as a transaction
+             */
+            const file = await this.fileStructureService.getFileById(fileId);
+            const realFolderPath = this.getRealPath(userId);
+            const realFilePath = path.join(realFolderPath, file.id);
+
+            return createReadStream(realFilePath)
+            // return {
+            //     folderId,
+            //     fileId: id
+            // };
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+    async getFileInfoById(
+        fileId: string,
+        userId: string
+    ): Promise<TFile> {
+        try {
+            /**
+             * TODO
+             * Run this code only as a transaction
+             */
+            const file = await this.fileStructureService.getFileById(fileId);
+            return file
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+    async removeFile(
+        fileId: string,
+        userId: string
+    ): Promise<TRemoveFileResult> {
+        try {
+            /**
+             * TODO
+             * Run this code only as a transaction
+             */
+            const { folderId, id } = await this.fileStructureService.removeFile(fileId);
+            const realFolderPath = this.getRealPath(userId);
+            const realFilePath = path.join(realFolderPath, id);
+            await this.fileSystem.removeFile(realFilePath);
+
+            return {
+                folderId,
+                fileId: id
+            };
+        } catch (e: unknown) {
+            console.log(e);
+        }
     }
 }
