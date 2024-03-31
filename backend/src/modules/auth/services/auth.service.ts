@@ -1,6 +1,10 @@
 import { IUserService } from '@modules/user/services/users.service';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueConstaint';
+import { UserRegisterError } from '@src/modules/errors/ErrorUserRegister';
+import { CannotFullfillRequestError } from '@src/modules/errors/logic/CannotFullfillRequest';
+import { GenericServerError } from '@src/modules/errors/logic/GenericServerError';
 import { FileStructureService } from '@src/modules/file-structure/file-structure.service';
 import { FileSystemService } from '@src/modules/file-system/file-system.service';
 
@@ -20,19 +24,32 @@ export class AuthService implements IAuthService {
     ) { }
 
     async register(username: string, password: string): Promise<any> {
-        const user = await this.usersService.createOne({ password, username });
+        try {
+            const user = await this.usersService.createOne({ password, username });
 
-        const payload = {
-            sub: user.id,
-            username: user.username
-        };
+            const payload = {
+                sub: user.id,
+                username: user.username
+            };
 
-        const result = { access_token: await this.jwtService.signAsync(payload) };
+            const result = { access_token: await this.jwtService.signAsync(payload) };
 
-        await this.fileSystem.createUserRootFolder(user.id);
-        await this.fileStructureService.createUserRootFolder(user.id);
+            await this.fileSystem.createUserRootFolder(user.id);
+            await this.fileStructureService.createUserRootFolder(user.id);
 
-        return result;
+            
+            return result;
+        } catch (e: unknown) {
+            if (e instanceof DbUserUniqueConstraintError) {
+                if (e.fieldName === 'username') {
+                    throw new UserRegisterError('Cannot register user with the same username.')
+                }
+            } else if (e instanceof CannotFullfillRequestError) {
+                throw new GenericServerError()
+            }
+
+            throw e
+        }
     }
 
     async signIn(username: string, pass: string): Promise<any> {

@@ -1,3 +1,5 @@
+import { ClientRegistrationError } from "@/app/errors/ClientRegistrationError";
+import { ClientUnauthorizedError } from "@/app/errors/ClientUnauthorizedError";
 import { TFoldersList } from "@/app/files/page";
 
 export const METHODS = {
@@ -60,33 +62,51 @@ export type TUploadFilesResult = {
     currentFolder: TFolder;
 };
 
+export type TRemoveFileResult = {
+    files: TFile[],
+    folders: TFoldersList,
+    currentFolder: TFolder;
+};
+
+export type TDownloadFile = void;
+
 export class Requester {
     private host: string = process.env.NEXT_PUBLIC_NIMBUS_API_HOST ?? '';
 
-    register(login: string, password: string) {
-        return fetch(`${this.host}/api/v1/auth/register`, {
-            body: JSON.stringify({
-                username: login,
-                password: password,
-            }),
-            method: METHODS.POST,
-            credentials: 'include',
-            headers: {
-                [HEADER.Accept]: HEADERS_VALUE.JSON,
-                [HEADER.ContentType]: HEADERS_VALUE.JSON,
-            },
-        }).then(this.handleResponse);
+    async register(login: string, password: string) {
+        try {
+            return await fetch(`${this.host}/api/v1/auth/register`, {
+                body: JSON.stringify({
+                    username: login,
+                    password: password
+                }),
+                method: METHODS.POST,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                }
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
     }
 
     getUserProfile(): Promise<TGetUserProfile> {
-        return fetch(`${this.host}/api/v1/auth/profile`, {
-            method: METHODS.GET,
-            credentials: 'include',
-            headers: {
-                [HEADER.Accept]: HEADERS_VALUE.JSON,
-                [HEADER.ContentType]: HEADERS_VALUE.JSON,
-            },
-        }).then(this.handleResponse);
+        try {
+            return fetch(`${this.host}/api/v1/auth/profile`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                }
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
     }
 
     getUserRootFolder(): Promise<TGetUserRootFolderChildren> {
@@ -143,14 +163,86 @@ export class Requester {
             .then(this.handleResponse);
     }
 
-    private handleResponse = (response: Response) => {
+    async removeFile(fileId: string): Promise<TRemoveFileResult> {
+        try {
+            return fetch(`${this.host}/api/v1/files/remove/${fileId}`, {
+                method: METHODS.POST,
+                credentials: 'include',
+                // body: data,
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                }
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
+    async downloadFile(fileId: string): Promise<Blob> {
+        try {
+            return fetch(`${this.host}/api/v1/files/download/${fileId}`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                // body: data,
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                }
+            }).then(async (response: Response) => {
+                console.log(response);
+                const res = await response.blob();
+                return res;
+            })
+            //     .then((blob) => {
+            //     console.log(blob);
+
+            //     if (blob != null) {
+            //         var url = window.URL.createObjectURL(blob);
+            //         var a = document.createElement('a');
+            //         a.href = url;
+            //         a.download = "testyyy.txt";
+            //         document.body.appendChild(a);
+            //         a.click();
+            //         a.remove();
+            //     }
+            // });
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
+    async getFileInfo(fileId: string): Promise<TFile> {
+        try {
+            return fetch(`${this.host}/api/v1/files/info/${fileId}`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                // body: data,
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                }
+            }).then(async (response: Response) => {
+                console.log(response);
+                const res = await response.json();
+                return res;
+            });
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
+    private handleResponse = async (response: Response) => {
         if (response.ok) {
             return response.json();
         } else {
-            if (response.status === 502) {
-                console.error(502, response.statusText);
+            const errorMessage = await response.json();
+            // console.error(errorMessage);
+            if (response.status === 401) {
+                throw new ClientUnauthorizedError();
+            } else {
+                throw new Error('Cannot handle response on client.');
             }
-            throw new Error(response.statusText);
         }
     };
 }

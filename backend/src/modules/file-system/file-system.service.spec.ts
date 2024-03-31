@@ -30,7 +30,7 @@ describe('FileService', () => {
         const username = 'artembellId';
         await service.createUserRootFolder(username)
             .catch(() => {
-                expect(fs.access(service.getUserRootFolderPathString(username)))
+                expect(fs.access(service.getUserRootFolderPathStringSync(username)))
                     .rejects
                     .toThrow();
             });
@@ -42,7 +42,7 @@ describe('FileService', () => {
             const username = 'artembellId';
             service.createUserRootFolder(username)
                 .catch(() => {
-                    expect(fs.access(service.getUserRootFolderPathString(username)))
+                    expect(fs.access(service.getUserRootFolderPathStringSync(username)))
                         .resolves
                         .toBeTruthy();
                 });
