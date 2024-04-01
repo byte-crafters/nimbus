@@ -95,7 +95,12 @@ export class FilesController {
                 this.fileStructureRepository.getFolderPath(parentFolderId),
             ]);
 
-            namesPath.unshift(user.username);
+            const rootUserFolder = await this.fileStructureRepository.getUserRootFolder(userId)
+
+            namesPath.unshift({
+                id: rootUserFolder.id,
+                name: rootUserFolder.name
+            });
             /**
              * Get names paths in usual names
              */
