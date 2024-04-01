@@ -7,20 +7,9 @@ import { FileService } from './file.service';
 import { FilesController } from './files.controller';
 
 @Module({
-    imports: [
-        AuthModule,
-        UsersModule,
-        FilesStructureModule,
-        FilesSystemModule
-    ],
-    controllers: [
-        FilesController
-    ],
-    providers: [
-        FileService
-    ],
-    exports: [
-        FileService
-    ]
+    imports: [AuthModule, UsersModule, FilesStructureModule, FilesSystemModule],
+    controllers: [FilesController],
+    providers: [FileService],
+    exports: [FileService],
 })
-export class FilesModule { }
+export class FilesModule {}

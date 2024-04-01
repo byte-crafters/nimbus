@@ -1,4 +1,4 @@
-import { SystemError } from "../SystemError";
+import { SystemError } from '../SystemError';
 
 export class NoDirectoryFound extends SystemError {
     message: string;

@@ -1,10 +1,9 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { User } from '../models/User';
 
-
 export const mockUsersCollection = [
     new User({ password: '123', username: 'one' }),
-    new User({ password: 'qwe', username: 'two' })
+    new User({ password: 'qwe', username: 'two' }),
 ];
 
 export type CreateUserDTO = {
@@ -29,7 +28,9 @@ export class MockUsersService {
     }
 
     async getUserProfile(userId: string) {
-        const user = mockUsersCollection.find((user) => user.id.toString() === userId);
+        const user = mockUsersCollection.find(
+            (user) => user.id.toString() === userId,
+        );
         return user;
     }
 }

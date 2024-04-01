@@ -1,6 +1,9 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { User } from '../models/User';
-import { PrismaClient as PostgresClient, Prisma } from '@prsm/generated/prisma-postgres-client-js';
+import {
+    PrismaClient as PostgresClient,
+    Prisma,
+} from '@prsm/generated/prisma-postgres-client-js';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDTO } from './mock.users.service';
 import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueConstaint';
@@ -8,7 +11,10 @@ import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueCons
 export interface IUserService {
     findOne(username: string): Promise<User | undefined>;
     findAll(): Promise<User[] | null>;
-    createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult>;
+    createOne({
+        password,
+        username,
+    }: CreateUserDTO): Promise<TCreateUserResult>;
     getUserProfile(userId: string): Promise<{
         id: string;
         email: string;
@@ -31,8 +37,8 @@ export class UsersService implements IUserService {
 
         const user = await postgresClient.user.findUnique({
             where: {
-                username
-            }
+                username,
+            },
         });
 
         return user;
@@ -42,14 +48,17 @@ export class UsersService implements IUserService {
         throw new NotImplementedException();
     }
 
-    async createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult> {
+    async createOne({
+        password,
+        username,
+    }: CreateUserDTO): Promise<TCreateUserResult> {
         try {
             const postgresClient = new PostgresClient();
 
             const user = {
                 email: Date.now() + '@nimbus.dev',
                 username,
-                password
+                password,
             };
 
             const db_user = await postgresClient.user.create({
@@ -57,7 +66,7 @@ export class UsersService implements IUserService {
                     email: user.email,
                     username: user.username,
                     password: user.password,
-                    id: uuidv4()
+                    id: uuidv4(),
                 },
             });
 
@@ -65,11 +74,11 @@ export class UsersService implements IUserService {
         } catch (e: unknown) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 if (e.code === 'P2002') {
-                    throw new DbUserUniqueConstraintError('username')
+                    throw new DbUserUniqueConstraintError('username');
                 }
             }
 
-            throw e
+            throw e;
         }
     }
 
@@ -84,8 +93,8 @@ export class UsersService implements IUserService {
 
         const user = await postgresClient.user.findUnique({
             where: {
-                id: userId
-            }
+                id: userId,
+            },
         });
 
         return user;

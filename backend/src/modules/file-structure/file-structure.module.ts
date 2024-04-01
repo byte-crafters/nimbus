@@ -3,11 +3,7 @@ import { AuthModule } from '../auth/auth.module';
 import { FileStructureService } from './file-structure.service';
 
 @Module({
-    providers: [
-        FileStructureService
-    ],
-    exports: [
-        FileStructureService
-    ]
+    providers: [FileStructureService],
+    exports: [FileStructureService],
 })
-export class FilesStructureModule { }
+export class FilesStructureModule {}

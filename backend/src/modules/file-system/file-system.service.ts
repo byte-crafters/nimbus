@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import { FILES } from '../files/constants';
-import util from "node:util"
+import util from 'node:util';
 import { CannotCreateUserRootFolderError } from '../errors/logic/CannotCreateRootFolder';
 import { CannotFullfillRequestError } from '../errors/logic/CannotFullfillRequest';
 // import * as sd from ''
@@ -16,10 +16,11 @@ export interface IFileSystemService {
  */
 @Injectable()
 export class FileSystemService implements IFileSystemService {
-    constructor() { }
+    constructor() {}
 
     writeFile(fileBuffer: Buffer, filePath: string) {
-        return fs.writeFile(filePath, fileBuffer)
+        return fs
+            .writeFile(filePath, fileBuffer)
             .then(() => {
                 console.log('Buffer has been written to file successfully');
             })
@@ -29,7 +30,8 @@ export class FileSystemService implements IFileSystemService {
     }
 
     removeFile(filePath: string) {
-        return fs.unlink(filePath)
+        return fs
+            .unlink(filePath)
             .then(() => {
                 console.log('File was removed successfully');
             })
@@ -42,14 +44,15 @@ export class FileSystemService implements IFileSystemService {
      * TODO: remove - we dont need to create this folder in file system
      */
     createNestedFolder(parentFolders: string[]): void {
-        fs.mkdir(path.join(FILES.FILES_PATH, ...parentFolders))
-            .catch((e: any) => {
+        fs.mkdir(path.join(FILES.FILES_PATH, ...parentFolders)).catch(
+            (e: any) => {
                 if (e.code === 'EEXIST') {
                     return true;
                 }
 
                 throw e;
-            });
+            },
+        );
     }
 
     async createRootFolder() {
@@ -60,9 +63,9 @@ export class FileSystemService implements IFileSystemService {
                 const systemErrorName = util.getSystemErrorName(e.errno);
 
                 if (systemErrorName === 'ENOENT') {
-                    throw new CannotCreateUserRootFolderError()
+                    throw new CannotCreateUserRootFolderError();
                 }
-            } 
+            }
 
             throw e;
         }
@@ -70,7 +73,7 @@ export class FileSystemService implements IFileSystemService {
 
     async createUserRootFolderByPath(path: string) {
         try {
-            await fs.mkdir(path)
+            await fs.mkdir(path);
         } catch (e: any) {
             if (e.errno !== undefined) {
                 const systemErrorName = util.getSystemErrorName(e.errno);
@@ -85,7 +88,8 @@ export class FileSystemService implements IFileSystemService {
     }
 
     checkIfRootFolderExists() {
-        return fs.access(FILES.FILES_PATH)
+        return fs
+            .access(FILES.FILES_PATH)
             .then(() => true)
             .catch(() => false);
     }
@@ -101,18 +105,16 @@ export class FileSystemService implements IFileSystemService {
         try {
             const rootFolderExists = await this.checkIfRootFolderExists();
 
-            if (!rootFolderExists)
-                await this.createRootFolder();
+            if (!rootFolderExists) await this.createRootFolder();
 
-            
             const path = this.getUserRootFolderPathStringSync(userId);
-            await this.createUserRootFolderByPath(path)
+            await this.createUserRootFolderByPath(path);
         } catch (e: unknown) {
             // if (e instanceof CannotCreateUserRootFolderError) {
             //     throw e
             // }
 
-            throw e
+            throw e;
         }
     }
 }

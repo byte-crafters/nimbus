@@ -31,9 +31,13 @@ describe('UsersService', () => {
     });
 
     it('should return all users', async () => {
-        jest.spyOn(usersService, 'findAll').mockImplementationOnce(async () => mockUsersCollection);
+        jest.spyOn(usersService, 'findAll').mockImplementationOnce(
+            async () => mockUsersCollection,
+        );
         const searchResult = await usersService.findAll();
 
-        expect(searchResult).toEqual(expect.arrayContaining(mockUsersCollection));
+        expect(searchResult).toEqual(
+            expect.arrayContaining(mockUsersCollection),
+        );
     });
 });

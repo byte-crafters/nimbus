@@ -11,9 +11,7 @@ describe('AppServiceController (e2e)', () => {
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [
-                AppModule,
-            ],
+            imports: [AppModule],
         }).compile();
 
         app = moduleFixture.createNestApplication();
@@ -32,7 +30,9 @@ describe('AppServiceController (e2e)', () => {
                 expect(typeof accessToken).toBe('string');
 
                 const payload = { sub: user.id, username: user.username };
-                const result = { access_token: await jwtService.signAsync(payload), };
+                const result = {
+                    access_token: await jwtService.signAsync(payload),
+                };
 
                 expect(accessToken === result.access_token);
             });

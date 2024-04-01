@@ -1,11 +1,11 @@
 export class DbUserUniqueConstraintError extends Error {
-    message: string
-    fieldName: string
+    message: string;
+    fieldName: string;
 
     constructor(fieldName: string) {
-        super()
+        super();
 
-        this.message = 'Unique constraint error.'
-        this.fieldName = fieldName
+        this.message = 'Unique constraint error.';
+        this.fieldName = fieldName;
     }
 }

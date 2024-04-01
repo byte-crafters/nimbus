@@ -18,37 +18,44 @@ export interface IAuthService {
 export class AuthService implements IAuthService {
     constructor(
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-        @Inject(FileStructureService) private fileStructureService: FileStructureService,
+        @Inject(FileStructureService)
+        private fileStructureService: FileStructureService,
         @Inject(FileSystemService) private fileSystem: FileSystemService,
-        private jwtService: JwtService
-    ) { }
+        private jwtService: JwtService,
+    ) {}
 
     async register(username: string, password: string): Promise<any> {
         try {
-            const user = await this.usersService.createOne({ password, username });
+            const user = await this.usersService.createOne({
+                password,
+                username,
+            });
 
             const payload = {
                 sub: user.id,
-                username: user.username
+                username: user.username,
             };
 
-            const result = { access_token: await this.jwtService.signAsync(payload) };
+            const result = {
+                access_token: await this.jwtService.signAsync(payload),
+            };
 
             await this.fileSystem.createUserRootFolder(user.id);
             await this.fileStructureService.createUserRootFolder(user.id);
 
-            
             return result;
         } catch (e: unknown) {
             if (e instanceof DbUserUniqueConstraintError) {
                 if (e.fieldName === 'username') {
-                    throw new UserRegisterError('Cannot register user with the same username.')
+                    throw new UserRegisterError(
+                        'Cannot register user with the same username.',
+                    );
                 }
             } else if (e instanceof CannotFullfillRequestError) {
-                throw new GenericServerError()
+                throw new GenericServerError();
             }
 
-            throw e
+            throw e;
         }
     }
 
@@ -70,7 +77,8 @@ export class AuthService implements IAuthService {
 
     async getProfile(userId: string): Promise<any> {
         const user = await this.usersService.getUserProfile(userId);
-        const rootFolder = await this.fileStructureService.getUserRootFolder(userId);
+        const rootFolder =
+            await this.fileStructureService.getUserRootFolder(userId);
         return { user, rootFolder };
     }
 }

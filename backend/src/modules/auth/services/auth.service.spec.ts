@@ -16,7 +16,7 @@ describe('AuthService', () => {
                     global: true,
                     secret: jwtConstants.secret,
                     signOptions: { expiresIn: '60s' },
-                })
+                }),
             ],
             providers: [authServiceDefaultProvider],
         }).compile();
@@ -27,5 +27,4 @@ describe('AuthService', () => {
     it('should be defined', () => {
         expect(service).toBeDefined();
     });
-
 });

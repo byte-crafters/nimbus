@@ -16,7 +16,7 @@ describe('Test db connectors', () => {
             data: {
                 email: testUserDTO.email,
                 username: testUserDTO.name,
-                id: uuidv4()
+                id: uuidv4(),
             },
         });
 
@@ -40,7 +40,7 @@ describe('Test db connectors', () => {
             data: {
                 parentId: 'asdf',
                 name: testNodeDTO.name,
-                owner: 'test-user'
+                owner: 'test-user',
             },
         });
 

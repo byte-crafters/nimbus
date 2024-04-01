@@ -7,6 +7,6 @@ import { userServiceDefaultProvider } from '@src/dependencies/providers';
 @Module({
     providers: [userServiceDefaultProvider],
     controllers: [UsersController],
-    exports: [userServiceDefaultProvider]
+    exports: [userServiceDefaultProvider],
 })
-export class UsersModule { }
+export class UsersModule {}

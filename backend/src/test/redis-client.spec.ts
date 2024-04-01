@@ -3,9 +3,9 @@ import { createClient } from 'redis';
 describe('Test redis connectors', () => {
     test('Test redis connector: write and read value', async () => {
         const client = await createClient({
-            url: 'redis://nimbus-redis:6379'
+            url: 'redis://nimbus-redis:6379',
         })
-            .on('error', err => console.log('Redis Client Error', err))
+            .on('error', (err) => console.log('Redis Client Error', err))
             .connect();
 
         await client.set('nimbus_key', 'nimbus_value');

@@ -13,7 +13,7 @@ import { UsersModule } from '../user/users.module';
         FilesModule,
         FilesSystemModule,
         FilesStructureModule,
-        UsersModule
+        UsersModule,
     ],
 })
-export class AppModule { }
+export class AppModule {}

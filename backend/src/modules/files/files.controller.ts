@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Inject, Param, Post, Req, StreamableFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Param,
+    Post,
+    Req,
+    StreamableFile,
+    UploadedFiles,
+    UseInterceptors,
+} from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FileStructureService } from '../file-structure/file-structure.service';
 import { FileSystemService } from '../file-system/file-system.service';
@@ -6,7 +17,6 @@ import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
 import { createReadStream } from 'node:fs';
 import { join } from 'node:path';
-
 
 /** TODO Share somehow types between fe and be */
 export type CreateFolderDTO = {
@@ -28,57 +38,67 @@ export class TUploadFileDTO {
 })
 export class FilesController {
     constructor(
-        @Inject(FileStructureService) private fileStructureService: FileStructureService,
+        @Inject(FileStructureService)
+        private fileStructureService: FileStructureService,
         @Inject(FileSystemService) private fileSystem: FileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-    ) { }
+    ) {}
 
     @Post('folder')
     async createFolder(
         @Body() createFolderDTO: CreateFolderDTO,
-        @Req() request: any
+        @Req() request: any,
     ) {
         const { folderName, parentFolderId } = createFolderDTO;
         const userId = request.user.sub;
 
-        const createdFolder = await this.fileStructureService.createUserFolder(userId, folderName, parentFolderId);
+        const createdFolder = await this.fileStructureService.createUserFolder(
+            userId,
+            folderName,
+            parentFolderId,
+        );
 
         // this.fileSystem.createNestedFolder([...createdFolder.path, createdFolder.id]);
 
-        const children = await this.fileStructureService.getChildrenFoldersOf(createdFolder.parentId);
-        const parentFolder = await this.fileStructureService.getFolderById(parentFolderId);
-
+        const children = await this.fileStructureService.getChildrenFoldersOf(
+            createdFolder.parentId,
+        );
+        const parentFolder =
+            await this.fileStructureService.getFolderById(parentFolderId);
 
         return {
             parentFolder,
-            folders: children
+            folders: children,
         };
     }
 
     @Get('folder/:id')
-    async getFolderChildren(
-        @Req() request: any,
-        @Param('id') id: string
-    ) {
+    async getFolderChildren(@Req() request: any, @Param('id') id: string) {
         const parentFolderId = id;
         const userId = request.user.sub;
 
         const user = await this.usersService.getUserProfile(userId);
 
         /** Now we find children nodes */
-        const children = await this.fileStructureService.getChildrenFoldersOf(parentFolderId);
-        const parentFolder = await this.fileStructureService.getFolderById(parentFolderId);
-        const folderFiles = await this.fileStructureService.getChildrenFilesOf(parentFolderId);
+        const children =
+            await this.fileStructureService.getChildrenFoldersOf(
+                parentFolderId,
+            );
+        const parentFolder =
+            await this.fileStructureService.getFolderById(parentFolderId);
+        const folderFiles =
+            await this.fileStructureService.getChildrenFilesOf(parentFolderId);
 
-        const namesPath = await this.fileStructureService.getFolderPath(parentFolderId);
+        const namesPath =
+            await this.fileStructureService.getFolderPath(parentFolderId);
         namesPath.unshift(user.username);
 
         return {
             parentFolder,
             folders: children,
             files: folderFiles,
-            currentPath: namesPath
+            currentPath: namesPath,
         };
     }
 
@@ -86,12 +106,15 @@ export class FilesController {
     async getUserRootFolder(@Req() request: any) {
         const userId = request.user.sub;
 
-        const rootFolder = await this.fileStructureService.getUserRootFolder(userId);
+        const rootFolder =
+            await this.fileStructureService.getUserRootFolder(userId);
         /** Now we find children nodes */
-        const children = await this.fileStructureService.getChildrenFoldersOf(rootFolder.id);
+        const children = await this.fileStructureService.getChildrenFoldersOf(
+            rootFolder.id,
+        );
         return {
             parentFolder: rootFolder,
-            folders: children
+            folders: children,
         };
     }
 
@@ -100,7 +123,7 @@ export class FilesController {
     async uploadFile(
         @UploadedFiles() files: Array<Express.Multer.File>,
         @Body() uploadFileDTO: TUploadFileDTO,
-        @Req() request: any
+        @Req() request: any,
     ) {
         const userId = request.user.sub;
         const { folderId } = uploadFileDTO;
@@ -112,49 +135,55 @@ export class FilesController {
                 file.buffer,
                 uploadFileDTO.folderId,
                 file.originalname,
-                file.mimetype
+                file.mimetype,
             );
         });
 
-        const currentFolder = await this.fileStructureService.getFolderById(folderId);
-        const children = await this.fileStructureService.getChildrenFoldersOf(folderId);
-        const folderFiles = await this.fileStructureService.getChildrenFilesOf(folderId);
+        const currentFolder =
+            await this.fileStructureService.getFolderById(folderId);
+        const children =
+            await this.fileStructureService.getChildrenFoldersOf(folderId);
+        const folderFiles =
+            await this.fileStructureService.getChildrenFilesOf(folderId);
 
         return {
             currentFolder,
             folders: children,
-            files: folderFiles
+            files: folderFiles,
         };
     }
 
     @Post('remove/:fileId')
-    async removeFile(
-        @Req() request: any,
-        @Param('fileId') fileId: string
-    ) {
+    async removeFile(@Req() request: any, @Param('fileId') fileId: string) {
         const userId = request.user.sub;
 
-        const { fileId: removedFileId, folderId } = await this.fileService.removeFile(fileId, userId);
-        const currentFolder = await this.fileStructureService.getFolderById(folderId);
-        const children = await this.fileStructureService.getChildrenFoldersOf(folderId);
-        const folderFiles = await this.fileStructureService.getChildrenFilesOf(folderId);
+        const { fileId: removedFileId, folderId } =
+            await this.fileService.removeFile(fileId, userId);
+        const currentFolder =
+            await this.fileStructureService.getFolderById(folderId);
+        const children =
+            await this.fileStructureService.getChildrenFoldersOf(folderId);
+        const folderFiles =
+            await this.fileStructureService.getChildrenFilesOf(folderId);
 
         return {
             currentFolder,
             folders: children,
-            files: folderFiles
+            files: folderFiles,
         };
     }
 
     @Get('download/:fileId')
     async getFile(
         @Req() request: any,
-        @Param('fileId') fileId: string
+        @Param('fileId') fileId: string,
     ): Promise<any> {
         const userId = request.user.sub;
 
-
-        const fileStream = await this.fileService.getFileStreamById(fileId, userId);
+        const fileStream = await this.fileService.getFileStreamById(
+            fileId,
+            userId,
+        );
 
         // console.log(process.cwd());
         // const fileStream = createReadStream(join(process.cwd(), 'package.json'));
@@ -164,10 +193,10 @@ export class FilesController {
     @Get('info/:fileId')
     async getFileInfo(
         @Req() request: any,
-        @Param('fileId') fileId: string
+        @Param('fileId') fileId: string,
     ): Promise<any> {
         const userId = request.user.sub;
         const fileInfo = await this.fileService.getFileInfoById(fileId, userId);
-        return fileInfo
+        return fileInfo;
     }
 }
