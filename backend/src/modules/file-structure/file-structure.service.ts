@@ -33,25 +33,66 @@ export type TFile = {
 
 @Injectable()
 export class FileStructureService implements IFileStructureService {
-    constructor() {}
+    constructor() { }
 
-    async getFolderPath(folderId: string) {
+    async getFoldersNames(folderIds: string[]) {
         const mongoClient = new MongoClient();
 
-        const folder = await this.getFolderById(folderId);
+        // return mongoClient.node.findMany({
+        //     where: {
+        //         id
+        //     },
+        //     select: {
 
-        return mongoClient.node
-            .findMany({
-                where: {
-                    id: {
-                        in: folder.path.slice(1),
+        //     }
+        // })
+    }
+
+    async getFolderPath(folderId: string): Promise<string[]> {
+        try {
+            const mongoClient = new MongoClient();
+
+            const folder = await this.getFolderById(folderId);
+            console.log(folder)
+            const ancestorFoldersIds = folder.path.slice(1);
+            console.log(ancestorFoldersIds);
+
+            const names = await mongoClient.node
+                .findMany({
+                    where: {
+                        id: {
+                            in: ancestorFoldersIds,
+                        },
                     },
-                },
-                select: {
-                    name: true,
-                },
-            })
-            .then((names) => names.map((folder) => folder.name));
+                    select: {
+                        name: true,
+                    },
+                });
+
+            const result = names.map((folder) => folder.name);
+            
+            /** Remove userId - it's the highest ancestor folder name. */
+            result.shift()
+            
+            if (ancestorFoldersIds.length !== 0) {
+                /** Add this folder name to make path include this folder. */
+                result.push(folder.name)
+            }
+            
+            console.log(result);
+            return result;
+        } catch (e: unknown) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
+                    throw new DbFileRecordDoesNotExist();
+                }
+                if (e.code === 'P2023') {
+                    /** 'Malformed ObjectID: invalid character '-' */
+                }
+            }
+
+            throw e;
+        }
     }
 
     async getChildrenFilesOf(folderId: string) {

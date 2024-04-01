@@ -43,7 +43,7 @@ export class FilesController {
         @Inject(FileSystemService) private fileSystem: FileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-    ) {}
+    ) { }
 
     @Post('folder')
     async createFolder(
@@ -92,7 +92,14 @@ export class FilesController {
 
         const namesPath =
             await this.fileStructureService.getFolderPath(parentFolderId);
+        
         namesPath.unshift(user.username);
+
+        console.log(namesPath)
+        /**
+         * Get names paths in usual names
+         */
+
 
         return {
             parentFolder,
