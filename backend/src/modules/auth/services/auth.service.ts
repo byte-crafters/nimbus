@@ -14,8 +14,6 @@ export interface IAuthService {
     getProfile(userId: string): Promise<any>;
 }
 
-
-
 @Injectable()
 export class AuthService implements IAuthService {
     constructor(
@@ -49,9 +47,7 @@ export class AuthService implements IAuthService {
         } catch (e: unknown) {
             if (e instanceof DbUserUniqueConstraintError) {
                 if (e.fieldName === 'username') {
-                    throw new UserRegisterError(
-                        'Cannot register user with the same username.',
-                    );
+                    throw new UserRegisterError('Cannot register user with the same username.');
                 }
             } else if (e instanceof CannotFullfillRequestError) {
                 throw new GenericServerError();
@@ -79,8 +75,7 @@ export class AuthService implements IAuthService {
 
     async getProfile(userId: string): Promise<any> {
         const user = await this.usersService.getUserProfile(userId);
-        const rootFolder =
-            await this.fileStructureService.getUserRootFolder(userId);
+        const rootFolder = await this.fileStructureService.getUserRootFolder(userId);
         return { user, rootFolder };
     }
 }

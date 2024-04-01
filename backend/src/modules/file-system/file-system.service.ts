@@ -44,15 +44,13 @@ export class FileSystemService implements IFileSystemService {
      * TODO: remove - we dont need to create this folder in file system
      */
     createNestedFolder(parentFolders: string[]): void {
-        fs.mkdir(path.join(FILES.FILES_PATH, ...parentFolders)).catch(
-            (e: any) => {
-                if (e.code === 'EEXIST') {
-                    return true;
-                }
+        fs.mkdir(path.join(FILES.FILES_PATH, ...parentFolders)).catch((e: any) => {
+            if (e.code === 'EEXIST') {
+                return true;
+            }
 
-                throw e;
-            },
-        );
+            throw e;
+        });
     }
 
     async createRootFolder() {

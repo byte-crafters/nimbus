@@ -7,13 +7,6 @@ import { FilesModule } from '../files/files.module';
 import { UsersModule } from '../user/users.module';
 
 @Module({
-    imports: [
-        AuthModule,
-        AppServiceModule,
-        FilesModule,
-        FilesSystemModule,
-        FilesStructureModule,
-        UsersModule,
-    ],
+    imports: [AuthModule, AppServiceModule, FilesModule, FilesSystemModule, FilesStructureModule, UsersModule],
 })
 export class AppModule {}

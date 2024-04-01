@@ -1,8 +1,11 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
+    HttpStatus,
     Inject,
+    InternalServerErrorException,
     Param,
     Post,
     Req,
@@ -18,6 +21,7 @@ import { FileStructureService } from '../file-structure/file-structure.service';
 import { FileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
+import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
 
 // export class TFol
 export class TUploadFileDTO {
@@ -35,7 +39,7 @@ export class FilesController {
         @Inject(FileSystemService) private fileSystem: FileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-    ) { }
+    ) {}
 
     @ApiResponse({ status: 200, type: CreateFolderResult })
     @ApiOperation({
@@ -44,24 +48,14 @@ export class FilesController {
     })
     @ApiTags('files')
     @Post('folder')
-    async createFolder(
-        @Body() createFolderDTO: CreateFolderDTO,
-        @Req() request: any,
-    ) {
+    async createFolder(@Body() createFolderDTO: CreateFolderDTO, @Req() request: any) {
         const { folderName, parentFolderId } = createFolderDTO;
         const userId = request.user.sub;
 
-        const createdFolder = await this.fileStructureRepository.createUserFolder(
-            userId,
-            folderName,
-            parentFolderId,
-        );
+        const createdFolder = await this.fileStructureRepository.createUserFolder(userId, folderName, parentFolderId);
 
-        const children = await this.fileStructureRepository.getChildrenFoldersOf(
-            createdFolder.parentId,
-        );
-        const parentFolder =
-            await this.fileStructureRepository.getFolderById(parentFolderId);
+        const children = await this.fileStructureRepository.getChildrenFoldersOf(createdFolder.parentId);
+        const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
 
         return {
             parentFolder,
@@ -72,7 +66,7 @@ export class FilesController {
     @ApiResponse({
         status: 200,
         type: GetFolderResult200Decl,
-        description: 'Get user folder.'
+        description: 'Get user folder.',
     })
     @ApiOperation({
         summary: 'Get folder by id.',
@@ -80,10 +74,7 @@ export class FilesController {
     })
     @ApiTags('files')
     @Get('folder/:id')
-    async getFolderChildren(
-        @Req() request: any,
-        @Param('id') id: string
-    ) {
+    async getFolderChildren(@Req() request: any, @Param('id') id: string) {
         try {
             const parentFolderId = id;
             const userId = request.user.sub;
@@ -91,18 +82,19 @@ export class FilesController {
             const user = await this.usersService.getUserProfile(userId);
 
             /** Now we find children nodes */
-            const children =
-                await this.fileStructureRepository.getChildrenFoldersOf(
-                    parentFolderId,
-                );
-            const parentFolder =
-                await this.fileStructureRepository.getFolderById(parentFolderId);
-            const folderFiles =
-                await this.fileStructureRepository.getChildrenFilesOf(parentFolderId);
+            const children = await this.fileStructureRepository.getChildrenFoldersOf(parentFolderId);
+            const folderFiles = await this.fileStructureRepository.getChildrenFilesOf(parentFolderId);
+            const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
+            const namesPath = await this.fileStructureRepository.getFolderPath(parentFolderId);
 
-            const namesPath =
-                await this.fileStructureRepository.getFolderPath(parentFolderId);
-        
+            /** When using `Promise.all` we  */
+            const result = await Promise.all([
+                this.fileStructureRepository.getChildrenFoldersOf(parentFolderId),
+                this.fileStructureRepository.getChildrenFilesOf(parentFolderId),
+                this.fileStructureRepository.getFolderById(parentFolderId),
+                this.fileStructureRepository.getFolderPath(parentFolderId),
+            ]);
+
             namesPath.unshift(user.username);
             /**
              * Get names paths in usual names
@@ -115,8 +107,11 @@ export class FilesController {
                 currentPath: namesPath,
             };
         } catch (e: unknown) {
+            if (e instanceof NoFolderWithThisIdError) {
+                throw new BadRequestException(e.message);
+            }
 
-            throw e
+            throw new InternalServerErrorException('Server error.');
         }
     }
 
@@ -126,17 +121,12 @@ export class FilesController {
     })
     @ApiTags('files')
     @Get('user/folder/root')
-    async getUserRootFolder(
-        @Req() request: any
-    ) {
+    async getUserRootFolder(@Req() request: any) {
         const userId = request.user.sub;
 
-        const rootFolder =
-            await this.fileStructureRepository.getUserRootFolder(userId);
+        const rootFolder = await this.fileStructureRepository.getUserRootFolder(userId);
         /** Now we find children nodes */
-        const children = await this.fileStructureRepository.getChildrenFoldersOf(
-            rootFolder.id,
-        );
+        const children = await this.fileStructureRepository.getChildrenFoldersOf(rootFolder.id);
         return {
             parentFolder: rootFolder,
             folders: children,
@@ -169,12 +159,9 @@ export class FilesController {
             );
         });
 
-        const currentFolder =
-            await this.fileStructureRepository.getFolderById(folderId);
-        const children =
-            await this.fileStructureRepository.getChildrenFoldersOf(folderId);
-        const folderFiles =
-            await this.fileStructureRepository.getChildrenFilesOf(folderId);
+        const currentFolder = await this.fileStructureRepository.getFolderById(folderId);
+        const children = await this.fileStructureRepository.getChildrenFoldersOf(folderId);
+        const folderFiles = await this.fileStructureRepository.getChildrenFilesOf(folderId);
 
         return {
             currentFolder,
@@ -192,14 +179,10 @@ export class FilesController {
     async removeFile(@Req() request: any, @Param('fileId') fileId: string) {
         const userId = request.user.sub;
 
-        const { fileId: removedFileId, folderId } =
-            await this.fileService.removeFile(fileId, userId);
-        const currentFolder =
-            await this.fileStructureRepository.getFolderById(folderId);
-        const children =
-            await this.fileStructureRepository.getChildrenFoldersOf(folderId);
-        const folderFiles =
-            await this.fileStructureRepository.getChildrenFilesOf(folderId);
+        const { fileId: removedFileId, folderId } = await this.fileService.removeFile(fileId, userId);
+        const currentFolder = await this.fileStructureRepository.getFolderById(folderId);
+        const children = await this.fileStructureRepository.getChildrenFoldersOf(folderId);
+        const folderFiles = await this.fileStructureRepository.getChildrenFilesOf(folderId);
 
         return {
             currentFolder,
@@ -214,16 +197,10 @@ export class FilesController {
     })
     @ApiTags('files')
     @Get('download/:fileId')
-    async getFile(
-        @Req() request: any,
-        @Param('fileId') fileId: string,
-    ): Promise<any> {
+    async getFile(@Req() request: any, @Param('fileId') fileId: string): Promise<any> {
         const userId = request.user.sub;
 
-        const fileStream = await this.fileService.getFileStreamById(
-            fileId,
-            userId,
-        );
+        const fileStream = await this.fileService.getFileStreamById(fileId, userId);
 
         // console.log(process.cwd());
         // const fileStream = createReadStream(join(process.cwd(), 'package.json'));
@@ -236,10 +213,7 @@ export class FilesController {
     })
     @ApiTags('files')
     @Get('info/:fileId')
-    async getFileInfo(
-        @Req() request: any,
-        @Param('fileId') fileId: string,
-    ): Promise<any> {
+    async getFileInfo(@Req() request: any, @Param('fileId') fileId: string): Promise<any> {
         const userId = request.user.sub;
         const fileInfo = await this.fileService.getFileInfoById(fileId, userId);
         return fileInfo;

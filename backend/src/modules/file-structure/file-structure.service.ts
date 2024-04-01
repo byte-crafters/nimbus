@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import {
-    PrismaClient as MongoClient,
-    Prisma,
-} from '@prsm/generated/prisma-mongo-client-js';
+import { PrismaClient as MongoClient, Prisma } from '@prsm/generated/prisma-mongo-client-js';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
+import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
 
 export type CreateUserRootFolderStructure = {
     parentId: string;
@@ -33,7 +31,7 @@ export type TFile = {
 
 @Injectable()
 export class FileStructureService implements IFileStructureService {
-    constructor() { }
+    constructor() {}
 
     async getFoldersNames(folderIds: string[]) {
         const mongoClient = new MongoClient();
@@ -53,33 +51,35 @@ export class FileStructureService implements IFileStructureService {
             const mongoClient = new MongoClient();
 
             const folder = await this.getFolderById(folderId);
+            if (folder === null) {
+                throw new NoFolderWithThisIdError(`No folder with id ${folderId}.`);
+            }
 
-            console.log(folder)
+            console.log(folder);
             const ancestorFoldersIds = folder.path.slice(1);
             console.log(ancestorFoldersIds);
 
-            const names = await mongoClient.node
-                .findMany({
-                    where: {
-                        id: {
-                            in: ancestorFoldersIds,
-                        },
+            const names = await mongoClient.node.findMany({
+                where: {
+                    id: {
+                        in: ancestorFoldersIds,
                     },
-                    select: {
-                        name: true,
-                    },
-                });
+                },
+                select: {
+                    name: true,
+                },
+            });
 
             const result = names.map((folder) => folder.name);
-            
+
             /** Remove userId - it's the highest ancestor folder name. */
-            result.shift()
-            
+            result.shift();
+
             if (ancestorFoldersIds.length !== 0) {
                 /** Add this folder name to make path include this folder. */
-                result.push(folder.name)
+                result.push(folder.name);
             }
-            
+
             console.log(result);
             return result;
         } catch (e: unknown) {
@@ -89,8 +89,11 @@ export class FileStructureService implements IFileStructureService {
                 }
                 if (e.code === 'P2023') {
                     /** 'Malformed ObjectID: invalid character '-' */
-                    throw e
+                    throw e;
                 }
+            }
+            if (e instanceof NoFolderWithThisIdError) {
+                throw e;
             }
 
             throw e;
@@ -107,12 +110,7 @@ export class FileStructureService implements IFileStructureService {
         });
     }
 
-    createFile(
-        name: string,
-        extension: string,
-        folderId: string,
-        userId: string,
-    ): Promise<TFile> {
+    createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFile> {
         const mongoClient = new MongoClient();
 
         return mongoClient.file.create({
@@ -175,9 +173,7 @@ export class FileStructureService implements IFileStructureService {
 
     /** TODO Need to disallow some username symbols. */
     /** TODO Remake tests to pass userId */
-    async createUserRootFolder(
-        userId: string,
-    ): Promise<CreateUserRootFolderStructure> {
+    async createUserRootFolder(userId: string): Promise<CreateUserRootFolderStructure> {
         const mongoClient = new MongoClient();
 
         return mongoClient.node.create({
@@ -223,25 +219,24 @@ export class FileStructureService implements IFileStructureService {
                     name: true,
                     owner: true,
                     parentId: true,
-                    path: true
-                }
+                    path: true,
+                },
             });
 
+            console.log(`folder ${folder?.id}`);
             if (folder !== null) {
-                return folder
+                return folder;
             }
 
-            return null
+            return null;
         } catch (e: unknown) {
-            throw e
+            console.log('cauht');
+            console.log(e);
+            throw e;
         }
     }
 
-    async createUserFolder(
-        userId: string,
-        folderName: string,
-        parentFolderId: string,
-    ) {
+    async createUserFolder(userId: string, folderName: string, parentFolderId: string) {
         const mongoClient = new MongoClient();
 
         const parentFolder = await mongoClient.node.findUnique({
