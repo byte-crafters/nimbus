@@ -1,3 +1,6 @@
 {
-    "files.eol": "\n"
+    "files.eol": "\n",
+    "editor.formatOnSave": false,
+    "files.autoSave": "onFocusChange",
+    "editor.fontSize": 14
 }
