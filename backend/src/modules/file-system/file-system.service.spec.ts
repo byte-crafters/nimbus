@@ -28,9 +28,7 @@ describe('FileService', () => {
     it('Create user root folder BEFORE creating root files folder.', async () => {
         const username = 'artembellId';
         await service.createUserRootFolder(username).catch(() => {
-            expect(
-                fs.access(service.getUserRootFolderPathStringSync(username)),
-            ).rejects.toThrow();
+            expect(fs.access(service.getUserRootFolderPathStringSync(username))).rejects.toThrow();
         });
     });
 
@@ -38,11 +36,7 @@ describe('FileService', () => {
         await service.createRootFolder().then(() => {
             const username = 'artembellId';
             service.createUserRootFolder(username).catch(() => {
-                expect(
-                    fs.access(
-                        service.getUserRootFolderPathStringSync(username),
-                    ),
-                ).resolves.toBeTruthy();
+                expect(fs.access(service.getUserRootFolderPathStringSync(username))).resolves.toBeTruthy();
             });
         });
     });

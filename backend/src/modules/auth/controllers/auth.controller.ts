@@ -1,14 +1,4 @@
-import {
-    Body,
-    Controller,
-    Get,
-    HttpStatus,
-    Inject,
-    Post,
-    Req,
-    Res,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TYPES } from '@src/dependencies/providers';
 import { UserRegisterError } from '@src/modules/errors/ErrorUserRegister';
@@ -25,7 +15,6 @@ export interface IAuthController {
     getSelfProfile(req: any, response: Response): Promise<Response>;
 }
 
-
 export type TProfile = {
     email: string;
     id: string;
@@ -38,33 +27,29 @@ export type TProfile = {
     path: 'auth',
 })
 export class AuthController implements IAuthController {
-    constructor(
-        @Inject(TYPES.AUTH_SERVICE) private authService: IAuthService,
-    ) {}
+    constructor(@Inject(TYPES.AUTH_SERVICE) private authService: IAuthService) {}
 
     @ApiTags('auth')
     @ApiOperation({
         summary: 'Log in user.',
-        description: 'Log in user by cookie.'
+        description: 'Log in user by cookie.',
     })
     @ApiResponse({
         status: 200,
         description: 'User has been successfully logged in.',
         headers: {
             ['Set-Cookie']: {
-                description: 'JWT token. It needs for user identification and authorization. It lives for 24 hours and it is `HttpOnly`.',
+                description:
+                    'JWT token. It needs for user identification and authorization. It lives for 24 hours and it is `HttpOnly`.',
                 schema: {
-                    type: 'string'
-                }
-            }
-        }
+                    type: 'string',
+                },
+            },
+        },
     })
     @Public()
     @Post('login')
-    async signIn(
-        @Body() signInDTO: SignInDTO,
-        @Res() response: Response
-    ) {
+    async signIn(@Body() signInDTO: SignInDTO, @Res() response: Response) {
         const accessToken = await this.authService.signIn(signInDTO.username, signInDTO.password);
         response.cookie('access_token', accessToken.access_token, {
             httpOnly: true,
@@ -76,7 +61,7 @@ export class AuthController implements IAuthController {
     @ApiTags('auth')
     @ApiOperation({
         summary: 'Get user profile.',
-        description: 'Get profile of user by cookie.'
+        description: 'Get profile of user by cookie.',
     })
     @ApiResponse({
         status: 200,
@@ -86,39 +71,33 @@ export class AuthController implements IAuthController {
     @UseGuards(AuthGuard)
     @Get('profile')
     async getSelfProfile(@Req() req: any, @Res() response: Response) {
-        const { user: userProfile, rootFolder } =
-            await this.authService.getProfile(req.user.sub);
+        const { user: userProfile, rootFolder } = await this.authService.getProfile(req.user.sub);
         return response.send({ ...userProfile, rootFolder });
     }
 
     @ApiTags('auth')
     @ApiOperation({
         summary: 'Register user.',
-        description: 'Create account for user.'
+        description: 'Create account for user.',
     })
     @ApiResponse({
         status: 200,
         description: 'User account has been successfully created.',
         headers: {
             ['Set-Cookie']: {
-                description: 'JWT token. It needs for user identification and authorization. It lives for 24 hours and it is `HttpOnly`.',
+                description:
+                    'JWT token. It needs for user identification and authorization. It lives for 24 hours and it is `HttpOnly`.',
                 schema: {
-                    type: 'string'
-                }
-            }
-        }
+                    type: 'string',
+                },
+            },
+        },
     })
     @Public()
     @Post('register')
-    async register(
-        @Body() registerDTO: RegisterDTO,
-        @Res() response: Response,
-    ) {
+    async register(@Body() registerDTO: RegisterDTO, @Res() response: Response) {
         try {
-            const accessToken = await this.authService.register(
-                registerDTO.username,
-                registerDTO.password,
-            );
+            const accessToken = await this.authService.register(registerDTO.username, registerDTO.password);
             response.cookie('access_token', accessToken.access_token, {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 24,

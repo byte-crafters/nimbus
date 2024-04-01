@@ -1,9 +1,6 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { User } from '../models/User';
-import {
-    PrismaClient as PostgresClient,
-    Prisma,
-} from '@prsm/generated/prisma-postgres-client-js';
+import { PrismaClient as PostgresClient, Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDTO } from './mock.users.service';
 import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueConstaint';
@@ -11,10 +8,7 @@ import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueCons
 export interface IUserService {
     findOne(username: string): Promise<User | undefined>;
     findAll(): Promise<User[] | null>;
-    createOne({
-        password,
-        username,
-    }: CreateUserDTO): Promise<TCreateUserResult>;
+    createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult>;
     getUserProfile(userId: string): Promise<{
         id: string;
         email: string;
@@ -48,10 +42,7 @@ export class UsersService implements IUserService {
         throw new NotImplementedException();
     }
 
-    async createOne({
-        password,
-        username,
-    }: CreateUserDTO): Promise<TCreateUserResult> {
+    async createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult> {
         try {
             const postgresClient = new PostgresClient();
 

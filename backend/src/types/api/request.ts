@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SignInDTO {
     @ApiProperty()
@@ -6,7 +6,7 @@ export class SignInDTO {
 
     @ApiProperty()
     password: string;
-};
+}
 
 /** TODO Share somehow types between fe and be */
 export class CreateFolderDTO {
@@ -15,8 +15,7 @@ export class CreateFolderDTO {
 
     @ApiProperty()
     parentFolderId: string;
-};
-
+}
 
 export class RegisterDTO {
     @ApiProperty()
@@ -24,4 +23,4 @@ export class RegisterDTO {
 
     @ApiProperty()
     password: string;
-};
+}

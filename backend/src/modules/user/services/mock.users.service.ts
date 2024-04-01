@@ -28,9 +28,7 @@ export class MockUsersService {
     }
 
     async getUserProfile(userId: string) {
-        const user = mockUsersCollection.find(
-            (user) => user.id.toString() === userId,
-        );
+        const user = mockUsersCollection.find((user) => user.id.toString() === userId);
         return user;
     }
 }
