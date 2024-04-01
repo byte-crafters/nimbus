@@ -46,7 +46,7 @@ export class FileStructureService implements IFileStructureService {
         // })
     }
 
-    async getFolderPath(folderId: string): Promise<string[]> {
+    async getFolderPath(folderId: string): Promise<{name: string, id: string}[]> {
         try {
             const mongoClient = new MongoClient();
 
@@ -67,17 +67,26 @@ export class FileStructureService implements IFileStructureService {
                 },
                 select: {
                     name: true,
+                    id: true
                 },
             });
 
-            const result = names.map((folder) => folder.name);
+            const result = names.map((folder) => {
+                return {
+                    name: folder.name,
+                    id: folder.id
+                };
+            });
 
             /** Remove userId - it's the highest ancestor folder name. */
             result.shift();
 
             if (ancestorFoldersIds.length !== 0) {
                 /** Add this folder name to make path include this folder. */
-                result.push(folder.name);
+                result.push({
+                    name: folder.name,
+                    id: folder.id
+                });
             }
 
             console.log(result);

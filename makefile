@@ -20,7 +20,7 @@ run-postgres-gui-docker:
 	docker compose --file docker-compose.local.dev.yaml up pgadmin -d --build
 
 run-mongo-docker:
-	docker compose --file docker-compose.local.dev.yaml up mongo -d --build
+	docker compose --file docker-compose.local.dev.yaml up mongo -d --build --force-recreate
 
 run-mongo-gui-docker:
 	docker compose --file docker-compose.local.dev.yaml up mongo-express -d --build
