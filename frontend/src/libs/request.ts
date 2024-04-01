@@ -2,16 +2,16 @@ import { TFoldersList } from "@/app/files/page";
 
 export const METHODS = {
     GET: 'GET',
-    POST: 'POST'
+    POST: 'POST',
 };
 
 export const HEADER = {
     Accept: 'Accept',
-    ContentType: 'Content-Type'
+    ContentType: 'Content-Type',
 };
 
 export const HEADERS_VALUE = {
-    JSON: 'application/json'
+    JSON: 'application/json',
 };
 
 export type TFolder = {
@@ -42,7 +42,7 @@ export type TGetUserRootFolderChildren = {
 };
 
 export type TGetUserProfile = {
-    rootFolder: TFolder,
+    rootFolder: TFolder;
     id: string;
 };
 
@@ -67,16 +67,15 @@ export class Requester {
         return fetch(`${this.host}/api/v1/auth/register`, {
             body: JSON.stringify({
                 username: login,
-                password: password
+                password: password,
             }),
             method: METHODS.POST,
             credentials: 'include',
             headers: {
                 [HEADER.Accept]: HEADERS_VALUE.JSON,
                 [HEADER.ContentType]: HEADERS_VALUE.JSON,
-            }
-        })
-            .then(this.handleResponse);
+            },
+        }).then(this.handleResponse);
     }
 
     getUserProfile(): Promise<TGetUserProfile> {
@@ -86,9 +85,8 @@ export class Requester {
             headers: {
                 [HEADER.Accept]: HEADERS_VALUE.JSON,
                 [HEADER.ContentType]: HEADERS_VALUE.JSON,
-            }
-        })
-            .then(this.handleResponse);
+            },
+        }).then(this.handleResponse);
     }
 
     getUserRootFolder(): Promise<TGetUserRootFolderChildren> {
@@ -99,8 +97,7 @@ export class Requester {
                 [HEADER.Accept]: HEADERS_VALUE.JSON,
                 [HEADER.ContentType]: HEADERS_VALUE.JSON,
             },
-        })
-            .then(this.handleResponse);
+        }).then(this.handleResponse);
     }
 
     getChildren(folderId: string): Promise<TGetChildren> {
@@ -111,15 +108,17 @@ export class Requester {
                 [HEADER.Accept]: HEADERS_VALUE.JSON,
                 [HEADER.ContentType]: HEADERS_VALUE.JSON,
             },
-        })
-            .then(this.handleResponse);
+        }).then(this.handleResponse);
     }
 
-    postCreateFolder(folderName: string, parentFolderId: string): Promise<TPostCreateFolder> {
+    postCreateFolder(
+        folderName: string,
+        parentFolderId: string
+    ): Promise<TPostCreateFolder> {
         return fetch(`${this.host}/api/v1/files/folder`, {
             body: JSON.stringify({
                 folderName,
-                parentFolderId
+                parentFolderId,
             }),
             method: METHODS.POST,
             credentials: 'include',
@@ -127,9 +126,7 @@ export class Requester {
                 [HEADER.Accept]: HEADERS_VALUE.JSON,
                 [HEADER.ContentType]: HEADERS_VALUE.JSON,
             },
-        })
-            .then(this.handleResponse);
-
+        }).then(this.handleResponse);
     }
 
     uploadFiles(data: FormData, folderId: string): Promise<TUploadFilesResult> {

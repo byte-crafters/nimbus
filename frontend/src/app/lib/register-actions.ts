@@ -5,12 +5,18 @@ export type TRegisterReturn = {
     email: string;
     id: string;
     password: string;
-    rootFolder: TFolder,
+    rootFolder: TFolder;
     username: string;
 };
 
-export async function register(login: string, password: string): Promise<TGetUserProfile | null> {
-    const res: { access_token: string; } = await fetcher.register(login, password);
+export async function register(
+    login: string,
+    password: string
+): Promise<TGetUserProfile | null> {
+    const res: { access_token: string } = await fetcher.register(
+        login,
+        password
+    );
 
     if (res.access_token) {
         const userProfile = await fetcher.getUserProfile();

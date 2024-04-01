@@ -6,7 +6,9 @@
         "fe:dev": "next dev -p 4000",
         "fe:build": "next build",
         "fe:start": "next start -p 4000",
-        "fe:lint": "next lint"
+        "format:all": "prettier --write src",
+        "fe:lint": "npm run format:all && next lint",
+        "fe:fix": "next lint --fix"
     },
     "dependencies": {
         "next": "14.1.0",
@@ -17,9 +19,10 @@
         "@types/node": "^20",
         "@types/react": "^18",
         "@types/react-dom": "^18",
-        "eslint": "^8",
+        "eslint": "^8.57.0",
         "eslint-config-next": "14.1.0",
         "eslint-config-prettier": "^9.1.0",
+        "lint-staged": "^15.2.2",
         "prettier": "3.2.5",
         "typescript": "^5"
     }
