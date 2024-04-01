@@ -68,7 +68,7 @@ services:
     build:
       context: ./backend
       dockerfile: ./rs.Dockerfile
-    restart: always 
+    # restart: always 
     ports:
       - 27017:27017
     volumes:

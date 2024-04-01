@@ -16,6 +16,7 @@ WORKDIR /etc/mongo
 
 RUN openssl rand -base64 741 > ./keys/mongo-keyfile && \
     chmod 600 ./keys/mongo-keyfile && \
+    chmod +x /usr/local/bin/start.sh && \
     chown mongodb:mongodb ./keys/mongo-keyfile
 
 # ENTRYPOINT ls /usr/local/bin
