@@ -5,14 +5,20 @@ export type TRegisterReturn = {
     email: string;
     id: string;
     password: string;
-    rootFolder: TFolder,
+    rootFolder: TFolder;
     username: string;
 };
 
-export async function register(login: string, password: string): Promise<TGetUserProfile | null> {
+export async function register(
+    login: string,
+    password: string
+): Promise<TGetUserProfile | null> {
     try {
-        const res: { access_token: string; } = await fetcher.register(login, password);
-        console.log(res)
+        const res: { access_token: string } = await fetcher.register(
+            login,
+            password
+        );
+        console.log(res);
 
         if (res.access_token) {
             const userProfile = await fetcher.getUserProfile();
@@ -21,7 +27,7 @@ export async function register(login: string, password: string): Promise<TGetUse
 
         return null;
     } catch (e: unknown) {
-        console.log(e)
-        throw e
+        console.log(e);
+        throw e;
     }
 }

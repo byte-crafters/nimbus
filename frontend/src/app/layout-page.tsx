@@ -32,19 +32,18 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
 
     useEffect(() => {
-        (async () => { 
+        (async () => {
             try {
                 if (loggedUser === null) {
-                    fetcher.getUserProfile()
-                        .then((profile) => {
-                            console.log(profile);
-                            setLoggedUser(profile.id);
-                            setOpenedFolder(profile.rootFolder);
-                            router.push('/files');
-                        });
+                    fetcher.getUserProfile().then((profile) => {
+                        console.log(profile);
+                        setLoggedUser(profile.id);
+                        setOpenedFolder(profile.rootFolder);
+                        router.push('/files');
+                    });
                 }
             } catch (e: unknown) {
-                throw e
+                throw e;
             }
         })();
     }, []);

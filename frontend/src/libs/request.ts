@@ -1,6 +1,6 @@
-import { ClientRegistrationError } from "@/app/errors/ClientRegistrationError";
-import { ClientUnauthorizedError } from "@/app/errors/ClientUnauthorizedError";
-import { TFoldersList } from "@/app/files/page";
+import { ClientRegistrationError } from '@/app/errors/ClientRegistrationError';
+import { ClientUnauthorizedError } from '@/app/errors/ClientUnauthorizedError';
+import { TFoldersList } from '@/app/files/page';
 
 export const METHODS = {
     GET: 'GET',
@@ -57,14 +57,14 @@ export type TFile = {
 };
 
 export type TUploadFilesResult = {
-    files: TFile[],
-    folders: TFoldersList,
+    files: TFile[];
+    folders: TFoldersList;
     currentFolder: TFolder;
 };
 
 export type TRemoveFileResult = {
-    files: TFile[],
-    folders: TFoldersList,
+    files: TFile[];
+    folders: TFoldersList;
     currentFolder: TFolder;
 };
 
@@ -78,14 +78,14 @@ export class Requester {
             return await fetch(`${this.host}/api/v1/auth/register`, {
                 body: JSON.stringify({
                     username: login,
-                    password: password
+                    password: password,
                 }),
                 method: METHODS.POST,
                 credentials: 'include',
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
                     [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                }
+                },
             }).then(this.handleResponse);
         } catch (e: unknown) {
             // console.error(e);
@@ -101,7 +101,7 @@ export class Requester {
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
                     [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                }
+                },
             }).then(this.handleResponse);
         } catch (e: unknown) {
             // console.error(e);
@@ -158,9 +158,8 @@ export class Requester {
             body: data,
             headers: {
                 [HEADER.Accept]: HEADERS_VALUE.JSON,
-            }
-        })
-            .then(this.handleResponse);
+            },
+        }).then(this.handleResponse);
     }
 
     async removeFile(fileId: string): Promise<TRemoveFileResult> {
@@ -171,7 +170,7 @@ export class Requester {
                 // body: data,
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
-                }
+                },
             }).then(this.handleResponse);
         } catch (e: unknown) {
             // console.error(e);
@@ -187,12 +186,12 @@ export class Requester {
                 // body: data,
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
-                }
+                },
             }).then(async (response: Response) => {
                 console.log(response);
                 const res = await response.blob();
                 return res;
-            })
+            });
             //     .then((blob) => {
             //     console.log(blob);
 
@@ -220,7 +219,7 @@ export class Requester {
                 // body: data,
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
-                }
+                },
             }).then(async (response: Response) => {
                 console.log(response);
                 const res = await response.json();
