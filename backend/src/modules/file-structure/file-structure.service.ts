@@ -53,6 +53,7 @@ export class FileStructureService implements IFileStructureService {
             const mongoClient = new MongoClient();
 
             const folder = await this.getFolderById(folderId);
+
             console.log(folder)
             const ancestorFoldersIds = folder.path.slice(1);
             console.log(ancestorFoldersIds);
@@ -88,6 +89,7 @@ export class FileStructureService implements IFileStructureService {
                 }
                 if (e.code === 'P2023') {
                     /** 'Malformed ObjectID: invalid character '-' */
+                    throw e
                 }
             }
 
@@ -208,14 +210,31 @@ export class FileStructureService implements IFileStructureService {
         });
     }
 
-    getFolderById(folderId: string) {
-        const mongoClient = new MongoClient();
+    async getFolderById(folderId: string): Promise<TFolder | null> {
+        try {
+            const mongoClient = new MongoClient();
 
-        return mongoClient.node.findFirst({
-            where: {
-                id: folderId,
-            },
-        });
+            const folder = await mongoClient.node.findFirst({
+                where: {
+                    id: folderId,
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    owner: true,
+                    parentId: true,
+                    path: true
+                }
+            });
+
+            if (folder !== null) {
+                return folder
+            }
+
+            return null
+        } catch (e: unknown) {
+            throw e
+        }
     }
 
     async createUserFolder(

@@ -13,12 +13,13 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateFolderDTO } from '@src/types/api/request';
-import { CreateFolderResult } from '@src/types/api/response';
+import { CreateFolderResult, GetFolderResult200Decl, GetRootFolderResult200Decl } from '@src/types/api/response';
 import { FileStructureService } from '../file-structure/file-structure.service';
 import { FileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
 
+// export class TFol
 export class TUploadFileDTO {
     folderId: string;
 }
@@ -30,7 +31,7 @@ export class TUploadFileDTO {
 export class FilesController {
     constructor(
         @Inject(FileStructureService)
-        private fileStructureService: FileStructureService,
+        private fileStructureRepository: FileStructureService,
         @Inject(FileSystemService) private fileSystem: FileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
@@ -50,19 +51,17 @@ export class FilesController {
         const { folderName, parentFolderId } = createFolderDTO;
         const userId = request.user.sub;
 
-        const createdFolder = await this.fileStructureService.createUserFolder(
+        const createdFolder = await this.fileStructureRepository.createUserFolder(
             userId,
             folderName,
             parentFolderId,
         );
 
-        // this.fileSystem.createNestedFolder([...createdFolder.path, createdFolder.id]);
-
-        const children = await this.fileStructureService.getChildrenFoldersOf(
+        const children = await this.fileStructureRepository.getChildrenFoldersOf(
             createdFolder.parentId,
         );
         const parentFolder =
-            await this.fileStructureService.getFolderById(parentFolderId);
+            await this.fileStructureRepository.getFolderById(parentFolderId);
 
         return {
             parentFolder,
@@ -70,42 +69,61 @@ export class FilesController {
         };
     }
 
+    @ApiResponse({
+        status: 200,
+        type: GetFolderResult200Decl,
+        description: 'Get user folder.'
+    })
+    @ApiOperation({
+        summary: 'Get folder by id.',
+        description: 'Returns folder info by specified id.',
+    })
     @ApiTags('files')
     @Get('folder/:id')
-    async getFolderChildren(@Req() request: any, @Param('id') id: string) {
-        const parentFolderId = id;
-        const userId = request.user.sub;
+    async getFolderChildren(
+        @Req() request: any,
+        @Param('id') id: string
+    ) {
+        try {
+            const parentFolderId = id;
+            const userId = request.user.sub;
 
-        const user = await this.usersService.getUserProfile(userId);
+            const user = await this.usersService.getUserProfile(userId);
 
-        /** Now we find children nodes */
-        const children =
-            await this.fileStructureService.getChildrenFoldersOf(
-                parentFolderId,
-            );
-        const parentFolder =
-            await this.fileStructureService.getFolderById(parentFolderId);
-        const folderFiles =
-            await this.fileStructureService.getChildrenFilesOf(parentFolderId);
+            /** Now we find children nodes */
+            const children =
+                await this.fileStructureRepository.getChildrenFoldersOf(
+                    parentFolderId,
+                );
+            const parentFolder =
+                await this.fileStructureRepository.getFolderById(parentFolderId);
+            const folderFiles =
+                await this.fileStructureRepository.getChildrenFilesOf(parentFolderId);
 
-        const namesPath =
-            await this.fileStructureService.getFolderPath(parentFolderId);
+            const namesPath =
+                await this.fileStructureRepository.getFolderPath(parentFolderId);
         
-        namesPath.unshift(user.username);
+            namesPath.unshift(user.username);
+            /**
+             * Get names paths in usual names
+             */
 
-        console.log(namesPath)
-        /**
-         * Get names paths in usual names
-         */
+            return {
+                parentFolder,
+                folders: children,
+                files: folderFiles,
+                currentPath: namesPath,
+            };
+        } catch (e: unknown) {
 
-        return {
-            parentFolder,
-            folders: children,
-            files: folderFiles,
-            currentPath: namesPath,
-        };
+            throw e
+        }
     }
 
+    @ApiOperation({
+        summary: 'Get user root folder content.',
+        description: 'Return content of user root directory.',
+    })
     @ApiTags('files')
     @Get('user/folder/root')
     async getUserRootFolder(
@@ -114,9 +132,9 @@ export class FilesController {
         const userId = request.user.sub;
 
         const rootFolder =
-            await this.fileStructureService.getUserRootFolder(userId);
+            await this.fileStructureRepository.getUserRootFolder(userId);
         /** Now we find children nodes */
-        const children = await this.fileStructureService.getChildrenFoldersOf(
+        const children = await this.fileStructureRepository.getChildrenFoldersOf(
             rootFolder.id,
         );
         return {
@@ -125,6 +143,11 @@ export class FilesController {
         };
     }
 
+    @ApiOperation({
+        summary: 'Upload file.',
+        description: 'Upload file to specified folder. Supports uploading up to 10 files.',
+    })
+    @ApiTags('files')
     @Post('upload')
     @UseInterceptors(FilesInterceptor('files', 10))
     async uploadFile(
@@ -147,11 +170,11 @@ export class FilesController {
         });
 
         const currentFolder =
-            await this.fileStructureService.getFolderById(folderId);
+            await this.fileStructureRepository.getFolderById(folderId);
         const children =
-            await this.fileStructureService.getChildrenFoldersOf(folderId);
+            await this.fileStructureRepository.getChildrenFoldersOf(folderId);
         const folderFiles =
-            await this.fileStructureService.getChildrenFilesOf(folderId);
+            await this.fileStructureRepository.getChildrenFilesOf(folderId);
 
         return {
             currentFolder,
@@ -160,6 +183,11 @@ export class FilesController {
         };
     }
 
+    @ApiOperation({
+        summary: 'Remove file.',
+        description: 'Remove file with specified parameters.',
+    })
+    @ApiTags('files')
     @Post('remove/:fileId')
     async removeFile(@Req() request: any, @Param('fileId') fileId: string) {
         const userId = request.user.sub;
@@ -167,11 +195,11 @@ export class FilesController {
         const { fileId: removedFileId, folderId } =
             await this.fileService.removeFile(fileId, userId);
         const currentFolder =
-            await this.fileStructureService.getFolderById(folderId);
+            await this.fileStructureRepository.getFolderById(folderId);
         const children =
-            await this.fileStructureService.getChildrenFoldersOf(folderId);
+            await this.fileStructureRepository.getChildrenFoldersOf(folderId);
         const folderFiles =
-            await this.fileStructureService.getChildrenFilesOf(folderId);
+            await this.fileStructureRepository.getChildrenFilesOf(folderId);
 
         return {
             currentFolder,
@@ -180,6 +208,11 @@ export class FilesController {
         };
     }
 
+    @ApiOperation({
+        summary: 'Download file.',
+        description: 'Download specified file.',
+    })
+    @ApiTags('files')
     @Get('download/:fileId')
     async getFile(
         @Req() request: any,
@@ -197,6 +230,11 @@ export class FilesController {
         return new StreamableFile(fileStream);
     }
 
+    @ApiOperation({
+        summary: 'Get file info by id.',
+        description: 'Return full file info.',
+    })
+    @ApiTags('files')
     @Get('info/:fileId')
     async getFileInfo(
         @Req() request: any,
