@@ -17,6 +17,16 @@ export class CreateFolderDTO {
     parentFolderId: string;
 }
 
+export class RenameFolderDTO {
+    @ApiProperty()
+    newFolderName: string;
+}
+
+export class DeleteFolderParamsDTO {
+    @ApiProperty()
+    softDelete: boolean;
+}
+
 export class RegisterDTO {
     @ApiProperty()
     username: string;

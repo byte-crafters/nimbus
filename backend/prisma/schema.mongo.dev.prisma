@@ -17,12 +17,14 @@ model Node {
     parentId String
     owner    String
     path     String[]
+    removed  Boolean  @default(false)
 }
 
 model File {
-    id        String @id @default(auto()) @map("_id") @mongo_db.ObjectId
+    id        String  @id @default(auto()) @map("_id") @mongo_db.ObjectId
     name      String
     extension String
     owner     String
     folderId  String
+    removed   Boolean @default(false)
 }

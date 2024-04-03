@@ -31,7 +31,7 @@ export type TFile = {
 
 @Injectable()
 export class FileStructureService implements IFileStructureService {
-    constructor() {}
+    constructor() { }
 
     async getFoldersNames(folderIds: string[]) {
         const mongoClient = new MongoClient();
@@ -46,7 +46,7 @@ export class FileStructureService implements IFileStructureService {
         // })
     }
 
-    async getFolderPath(folderId: string): Promise<{name: string, id: string}[]> {
+    async getFolderPath(folderId: string): Promise<{ name: string, id: string; }[]> {
         try {
             const mongoClient = new MongoClient();
 
@@ -243,6 +243,50 @@ export class FileStructureService implements IFileStructureService {
             console.log(e);
             throw e;
         }
+    }
+
+
+    async renameFolder(newFolderName: string, folderId: string) {
+        const mongoClient = new MongoClient();
+
+        const folder = await mongoClient.node.update({
+            where: {
+                id: folderId
+            },
+            data: {
+                name: newFolderName
+            }
+        });
+
+        return folder;
+    }
+
+    async changeFolderRemovedState(folderId: string, removedState: boolean) {
+        const mongoClient = new MongoClient();
+
+        const folder = await mongoClient.node.update({
+            where: {
+                id: folderId
+            },
+            data:
+            {
+                removed: removedState
+            }
+        });
+
+        return folder;
+    }
+
+    async deleteFolder(folderId: string) {
+        const mongoClient = new MongoClient();
+
+        const folder = await mongoClient.node.delete({
+            where: {
+                id: folderId
+            }
+        });
+
+        return folder;
     }
 
     async createUserFolder(userId: string, folderName: string, parentFolderId: string) {

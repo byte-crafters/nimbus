@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as fs from 'node:fs/promises';
+import * as fsAsync from 'node:fs/promises';
+import * as fsSync from 'node:fs';
 import path from 'node:path';
 import { FILES } from '../files/constants';
 import util from 'node:util';
@@ -16,10 +17,10 @@ export interface IFileSystemService {
  */
 @Injectable()
 export class FileSystemService implements IFileSystemService {
-    constructor() {}
+    constructor() { }
 
     writeFile(fileBuffer: Buffer, filePath: string) {
-        return fs
+        return fsAsync
             .writeFile(filePath, fileBuffer)
             .then(() => {
                 console.log('Buffer has been written to file successfully');
@@ -29,8 +30,17 @@ export class FileSystemService implements IFileSystemService {
             });
     }
 
+    async removeFolder(folderPath: string) {
+        try {
+            return fsSync.rmSync(folderPath);
+        } catch (e: unknown) {
+            console.log(e);
+            throw e;
+        }
+    }
+
     removeFile(filePath: string) {
-        return fs
+        return fsAsync
             .unlink(filePath)
             .then(() => {
                 console.log('File was removed successfully');
@@ -44,7 +54,7 @@ export class FileSystemService implements IFileSystemService {
      * TODO: remove - we dont need to create this folder in file system
      */
     createNestedFolder(parentFolders: string[]): void {
-        fs.mkdir(path.join(FILES.FILES_PATH, ...parentFolders)).catch((e: any) => {
+        fsAsync.mkdir(path.join(FILES.FILES_PATH, ...parentFolders)).catch((e: any) => {
             if (e.code === 'EEXIST') {
                 return true;
             }
@@ -55,7 +65,7 @@ export class FileSystemService implements IFileSystemService {
 
     async createRootFolder() {
         try {
-            return await fs.mkdir(FILES.FILES_PATH);
+            return await fsAsync.mkdir(FILES.FILES_PATH);
         } catch (e: any) {
             if (e.errno !== undefined) {
                 const systemErrorName = util.getSystemErrorName(e.errno);
@@ -71,7 +81,7 @@ export class FileSystemService implements IFileSystemService {
 
     async createUserRootFolderByPath(path: string) {
         try {
-            await fs.mkdir(path);
+            await fsAsync.mkdir(path);
         } catch (e: any) {
             if (e.errno !== undefined) {
                 const systemErrorName = util.getSystemErrorName(e.errno);
@@ -86,7 +96,7 @@ export class FileSystemService implements IFileSystemService {
     }
 
     checkIfRootFolderExists() {
-        return fs
+        return fsAsync
             .access(FILES.FILES_PATH)
             .then(() => true)
             .catch(() => false);

@@ -98,7 +98,7 @@ export default function FilesContainer() {
                 type="file"
                 name="files"
                 multiple
-                onClick={() => {}}
+                onClick={() => { }}
             ></input>
             <button
                 onClick={() => {
@@ -141,6 +141,61 @@ export default function FilesContainer() {
                         >
                             {/* <div>asd</div> */}
                             <div>
+                                <button
+                                    onClick={() => {
+                                        const newName = prompt('Enter new folder name:');
+                                        if (newName !== null && newName.trim() !== '') {
+                                            fetcher
+                                                .renameFolder(folder.id, newName)
+                                                .then(
+                                                    ({ folder }) => {
+                                                        console.log('RENAMED');
+                                                        console.log(folder);
+                                                    }
+                                                );
+                                        }
+                                    }}
+                                >
+                                    rename
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const yes = prompt('You want to remove this file first in TRASH BIN?:');
+
+                                        if (yes === 'yes') {
+                                            fetcher
+                                                .deleteFolder(folder.id, true)
+                                                .then(
+                                                    ({ folder }) => {
+                                                        console.log('RENAMED');
+                                                        console.log(folder);
+                                                    }
+                                                );
+                                        } else {
+                                            fetcher
+                                                .deleteFolder(folder.id, false)
+                                                .then(
+                                                    ({ folder }) => {
+                                                        console.log('RENAMED');
+                                                        console.log(folder);
+                                                    }
+                                                );
+                                        }
+
+                                        // if (newName !== null && newName.trim() !== '') {
+                                        //     fetcher
+                                        //         .renameFolder(folder.id, newName)
+                                        //         .then(
+                                        //             ({ folder }) => {
+                                        //                 console.log('RENAMED');
+                                        //                 console.log(folder);
+                                        //             }
+                                        //         );
+                                        // }
+                                    }}
+                                >
+                                    delete
+                                </button>
                                 ./{folder.name} - {folder.id}
                             </div>
                         </li>
