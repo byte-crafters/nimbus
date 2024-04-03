@@ -15,9 +15,9 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateFolderDTO } from '@src/types/api/request';
+import { CreateFolderDTO, DeleteFolderParamsDTO, RenameFolderDTO } from '@src/types/api/request';
 import { CreateFolderResult, GetFolderResult200Decl, GetRootFolderResult200Decl } from '@src/types/api/response';
-import { FileStructureService } from '../file-structure/file-structure.service';
+import { FileStructureService, TFolder } from '../file-structure/file-structure.service';
 import { FileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
@@ -39,7 +39,7 @@ export class FilesController {
         @Inject(FileSystemService) private fileSystem: FileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-    ) {}
+    ) { }
 
     @ApiResponse({ status: 200, type: CreateFolderResult })
     @ApiOperation({
@@ -60,6 +60,48 @@ export class FilesController {
         return {
             parentFolder,
             folders: children,
+        };
+    }
+
+    @Post('folder/rename/:folderId')
+    async renameFolder(
+        @Body() renameFolderDTO: RenameFolderDTO,
+        @Req() request: any,
+        @Param('folderId') folderId: string
+    ) {
+        const { newFolderName } = renameFolderDTO;
+        const userId = request.user.sub;
+
+        const renamedFolder = await this.fileStructureRepository.renameFolder(newFolderName, folderId);
+
+        return {
+            folder: renamedFolder,
+        };
+    }
+
+    @Post('folder/delete/:folderId')
+    async deleteFolder(
+        @Body() deleteFolderDTO: DeleteFolderParamsDTO,
+        @Req() request: any,
+        @Param('folderId') folderId: string
+    ): Promise<{ folder: TFolder, softDelete: boolean}> {
+        const { softDelete } = deleteFolderDTO;
+        const userId = request.user.sub;
+
+        let deletedFolder: TFolder
+        if (!softDelete) {
+            /** We should delete all nested subfolders */
+            deletedFolder = await this.fileStructureRepository.deleteFolder(folderId);
+            const deletedFolderFS = await this.fileSystem.removeFolder(folderId)
+        } else {
+            /** We should change this flag for all files in nodes subtree */
+            deletedFolder = await this.fileStructureRepository.changeFolderRemovedState(folderId, true);
+            // const deletedFolderFS = await this.fileSystem.removeFolder(folderId)
+        }
+
+        return {
+            folder: deletedFolder,
+            softDelete
         };
     }
 
@@ -95,7 +137,7 @@ export class FilesController {
                 this.fileStructureRepository.getFolderPath(parentFolderId),
             ]);
 
-            const rootUserFolder = await this.fileStructureRepository.getUserRootFolder(userId)
+            const rootUserFolder = await this.fileStructureRepository.getUserRootFolder(userId);
 
             namesPath.unshift({
                 id: rootUserFolder.id,
