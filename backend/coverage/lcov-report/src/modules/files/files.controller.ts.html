@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/85</span>
+                <span class='fraction'>0/83</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/83</span>
+                <span class='fraction'>0/81</span>
             </div>
         
             
@@ -336,9 +336,7 @@
 <a name='L271'></a><a href='#L271'>271</a>
 <a name='L272'></a><a href='#L272'>272</a>
 <a name='L273'></a><a href='#L273'>273</a>
-<a name='L274'></a><a href='#L274'>274</a>
-<a name='L275'></a><a href='#L275'>275</a>
-<a name='L276'></a><a href='#L276'>276</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L274'></a><a href='#L274'>274</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -362,7 +360,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -463,8 +461,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -637,7 +633,7 @@
 import { IUserService } from '../user/services/users.service';
 <span class="cstat-no" title="statement not covered" >import { FileService } from './file.service';</span>
 <span class="cstat-no" title="statement not covered" >import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';</span>
-<span class="cstat-no" title="statement not covered" >import { FILES } from './constants';</span>
+import { FILES } from './constants';
 &nbsp;
 // export class TFol
 <span class="cstat-no" title="statement not covered" >export class T</span>UploadFileDTO {
@@ -668,9 +664,9 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
         const { folderName, parentFolderId } = <span class="cstat-no" title="statement not covered" >createFolderDTO;</span>
         const userId = <span class="cstat-no" title="statement not covered" >request.user.sub;</span>
 &nbsp;
-        const createdFolder = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.createUserFolder(userId, folderName, parentFolderId);</span>
+        const createdFolder = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.createFolder(userId, folderName, parentFolderId);</span>
 &nbsp;
-        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFoldersOf(createdFolder.parentId);</span>
+        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFolders(createdFolder.parentId);</span>
         const parentFolder = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getFolderById(parentFolderId);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        return {</span>
@@ -738,23 +734,21 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
     @Get('folder/:id')
 <span class="fstat-no" title="function not covered" >    async <span class="cstat-no" title="statement not covered" ></span>getFolderChildren(@Req() request: any, @Param('id') id: string) {</span>
 <span class="cstat-no" title="statement not covered" >        try {</span>
-<span class="cstat-no" title="statement not covered" >            console.log(FILES.FILES_PATH)</span>
-            const parentFolderId =
-<span class="cstat-no" title="statement not covered" >                id;</span>
+            const parentFolderId = <span class="cstat-no" title="statement not covered" >id;</span>
             const userId = <span class="cstat-no" title="statement not covered" >request.user.sub;</span>
 &nbsp;
             const user = <span class="cstat-no" title="statement not covered" >await this.usersService.getUserProfile(userId);</span>
 &nbsp;
             /** Now we find children nodes */
-            const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFoldersOf(parentFolderId);</span>
-            const folderFiles = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFilesOf(parentFolderId);</span>
+            const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFolders(parentFolderId);</span>
+            const folderFiles = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFiles(parentFolderId);</span>
             const parentFolder = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getFolderById(parentFolderId);</span>
             const namesPath = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getFolderPath(parentFolderId);</span>
 &nbsp;
             /** When using `Promise.all` we  */
             const result = <span class="cstat-no" title="statement not covered" >await Promise.all([</span>
-                this.fileStructureRepository.getChildrenFoldersOf(parentFolderId),
-                this.fileStructureRepository.getChildrenFilesOf(parentFolderId),
+                this.fileStructureRepository.getChildrenFolders(parentFolderId),
+                this.fileStructureRepository.getChildrenFiles(parentFolderId),
                 this.fileStructureRepository.getFolderById(parentFolderId),
                 this.fileStructureRepository.getFolderPath(parentFolderId),
             ]);
@@ -795,7 +789,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
 &nbsp;
         const rootFolder = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getUserRootFolder(userId);</span>
         /** Now we find children nodes */
-        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFoldersOf(rootFolder.id);</span>
+        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFolders(rootFolder.id);</span>
 <span class="cstat-no" title="statement not covered" >        return {</span>
             parentFolder: rootFolder,
             folders: children,
@@ -829,8 +823,8 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
         });
 &nbsp;
         const currentFolder = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getFolderById(folderId);</span>
-        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFoldersOf(folderId);</span>
-        const folderFiles = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFilesOf(folderId);</span>
+        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFolders(folderId);</span>
+        const folderFiles = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFiles(folderId);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        return {</span>
             currentFolder,
@@ -850,8 +844,8 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
 &nbsp;
         const { fileId: removedFileId, folderId } = <span class="cstat-no" title="statement not covered" >await this.fileService.removeFile(fileId, userId);</span>
         const currentFolder = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getFolderById(folderId);</span>
-        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFoldersOf(folderId);</span>
-        const folderFiles = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFilesOf(folderId);</span>
+        const children = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFolders(folderId);</span>
+        const folderFiles = <span class="cstat-no" title="statement not covered" >await this.fileStructureRepository.getChildrenFiles(folderId);</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        return {</span>
             currentFolder,
@@ -895,7 +889,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-07T16:31:08.229Z
+                at 2024-04-08T00:33:07.804Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

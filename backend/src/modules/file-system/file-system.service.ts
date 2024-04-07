@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import * as fsAsync from 'node:fs/promises';
+import { Inject, Injectable } from '@nestjs/common';
 import * as fsSync from 'node:fs';
+import { ReadStream, createReadStream } from 'node:fs';
+import * as fsAsync from 'node:fs/promises';
 import path from 'node:path';
-import { FILES } from '../files/constants';
 import util from 'node:util';
+import { IConfigService } from '../config/dev.config.service';
 import { CannotCreateUserRootFolderError } from '../errors/logic/CannotCreateRootFolder';
-import { CannotFullfillRequestError } from '../errors/logic/CannotFullfillRequest';
-// import * as sd from ''
 
 export interface IFileSystemService {
     createNestedFolder(parentFolders: string[]): void;
+    getFileStream(filePath: string): ReadStream;
+    createRootFolder(): Promise<void>;
+    createUserRootFolder(userId: string): Promise<void>;
+    getUserRootFolderPathStringSync(username: string): string;
+    writeFile(fileBuffer: Buffer, filePath: string): Promise<void>
 }
 
 /**
@@ -17,9 +21,15 @@ export interface IFileSystemService {
  */
 @Injectable()
 export class FileSystemService implements IFileSystemService {
-    constructor() { }
+    constructor(
+        @Inject(Symbol.for('IConfigService')) private configService: IConfigService
+    ) { }
 
-    writeFile(fileBuffer: Buffer, filePath: string) {
+    getFileStream(filePath: string) {
+        return createReadStream(filePath);
+    }
+
+    async writeFile(fileBuffer: Buffer, filePath: string): Promise<void> {
         return fsAsync
             .writeFile(filePath, fileBuffer)
             .then(() => {
@@ -53,19 +63,21 @@ export class FileSystemService implements IFileSystemService {
     /**
      * TODO: remove - we dont need to create this folder in file system
      */
-    createNestedFolder(parentFolders: string[]): void {
-        fsAsync.mkdir(path.join(FILES.FILES_PATH, ...parentFolders)).catch((e: any) => {
+    async createNestedFolder(parentFolders: string[]): Promise<Boolean> {
+        try {
+            await fsAsync.mkdir(path.join(this.configService.getStoragePath(), ...parentFolders));
+        } catch (e: any) {
             if (e.code === 'EEXIST') {
                 return true;
             }
 
             throw e;
-        });
+        }
     }
 
-    async createRootFolder() {
+    async createRootFolder(): Promise<void> {
         try {
-            return await fsAsync.mkdir(FILES.FILES_PATH);
+            return await fsAsync.mkdir(this.configService.getStoragePath());
         } catch (e: any) {
             if (e.errno !== undefined) {
                 const systemErrorName = util.getSystemErrorName(e.errno);
@@ -95,21 +107,20 @@ export class FileSystemService implements IFileSystemService {
         }
     }
 
-    checkIfRootFolderExists() {
+    async checkIfRootFolderExists() {
         return fsAsync
-            .access(FILES.FILES_PATH)
+            .access(this.configService.getStoragePath())
             .then(() => true)
             .catch(() => false);
     }
 
     /** Just generates string value WITHOUT creating folders. */
-    getUserRootFolderPathStringSync(username: string) {
-        // return `${FILES.FILES_PATH}/${username}`;
-        return path.join(FILES.FILES_PATH, username);
+    getUserRootFolderPathStringSync(username: string): string {
+        return path.join(this.configService.getStoragePath(), username);
     }
 
     /** TODO Need to disallow some username symbols. */
-    async createUserRootFolder(userId: string) {
+    async createUserRootFolder(userId: string): Promise<void> {
         try {
             const rootFolderExists = await this.checkIfRootFolderExists();
 

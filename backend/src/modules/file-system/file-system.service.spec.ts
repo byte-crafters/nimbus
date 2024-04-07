@@ -1,28 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fs from 'node:fs/promises';
 import path from 'path';
-import { FILES } from '../files/constants';
-import { FileSystemService } from './file-system.service';
+import { ConfigModule } from '../config/config.module';
+import { IConfigService } from '../config/dev.config.service';
+import { TestConfigService } from '../config/test.config.service';
+import { FileSystemService, IFileSystemService } from './file-system.service';
 
-describe('FileService', () => {
-    let service: FileSystemService;
+describe('FileService: file system service.', () => {
+    let service: IFileSystemService;
+    let config: IConfigService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [FileSystemService],
+            imports: [ConfigModule],
+            providers: [FileSystemService, {
+                provide: Symbol.for('IConfigService'),
+                useClass: TestConfigService
+            }],
         }).compile();
 
         service = module.get<FileSystemService>(FileSystemService);
+        config = module.get<IConfigService>(Symbol.for('IConfigService'));
     });
 
-    it('should be defined', () => {
+    it('Should be defined.', () => {
         expect(service).toBeDefined();
+        expect(config).toBeDefined();
     });
 
-    it('Create folder.', async () => {
-        await service.createRootFolder().then(() => {
-            expect(fs.access(FILES.TEST_FILES_PATH)).resolves;
-        });
+    it('Create root folder.', async () => {
+        await service.createRootFolder();
+        expect(fs.access(config.getStoragePath())).resolves;
     });
 
     it('Create user root folder BEFORE creating root files folder.', async () => {
@@ -33,33 +41,58 @@ describe('FileService', () => {
     });
 
     it('Create user root folder AFTER creating root files folder.', async () => {
-        await service.createRootFolder().then(() => {
-            const username = 'artembellId';
-            service.createUserRootFolder(username).catch(() => {
-                expect(fs.access(service.getUserRootFolderPathStringSync(username))).resolves.toBeTruthy();
-            });
-        });
+        await service.createRootFolder();
+        const username = 'artembellId';
+        try {
+            service.createUserRootFolder(username);
+        } catch (e: unknown) {
+            expect(fs.access(service.getUserRootFolderPathStringSync(username))).resolves.toBeTruthy();
+        }
     });
 
     it("Create user nested folder by path of parent folders' id", async () => {
         const folders = ['maksimbellId', 'testy'];
-        await service
-            .createRootFolder()
-            .then(() => {
-                return service.createUserRootFolder(folders[0]);
-            })
-            .then(() => {
-                return service.createNestedFolder(folders);
-            })
-            .then(() => {
-                const folderPath = path.join(FILES.TEST_FILES_PATH, ...folders);
-                console.log(folderPath);
-                expect(fs.access(folderPath)).resolves.toBeUndefined();
-                //
-            });
+        await service.createRootFolder();
+
+        await service.createUserRootFolder(folders[0]);
+        service.createNestedFolder(folders);
+        const folderPath = path.join(config.getStoragePath(), ...folders);
+        console.log(folderPath);
+        expect(fs.access(folderPath)).resolves.toBeUndefined();
     });
 
+    it("Write file.", async () => {
+        await service.createRootFolder();
+        expect(fs.access(config.getStoragePath())).resolves.toBeUndefined();
+
+        const filePath = path.join(config.getStoragePath(), "file.name.extension");
+        const fileContent = "TestString"
+        await service.writeFile(
+            Buffer.from(fileContent, 'utf-8'),
+            filePath
+        )
+        expect(fs.access(filePath)).resolves.toBeUndefined()
+
+        const fileStream = service.getFileStream(filePath)
+        const chunks = [];
+
+        for await (const chunk of fileStream) {
+            chunks.push(Buffer.from(chunk));
+        }
+
+        const string = Buffer.concat(chunks).toString("utf-8");
+        expect(string).toEqual(fileContent)
+    })
+
+    it("Remove folder", async () => {
+
+    })
+
+    it("Remove file", async () => {
+
+    })
+
     afterEach(async () => {
-        await fs.rm(FILES.TEST_FILES_PATH, { recursive: true, force: true });
+        await fs.rm(config.getStoragePath(), { recursive: true, force: true });
     });
 });

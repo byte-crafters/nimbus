@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaClient as MongoClient } from '@prsm/generated/prisma-mongo-client-js';
 import { User } from '../user/models/User';
-import { CreateUserRootFolderStructure, FileStructureService } from './file-structure.service';
+import { CreateUserRootFolderStructure, FileStructureRepository } from './file-structure.service';
 
 describe('FileService', () => {
-    let service: FileStructureService;
+    let service: FileStructureRepository;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [FileStructureService],
+            providers: [FileStructureRepository],
         }).compile();
 
-        service = module.get<FileStructureService>(FileStructureService);
+        service = module.get<FileStructureRepository>(FileStructureRepository);
     });
 
     it('should be defined', () => {
