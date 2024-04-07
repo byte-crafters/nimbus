@@ -49,7 +49,7 @@ export type TGetUserProfile = {
 };
 
 export type TRenameFolder = {
-    folder: TFolder
+    folder: TFolder;
 };
 
 export type TFile = {
@@ -113,19 +113,25 @@ export class Requester {
         }
     }
 
-    async deleteFolder(folderId: string, softDelete: boolean): Promise<TRenameFolder> {
+    async deleteFolder(
+        folderId: string,
+        softDelete: boolean
+    ): Promise<TRenameFolder> {
         try {
-            const response = await fetch(`${this.host}/api/v1/files/folder/delete/${folderId}`, {
-                method: METHODS.POST,
-                credentials: 'include',
-                headers: {
-                    [HEADER.Accept]: HEADERS_VALUE.JSON,
-                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                },
-                body: JSON.stringify({
-                    softDelete
-                }),
-            });
+            const response = await fetch(
+                `${this.host}/api/v1/files/folder/delete/${folderId}`,
+                {
+                    method: METHODS.POST,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                    body: JSON.stringify({
+                        softDelete,
+                    }),
+                }
+            );
 
             const jsonResponse = await this.handleResponse(response);
             return jsonResponse;
@@ -135,22 +141,28 @@ export class Requester {
         }
     }
 
-    async renameFolder(folderId: string, newFolderName: string): Promise<TRenameFolder> {
+    async renameFolder(
+        folderId: string,
+        newFolderName: string
+    ): Promise<TRenameFolder> {
         try {
-            const response = await fetch(`${this.host}/api/v1/files/folder/rename/${folderId}`, {
-                method: METHODS.POST,
-                credentials: 'include',
-                headers: {
-                    [HEADER.Accept]: HEADERS_VALUE.JSON,
-                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                },
-                body: JSON.stringify({
-                    newFolderName: newFolderName
-                }),
-            });
-            
-            const jsonResponse = await this.handleResponse(response)
-            return jsonResponse
+            const response = await fetch(
+                `${this.host}/api/v1/files/folder/rename/${folderId}`,
+                {
+                    method: METHODS.POST,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                    body: JSON.stringify({
+                        newFolderName: newFolderName,
+                    }),
+                }
+            );
+
+            const jsonResponse = await this.handleResponse(response);
+            return jsonResponse;
         } catch (e: unknown) {
             // console.error(e);
             throw new ClientRegistrationError();
