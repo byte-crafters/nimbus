@@ -25,7 +25,7 @@ export default function Auth() {
                     );
                     if (userProfile.id !== null) {
                         setLoggedUser?.(userProfile.id);
-                        router.push('/files');
+                        router.push('/files/my');
                     }
                 }}
             >

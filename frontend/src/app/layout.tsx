@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { PathContext, ProfileContext, Providers } from './layout-page';
 import React from 'react';
+import Link from 'next/link';
 
 // import "./globals.css";
 
@@ -20,7 +21,22 @@ export default function RootLayout({
     return (
         <Providers>
             <html lang="en">
-                <body className={inter.className}>{children}</body>
+                <body className={inter.className}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: '20px',
+                        }}
+                    >
+                        <Link href={'/login'}>Login</Link>
+                        <Link href={'/register'}>Register</Link>
+                        <Link href={'/files/my'}>My files</Link>
+                        <Link href={'/files/trash'}>Trash files</Link>
+                        <Link href={'/files/shared'}>Shared files</Link>
+                    </div>
+                    {children}
+                </body>
             </html>
         </Providers>
     );

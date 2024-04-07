@@ -39,7 +39,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
                         console.log(profile);
                         setLoggedUser(profile.id);
                         setOpenedFolder(profile.rootFolder);
-                        router.push('/files');
+                        router.push('/files/my');
                     });
                 }
             } catch (e: unknown) {
