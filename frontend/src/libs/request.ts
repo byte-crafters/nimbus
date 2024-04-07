@@ -30,7 +30,12 @@ export type TGetChildren = {
     parentFolder: TFolder;
     folders: TFolder[];
     files: TFile[];
-    currentPath: string[];
+    currentPath: TPath[];
+};
+
+export type TPath = {
+    name: string;
+    id: string;
 };
 
 export type TPostCreateFolder = {
