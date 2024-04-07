@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -85,7 +85,7 @@
 <a name='L20'></a><a href='#L20'>20</a>
 <a name='L21'></a><a href='#L21'>21</a>
 <a name='L22'></a><a href='#L22'>22</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -93,20 +93,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { IUserService } from '@modules/user/services/users.service';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+<span class="cstat-no" title="statement not covered" >import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';</span>
 import { JwtService } from '@nestjs/jwt';
 import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueConstaint';
 import { UserRegisterError } from '@src/modules/errors/ErrorUserRegister';
@@ -114,16 +114,16 @@ import { CannotFullfillRequestError } from '@src/modules/errors/logic/CannotFull
 import { GenericServerError } from '@src/modules/errors/logic/GenericServerError';
 import { FileStructureRepository } from '@src/modules/file-structure/file-structure.service';
 import { FileSystemService } from '@src/modules/file-system/file-system.service';
-import path from 'node:path';
+<span class="cstat-no" title="statement not covered" >import path from 'node:path';</span>
 import { IConfigService } from './dev.config.service';
 &nbsp;
 &nbsp;
 @Injectable()
-export class TestConfigService implements IConfigService {
-    constructor() { }
+export <span class="cstat-no" title="statement not covered" >class <span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >TestConfigService </span>implements IConfigService {</span></span>
+<span class="fstat-no" title="function not covered" >    constructor() { }</span>
 &nbsp;
-    getStoragePath(): string {
-        return path.join(path.resolve(process.cwd()), "_test_storage");
+<span class="fstat-no" title="function not covered" >    getStoragePath(</span>): string {
+<span class="cstat-no" title="statement not covered" >        return path.join(path.resolve(process.cwd()), "_test_storage");</span>
     }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -133,7 +133,7 @@ export class TestConfigService implements IConfigService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-07T16:31:08.229Z
+                at 2024-04-08T00:33:07.804Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

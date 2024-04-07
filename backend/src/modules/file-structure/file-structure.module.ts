@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
-import { FileStructureService } from './file-structure.service';
+import { FileStructureRepository } from './file-structure.service';
+import { MongoConnection } from './mongo-connection';
 
 @Module({
-    providers: [FileStructureService],
-    exports: [FileStructureService],
+    providers: [FileStructureRepository],
+    exports: [FileStructureRepository],
 })
 export class FilesStructureModule {}

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClient as MongoClient, Prisma } from '@prsm/generated/prisma-mongo-client-js';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
+import { MongoConnection } from './mongo-connection';
 
 export type CreateUserRootFolderStructure = {
     parentId: string;
@@ -30,25 +31,16 @@ export type TFile = {
 };
 
 @Injectable()
-export class FileStructureService implements IFileStructureService {
-    constructor() { }
-
-    async getFoldersNames(folderIds: string[]) {
-        const mongoClient = new MongoClient();
-
-        // return mongoClient.node.findMany({
-        //     where: {
-        //         id
-        //     },
-        //     select: {
-
-        //     }
-        // })
+export class FileStructureRepository implements IFileStructureService {
+    private connection: MongoClient
+    
+    constructor() { 
+        this.connection = new MongoConnection().Connection
     }
 
     async getFolderPath(folderId: string): Promise<{ name: string, id: string; }[]> {
         try {
-            const mongoClient = new MongoClient();
+            const mongoClient = this.connection
 
             const folder = await this.getFolderById(folderId);
             if (folder === null) {
