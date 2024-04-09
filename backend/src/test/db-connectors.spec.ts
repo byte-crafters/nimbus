@@ -4,9 +4,16 @@ import { PrismaClient as PostgresClient } from '@prsm/generated/prisma-postgres-
 import { v4 as uuidv4 } from 'uuid';
 
 describe('Test db connectors', () => {
-    test('Test Postgres connector: find by email', async () => {
-        const postgresClient = new PostgresClient();
+    const postgresClient = new PostgresClient()
+    const mongoClient = new MongoClient();
 
+    beforeEach(async () => {
+        await postgresClient.user.deleteMany()
+        await mongoClient.node.deleteMany()
+        await mongoClient.file.deleteMany()
+    })
+
+    test('Test Postgres connector: find by email', async () => {
         const testUserDTO = {
             email: Date.now + '+admin@nimbus.dev',
             name: 'Adam',
@@ -30,8 +37,6 @@ describe('Test db connectors', () => {
     });
 
     test('Test Mongo connector: find by email', async () => {
-        const mongoClient = new MongoClient();
-
         const testNodeDTO = {
             name: '/path/to/uploaded/file',
         };

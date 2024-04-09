@@ -6,7 +6,7 @@ import { IConfigService } from '../config/dev.config.service';
 import { TestConfigService } from '../config/test.config.service';
 import { FileSystemService, IFileSystemService } from './file-system.service';
 
-describe('FileService: file system service.', () => {
+describe('FileSystemService', () => {
     let service: IFileSystemService;
     let config: IConfigService;
 
@@ -53,13 +53,11 @@ describe('FileService: file system service.', () => {
     });
 
     it("Create user nested folder by path of parent folders' id", async () => {
-        const folders = ['maksimbellId', 'testy'];
         await service.createRootFolder();
-
+        const folders = ['maksimbellId', 'testy'];
         await service.createUserRootFolder(folders[0]);
-        service.createNestedFolder(folders);
+        await service.createNestedFolder(folders) 
         const folderPath = path.join(config.getStoragePath(), ...folders);
-        console.log(folderPath);
         expect(fs.access(folderPath)).resolves.toBeUndefined();
     });
 

@@ -22,7 +22,7 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:run-all": "jest --config ./jest.config.ts",
         "be:test:e2e": "jest --config ./src/test/jest-e2e.json",
-        "be:test:dev": "dotenv -e .env.local.dev -- jest --config ./jest.config.ts --testPathPattern ./src/modules/file-*/**",
+        "be:test:dev": "dotenv -e .env.local.dev -- jest --config ./jest.config.ts",
         "be:start:b": "nest start -b swc",
         "app:run": "tsc ./app/app.ts && node ./app/app.js",
         "be:mongo:dev:sync": "dotenv -e .env.local.dev -- prisma db push --schema ./prisma/schema.mongo.dev.prisma",
@@ -37,7 +37,8 @@
         "services:local:down": "docker compose --file ../docker-compose.local-deploy.dev.yaml down -v",
         "prisma:postgres:reset": "prisma migrate reset --schema ./prisma/schema.main.postgresql.prisma --force",
         "test:local:run-all": "npm run test:run-all && npm run test:e2e",
-        "deploy:local": "npm run prisma:postgres:reset && npm run services:local:up && npm run postgres:prisma && npm run mongo:prisma && npm run test:run-all && npm run test:e2e"
+        "deploy:local": "npm run prisma:postgres:reset && npm run services:local:up && npm run postgres:prisma && npm run mongo:prisma && npm run test:run-all && npm run test:e2e",
+        "test:unit": "dotenv -e .env.local.dev -- jest --config ./jest.config.ts"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",

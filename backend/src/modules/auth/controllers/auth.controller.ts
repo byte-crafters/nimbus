@@ -105,7 +105,6 @@ export class AuthController implements IAuthController {
 
             return response.send(accessToken);
         } catch (e: unknown) {
-            console.log(e);
             if (e instanceof UserRegisterError) {
                 response.status(HttpStatus.BAD_REQUEST).send(e.message);
             } else if (e instanceof GenericServerError) {
