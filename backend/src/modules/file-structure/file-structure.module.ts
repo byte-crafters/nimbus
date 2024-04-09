@@ -4,13 +4,17 @@ import { FileStructureRepository } from './file-structure.service';
 import { MongoConnection } from './mongo-connection';
 
 @Module({
-    providers: [{
-        provide: Symbol.for('IFileStructureRepository'),
-        useClass: FileStructureRepository
-    }],
-    exports: [{
-        provide: Symbol.for('IFileStructureRepository'),
-        useClass: FileStructureRepository
-    }],
+    providers: [
+        {
+            provide: Symbol.for('IFileStructureRepository'),
+            useClass: FileStructureRepository,
+        },
+    ],
+    exports: [
+        {
+            provide: Symbol.for('IFileStructureRepository'),
+            useClass: FileStructureRepository,
+        },
+    ],
 })
 export class FilesStructureModule {}

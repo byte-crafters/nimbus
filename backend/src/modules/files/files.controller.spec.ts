@@ -15,27 +15,22 @@ describe('FilesController', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            imports: [
-                FilesStructureModule,
-                FilesSystemModule,
-                FilesModule,
-                UsersModule
-            ],
+            imports: [FilesStructureModule, FilesSystemModule, FilesModule, UsersModule],
             providers: [
                 {
                     provide: Symbol.for('IFileStructureRepository'),
-                    useClass: FileStructureRepository
+                    useClass: FileStructureRepository,
                 },
                 {
                     provide: Symbol.for('IFileSystemService'),
-                    useClass: FileSystemService
+                    useClass: FileSystemService,
                 },
                 {
                     provide: Symbol.for('IConfigService'),
-                    useClass: TestConfigService
+                    useClass: TestConfigService,
                 },
                 userServiceDefaultProvider,
-                FileService
+                FileService,
             ],
             controllers: [FilesController],
         }).compile();

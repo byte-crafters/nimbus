@@ -15,7 +15,7 @@ import { ConfigModule } from '../config/config.module';
         FilesSystemModule,
         FilesStructureModule,
         UsersModule,
-        ConfigModule
+        ConfigModule,
     ],
 })
-export class AppModule { }
+export class AppModule {}

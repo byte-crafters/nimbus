@@ -7,16 +7,16 @@ import { TestConfigService } from './test.config.service';
     providers: [
         {
             provide: Symbol.for('IConfigService'),
-            useClass: DevConfigService
+            useClass: DevConfigService,
         },
-        TestConfigService
+        TestConfigService,
     ],
     exports: [
         {
             provide: Symbol.for('IConfigService'),
-            useClass: DevConfigService
+            useClass: DevConfigService,
         },
-        TestConfigService
-    ]
+        TestConfigService,
+    ],
 })
-export class ConfigModule { }
+export class ConfigModule {}

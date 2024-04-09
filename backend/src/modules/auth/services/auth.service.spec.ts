@@ -28,18 +28,18 @@ describe('AuthService', () => {
             providers: [
                 {
                     provide: Symbol.for('IFileStructureRepository'),
-                    useClass: FileStructureRepository
+                    useClass: FileStructureRepository,
                 },
                 {
                     provide: Symbol.for('IFileSystemService'),
-                    useClass: FileSystemService
+                    useClass: FileSystemService,
                 },
                 {
                     provide: Symbol.for('IConfigService'),
-                    useClass: TestConfigService
+                    useClass: TestConfigService,
                 },
                 userServiceDefaultProvider,
-                authServiceDefaultProvider
+                authServiceDefaultProvider,
             ],
         }).compile();
 

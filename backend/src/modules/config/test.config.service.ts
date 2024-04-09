@@ -10,12 +10,11 @@ import { FileSystemService } from '@src/modules/file-system/file-system.service'
 import path from 'node:path';
 import { IConfigService } from './dev.config.service';
 
-
 @Injectable()
 export class TestConfigService implements IConfigService {
-    constructor() { }
+    constructor() {}
 
     getStoragePath(): string {
-        return path.join(path.resolve(process.cwd()), "_test_storage");
+        return path.join(path.resolve(process.cwd()), '_test_storage');
     }
 }
