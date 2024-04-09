@@ -6,7 +6,7 @@ import { UserRegisterError } from '@src/modules/errors/ErrorUserRegister';
 import { CannotFullfillRequestError } from '@src/modules/errors/logic/CannotFullfillRequest';
 import { GenericServerError } from '@src/modules/errors/logic/GenericServerError';
 import { FileStructureRepository } from '@src/modules/file-structure/file-structure.service';
-import { FileSystemService } from '@src/modules/file-system/file-system.service';
+import { FileSystemService, IFileSystemService } from '@src/modules/file-system/file-system.service';
 
 export interface IAuthService {
     register(username: string, password: string): Promise<any>;
@@ -20,7 +20,7 @@ export class AuthService implements IAuthService {
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
         @Inject(FileStructureRepository)
         private fileStructureService: FileStructureRepository,
-        @Inject(FileSystemService) private fileSystem: FileSystemService,
+        @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         private jwtService: JwtService,
     ) {}
 
