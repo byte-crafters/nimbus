@@ -1,9 +1,12 @@
 'use client';
-import { TFile, TFolder, fetcher } from '@/libs/request';
+import { TFile, TFolder, TPath, fetcher } from '@/libs/request';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { PathContext, ProfileContext } from '../../layout-page';
+// import { PathContext, ProfileContext } from '../layout-page';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import { Browser } from '@/components';
+import { PathContext, ProfileContext } from '@/app/layout-page';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -11,11 +14,18 @@ import { PathContext, ProfileContext } from '../../layout-page';
 
 export type TFoldersList = TFolder[];
 
+export type TFolderChilren = {
+    folders: TFolder[];
+    files: TFile[];
+    currentPath: TPath[];
+};
+
 export default function FilesContainer() {
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
     const { loggedUser } = useContext(ProfileContext);
     const [showFoldersList, setShowFolders] = useState<TFoldersList>([]);
     const [files, setFiles] = useState<TFile[]>([]);
+    const [path, setPath] = useState<TPath[]>([]);
 
     const router = useRouter();
 
@@ -45,35 +55,50 @@ export default function FilesContainer() {
                 .then(({ folders }) => setShowFolders(folders));
         } else {
             const folderId = openedFolder.id;
-            fetcher
-                .getChildren(folderId)
-                .then(({ folders }) => setShowFolders(folders));
+            fetcher.getChildren(folderId).then(({ folders, currentPath }) => {
+                setShowFolders(folders);
+            });
         }
     }, []);
 
+    function openFolder(folder: TFolder, info: TFolderChilren) {
+        const { folders, files, currentPath } = info;
+
+        setShowFolders(folders);
+        setOpenedFolder?.(folder);
+        setFiles(files);
+        setPath(currentPath);
+    }
+
     return (
         <>
-            <h1>My files</h1>
-            <h2>Current user: `{loggedUser}`</h2>
-            <h2>Current path: `{openedFolder?.id}`</h2>
-            <br />
+            <Breadcrumbs aria-label="breadcrumb">
+                {path.map((item) => (
+                    <div
+                        onClick={() => {
+                            const folderId = item.id;
+                            fetcher
+                                .getChildren(folderId)
+                                .then(({ folders, files, currentPath }) => {
+                                    setShowFolders(folders);
+                                    setOpenedFolder?.(folderId); //fix that
+                                    setFiles(files);
+                                    setPath(currentPath);
+                                    console.log(currentPath);
+                                });
+                        }}
+                        key={item.id}
+                    >
+                        {item.name}
+                    </div>
+                ))}
+            </Breadcrumbs>
 
-            <button
-                onClick={() => {
-                    if (openedFolder) {
-                        const folderId = openedFolder.parentId;
-                        fetcher
-                            .getChildren(folderId)
-                            .then(({ folders, parentFolder, files }) => {
-                                setShowFolders(folders);
-                                setOpenedFolder?.(parentFolder);
-                                setFiles(files);
-                            });
-                    }
-                }}
-            >
-                Get on upper level
-            </button>
+            <Browser
+                files={files}
+                folders={showFoldersList}
+                openFolder={openFolder}
+            />
 
             <button
                 onClick={() => {
@@ -130,10 +155,11 @@ export default function FilesContainer() {
                             onClick={() => {
                                 fetcher
                                     .getChildren(folder.id)
-                                    .then(({ folders, files }) => {
+                                    .then(({ folders, files, currentPath }) => {
                                         setShowFolders(folders);
                                         setOpenedFolder?.(folder);
                                         setFiles(files);
+                                        setPath(currentPath);
                                     });
                             }}
                             id={`folder-item-${folder.id}`}
