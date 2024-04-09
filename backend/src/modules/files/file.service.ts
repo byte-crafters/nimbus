@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import path from 'node:path';
 import { FileStructureRepository, TFile } from '../file-structure/file-structure.service';
-import { FileSystemService } from '../file-system/file-system.service';
+import { IFileSystemService } from '../file-system/file-system.service';
 import { FILES } from './constants';
-import { createReadStream } from 'node:fs';
 
 export interface IFileService {}
 
@@ -22,7 +21,7 @@ export class FileService implements IFileService {
     constructor(
         @Inject(FileStructureRepository)
         private fileStructureService: FileStructureRepository,
-        @Inject(FileSystemService) private fileSystem: FileSystemService,
+        @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
     ) {}
 
     private getRealPath(userFolder: string) {

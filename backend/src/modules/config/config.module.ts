@@ -4,7 +4,19 @@ import { DevConfigService } from './dev.config.service';
 import { TestConfigService } from './test.config.service';
 
 @Module({
-    providers: [DevConfigService, TestConfigService],
-    exports: [DevConfigService, TestConfigService],
+    providers: [
+        {
+            provide: Symbol.for('IConfigService'),
+            useClass: DevConfigService
+        },
+        TestConfigService
+    ],
+    exports: [
+        {
+            provide: Symbol.for('IConfigService'),
+            useClass: DevConfigService
+        },
+        TestConfigService
+    ]
 })
 export class ConfigModule { }

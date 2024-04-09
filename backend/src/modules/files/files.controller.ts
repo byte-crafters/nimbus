@@ -3,7 +3,6 @@ import {
     Body,
     Controller,
     Get,
-    HttpStatus,
     Inject,
     InternalServerErrorException,
     Param,
@@ -11,18 +10,17 @@ import {
     Req,
     StreamableFile,
     UploadedFiles,
-    UseInterceptors,
+    UseInterceptors
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateFolderDTO, DeleteFolderParamsDTO, RenameFolderDTO } from '@src/types/api/request';
-import { CreateFolderResult, GetFolderResult200Decl, GetRootFolderResult200Decl } from '@src/types/api/response';
+import { CreateFolderResult, GetFolderResult200Decl } from '@src/types/api/response';
+import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
 import { FileStructureRepository, TFolder } from '../file-structure/file-structure.service';
-import { FileSystemService } from '../file-system/file-system.service';
+import { IFileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
-import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
-import { FILES } from './constants';
 
 // export class TFol
 export class TUploadFileDTO {
@@ -37,7 +35,7 @@ export class FilesController {
     constructor(
         @Inject(FileStructureRepository)
         private fileStructureRepository: FileStructureRepository,
-        @Inject(FileSystemService) private fileSystem: FileSystemService,
+        @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
     ) { }

@@ -13,7 +13,9 @@ export interface IFileSystemService {
     createRootFolder(): Promise<void>;
     createUserRootFolder(userId: string): Promise<void>;
     getUserRootFolderPathStringSync(username: string): string;
-    writeFile(fileBuffer: Buffer, filePath: string): Promise<void>
+    writeFile(fileBuffer: Buffer, filePath: string): Promise<void>;
+    removeFolder(folderPath: string): Promise<void>;
+    removeFile(filePath: string): Promise<void>;
 }
 
 /**
@@ -40,7 +42,7 @@ export class FileSystemService implements IFileSystemService {
             });
     }
 
-    async removeFolder(folderPath: string) {
+    async removeFolder(folderPath: string): Promise<void> {
         try {
             return fsSync.rmSync(folderPath);
         } catch (e: unknown) {
@@ -49,7 +51,7 @@ export class FileSystemService implements IFileSystemService {
         }
     }
 
-    removeFile(filePath: string) {
+    async removeFile(filePath: string): Promise<void> {
         return fsAsync
             .unlink(filePath)
             .then(() => {
