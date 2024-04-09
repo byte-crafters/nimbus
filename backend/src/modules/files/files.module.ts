@@ -5,9 +5,10 @@ import { FilesSystemModule } from '../file-system/file-system.module';
 import { UsersModule } from '../user/users.module';
 import { FileService } from './file.service';
 import { FilesController } from './files.controller';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
-    imports: [AuthModule, UsersModule, FilesStructureModule, FilesSystemModule],
+    imports: [AuthModule, UsersModule, FilesStructureModule, FilesSystemModule, ConfigModule],
     controllers: [FilesController],
     providers: [FileService],
     exports: [FileService],
