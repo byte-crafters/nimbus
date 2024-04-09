@@ -14,7 +14,6 @@ interface IProps {
     files: TFile[];
     folders: TFolder[];
     openFolder: (folder: TFolder, info: TFolderChildren) => void;
-    onFolderDelete: (folder: TFolder) => void;
 }
 
 export function Browser({ files, folders, openFolder }: IProps) {
@@ -24,7 +23,9 @@ export function Browser({ files, folders, openFolder }: IProps) {
         toggled: false,
     });
 
-    const [item, setItem] = useState<string | null>(null);
+    /** Selected files and folders */
+    const [selectedFiles, setSelectedFiles] = useState<TFile[]>([]);
+    const [selectedFolders, setSelectedFolders] = useState<TFolder[]>([]);
 
     function handleContextMenu(e: React.MouseEvent, id: string) {
         e.preventDefault();
@@ -44,9 +45,6 @@ export function Browser({ files, folders, openFolder }: IProps) {
             position: { x, y },
             toggled: true,
         });
-
-        setItem(id);
-        console.log(id);
     }
 
     function resetContextMenu() {
@@ -54,8 +52,11 @@ export function Browser({ files, folders, openFolder }: IProps) {
             position: { x: 0, y: 0 },
             toggled: false,
         });
+    }
 
-        setItem(null);
+    function resetSelection() {
+        setSelectedFiles([]);
+        setSelectedFolders([]);
     }
 
     useEffect(() => {
@@ -63,6 +64,7 @@ export function Browser({ files, folders, openFolder }: IProps) {
             if (contextMenuRef?.current) {
                 if (!contextMenuRef.current.contains(e.target)) {
                     resetContextMenu();
+                    resetSelection(); //can lead to some shit
                 }
             }
         }
@@ -81,9 +83,27 @@ export function Browser({ files, folders, openFolder }: IProps) {
                     <ListItem
                         className={clsx(
                             styles.card,
-                            folder.id == item ? styles.card__selected : null
+                            selectedFolders.includes(folder)
+                                ? styles.card__selected
+                                : null
                         )}
                         key={folder.id}
+                        onClick={(e) => {
+                            if (e.ctrlKey) {
+                                if (selectedFolders.includes(folder)) {
+                                    setSelectedFolders([
+                                        ...selectedFolders.filter(
+                                            (item) => item !== folder
+                                        ),
+                                    ]);
+                                } else {
+                                    setSelectedFolders([
+                                        ...selectedFolders,
+                                        folder,
+                                    ]);
+                                }
+                            }
+                        }}
                         onDoubleClick={() => {
                             fetcher.getChildren(folder.id).then((info) => {
                                 openFolder(folder, info);
@@ -106,9 +126,26 @@ export function Browser({ files, folders, openFolder }: IProps) {
                     <ListItem
                         className={clsx(
                             styles.card,
-                            file.id == item ? styles.card__selected : null
+                            selectedFiles.includes(file)
+                                ? styles.card__selected
+                                : null
                         )}
                         key={file.id}
+                        onClick={(e) => {
+                            if (e.ctrlKey) {
+                                if (selectedFiles.includes(file)) {
+                                    setSelectedFiles([
+                                        ...selectedFiles.filter(
+                                            (item) => item !== file
+                                        ),
+                                    ]);
+                                    console.log('!!!');
+                                } else {
+                                    setSelectedFiles([...selectedFiles, file]);
+                                    console.log('???');
+                                }
+                            }
+                        }}
                         onContextMenu={(e) => handleContextMenu(e, file.id)}
                     >
                         <Image
@@ -127,16 +164,8 @@ export function Browser({ files, folders, openFolder }: IProps) {
                 toggled={contextMenu.toggled}
                 positionX={contextMenu.position.x}
                 positionY={contextMenu.position.y}
-                buttons={[
-                    {
-                        text: 'Delete',
-                        onClick: () => console.log('Deleted'),
-                    },
-                    {
-                        text: 'Rename',
-                        onClick: () => console.log('Renamed'),
-                    },
-                ]}
+                // selectedFiles={selectedFiles}
+                // selectedFolders={selectedFolders}
             />
         </>
     );
