@@ -1,7 +1,7 @@
 {
     "scripts": {
         "prepare": "husky",
-        "be:dev": "npm run --prefix backend be:start:local:dev",
+        "be:dev": "npm run --prefix backend dev",
         "be:migrate": "npm run --prefix backend migrate",
         "be:test": "npm run --prefix backend be:test:dev",
         "be:test:unit": "npm run --prefix backend test:unit",

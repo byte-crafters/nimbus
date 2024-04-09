@@ -1,3 +1,7 @@
+update:
+	cd ./frontend && npm install
+	cd ./backend && npm install
+
 clear:
 	./commands/clear.sh && ./commands/down.sh
 
@@ -5,13 +9,12 @@ run:
 	./commands/rewind.sh
 
 nimbus: run
-
 nimbus-restart: clear run
 
+# nimbus-win: run
+# nimbus-restart-win: clear run
+
 # Running services in docker
-run-caddy-docker:
-	docker compose --file docker-compose.local.dev.yaml up caddy_reverse_proxy -d --build
-	
 local-start-debug-main-services-docker: 
 	docker compose --file docker-compose.local.dev.yaml up postgres -d --build
 	docker compose --file docker-compose.local.dev.yaml up pgadmin -d --build
@@ -23,10 +26,10 @@ local-start-all-services-docker:
 	./rewind.sh
 
 # Start services for debugging frontend and backend
-win-run-caddy:
+caddy-run-locally:
 	caddy start --config ./backend/caddy/Caddyfile
 
-win-caddy-reload:
+caddy-reload-locally:
 	caddy reload --config ./backend/caddy/Caddyfile
 
 start-dev: local-start-debug-main-services-docker run-caddy-docker
@@ -40,8 +43,6 @@ local-prepare-tests: local-start-all-services-docker run-caddy-docker
 
 win-local-prepare-tests: local-start-all-services-docker win-run-caddy
 	
-
-
 local-remove-nginx:
 	sudo systemctl disable nginx
 	sudo systemctl stop nginx
