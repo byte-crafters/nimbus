@@ -29,29 +29,29 @@
 // @Injectable()
 // export class FileStructureRepository implements IFileStructureRepository {
 //     private connection: MongoClient
-    
-//     constructor() { 
+
+//     constructor() {
 //         this.connection = new MongoConnection().Connection
 //     }
 
 //     async getFolderPath(folderId: string): Promise<{ name: string, id: string; }[]> {
-        
+
 //     }
 
 //     async getChildrenFilesOf(folderId: string) {
-        
+
 //     }
 
 //     createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFile> {
-        
+
 //     }
 
 //     getFileById(fileId: string): Promise<TFile> {
-       
+
 //     }
 
 //     removeFile(fileId: string): Promise<Pick<TFile, 'folderId' | 'id'>> {
-        
+
 //     }
 
 //     // getFolderIdPath(folderId: string): string {
@@ -61,21 +61,20 @@
 //     /** TODO Need to disallow some username symbols. */
 //     /** TODO Remake tests to pass userId */
 //     async createUserRootFolder(userId: string): Promise<CreateUserRootFolderStructure> {
-       
+
 //     }
 
 //     getUserRootFolder(userId: string): Promise<TFolder> {
-        
+
 //     }
 
 //     getChildrenFoldersOf(folderId: string) {
-        
+
 //     }
 
 //     async getFolderById(folderId: string): Promise<TFolder | null> {
 
 //     }
-
 
 //     async renameFolder(newFolderName: string, folderId: string) {
 

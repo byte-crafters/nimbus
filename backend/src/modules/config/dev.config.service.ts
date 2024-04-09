@@ -7,9 +7,9 @@ export interface IConfigService {
 
 @Injectable()
 export class DevConfigService implements IConfigService {
-    constructor() { }
+    constructor() {}
 
     getStoragePath(): string {
-        return path.join(path.resolve(process.cwd()), "_files");
+        return path.join(path.resolve(process.cwd()), '_files');
     }
 }

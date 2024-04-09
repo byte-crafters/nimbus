@@ -10,7 +10,7 @@ import {
     Req,
     StreamableFile,
     UploadedFiles,
-    UseInterceptors
+    UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -37,7 +37,7 @@ export class FilesController {
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-    ) { }
+    ) {}
 
     @ApiResponse({ status: 200, type: CreateFolderResult })
     @ApiOperation({
@@ -61,13 +61,12 @@ export class FilesController {
         };
     }
 
-
     @ApiTags('files')
     @Post('folder/rename/:folderId')
     async renameFolder(
         @Body() renameFolderDTO: RenameFolderDTO,
         @Req() request: any,
-        @Param('folderId') folderId: string
+        @Param('folderId') folderId: string,
     ) {
         const { newFolderName } = renameFolderDTO;
         const userId = request.user.sub;
@@ -79,22 +78,21 @@ export class FilesController {
         };
     }
 
-
     @ApiTags('files')
     @Post('folder/delete/:folderId')
     async deleteFolder(
         @Body() deleteFolderDTO: DeleteFolderParamsDTO,
         @Req() request: any,
-        @Param('folderId') folderId: string
-    ): Promise<{ folder: TFolder, softDelete: boolean}> {
+        @Param('folderId') folderId: string,
+    ): Promise<{ folder: TFolder; softDelete: boolean }> {
         const { softDelete } = deleteFolderDTO;
         const userId = request.user.sub;
 
-        let deletedFolder: TFolder
+        let deletedFolder: TFolder;
         if (!softDelete) {
             /** We should delete all nested subfolders */
             deletedFolder = await this.fileStructureRepository.deleteFolder(folderId);
-            const deletedFolderFS = await this.fileSystem.removeFolder(folderId)
+            const deletedFolderFS = await this.fileSystem.removeFolder(folderId);
         } else {
             /** We should change this flag for all files in nodes subtree */
             deletedFolder = await this.fileStructureRepository.changeFolderRemovedState(folderId, true);
@@ -103,7 +101,7 @@ export class FilesController {
 
         return {
             folder: deletedFolder,
-            softDelete
+            softDelete,
         };
     }
 
@@ -143,7 +141,7 @@ export class FilesController {
 
             namesPath.unshift({
                 id: rootUserFolder.id,
-                name: rootUserFolder.name
+                name: rootUserFolder.name,
             });
             /**
              * Get names paths in usual names

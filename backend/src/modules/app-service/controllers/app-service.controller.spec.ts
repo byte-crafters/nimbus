@@ -9,17 +9,14 @@ describe('AppServiceController', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            imports: [
-                FilesSystemModule,
-                FilesStructureModule
+            imports: [FilesSystemModule, FilesStructureModule],
+            providers: [
+                {
+                    provide: Symbol.for('IFileStructureRepository'),
+                    useClass: FileStructureRepository,
+                },
             ],
-            providers: [{
-                provide: Symbol.for('IFileStructureRepository'),
-                useClass: FileStructureRepository
-            }],
-            controllers: [
-                AppServiceController
-            ],
+            controllers: [AppServiceController],
         }).compile();
 
         controller = module.get<AppServiceController>(AppServiceController);

@@ -21,7 +21,7 @@ export class AuthService implements IAuthService {
         @Inject(Symbol.for('IFileStructureRepository')) private fileStructureService: IFileStructureRepository,
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         private jwtService: JwtService,
-    ) { }
+    ) {}
 
     async register(username: string, password: string): Promise<any> {
         try {

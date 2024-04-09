@@ -23,9 +23,7 @@ export interface IFileSystemService {
  */
 @Injectable()
 export class FileSystemService implements IFileSystemService {
-    constructor(
-        @Inject(Symbol.for('IConfigService')) private configService: IConfigService
-    ) { }
+    constructor(@Inject(Symbol.for('IConfigService')) private configService: IConfigService) {}
 
     getFileStream(filePath: string) {
         return createReadStream(filePath);

@@ -16,23 +16,20 @@ describe('FileService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            imports: [
-                FilesStructureModule,
-                FilesSystemModule,
-                FilesModule,
-                UsersModule,
+            imports: [FilesStructureModule, FilesSystemModule, FilesModule, UsersModule],
+            providers: [
+                {
+                    provide: Symbol.for('IConfigService'),
+                    useClass: TestConfigService,
+                },
             ],
-            providers: [{
-                provide: Symbol.for('IConfigService'),
-                useClass: TestConfigService
-            }],
         }).compile();
 
         service = module.get<FileService>(FileService);
         config = module.get<IConfigService>(Symbol.for('IConfigService'));
     });
 
-    it("Should be defined", () => {
+    it('Should be defined', () => {
         expect(service).toBeDefined();
     });
 

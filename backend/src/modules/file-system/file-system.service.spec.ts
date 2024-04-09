@@ -12,13 +12,13 @@ describe('FileSystemService', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            // imports: [ConfigModule],
             providers: [
                 FileSystemService,
                 {
                     provide: Symbol.for('IConfigService'),
-                    useClass: TestConfigService
-                }],
+                    useClass: TestConfigService,
+                },
+            ],
         }).compile();
 
         service = module.get<FileSystemService>(FileSystemService);
@@ -56,21 +56,18 @@ describe('FileSystemService', () => {
         await service.createRootFolder();
         const folders = ['maksimbellId', 'testy'];
         await service.createUserRootFolder(folders[0]);
-        await service.createNestedFolder(folders) 
+        await service.createNestedFolder(folders);
         const folderPath = path.join(config.getStoragePath(), ...folders);
         expect(fs.access(folderPath)).resolves.toBeUndefined();
     });
 
-    it("Write file.", async () => {
+    it('Write file.', async () => {
         await service.createRootFolder();
         expect(fs.access(config.getStoragePath())).resolves.toBeUndefined();
 
-        const filePath = path.join(config.getStoragePath(), "file.name.extension");
-        const fileContent = "TestString";
-        await service.writeFile(
-            Buffer.from(fileContent, 'utf-8'),
-            filePath
-        );
+        const filePath = path.join(config.getStoragePath(), 'file.name.extension');
+        const fileContent = 'TestString';
+        await service.writeFile(Buffer.from(fileContent, 'utf-8'), filePath);
         expect(fs.access(filePath)).resolves.toBeUndefined();
 
         const fileStream = service.getFileStream(filePath);
@@ -80,17 +77,13 @@ describe('FileSystemService', () => {
             chunks.push(Buffer.from(chunk));
         }
 
-        const string = Buffer.concat(chunks).toString("utf-8");
+        const string = Buffer.concat(chunks).toString('utf-8');
         expect(string).toEqual(fileContent);
     });
 
-    it("Remove folder", async () => {
+    it('Remove folder', async () => {});
 
-    });
-
-    it("Remove file", async () => {
-
-    });
+    it('Remove file', async () => {});
 
     afterEach(async () => {
         await fs.rm(config.getStoragePath(), { recursive: true, force: true });

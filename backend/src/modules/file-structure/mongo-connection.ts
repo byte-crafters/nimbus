@@ -1,4 +1,3 @@
-
 import { PrismaClient as MongoClient, Prisma } from '@prsm/generated/prisma-mongo-client-js';
 
 export class MongoConnection {

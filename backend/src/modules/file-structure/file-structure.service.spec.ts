@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../user/models/User';
-import { CreateUserRootFolderStructure, FileStructureRepository, IFileStructureRepository, TFileRepository } from './file-structure.service';
+import {
+    CreateUserRootFolderStructure,
+    FileStructureRepository,
+    IFileStructureRepository,
+    TFileRepository,
+} from './file-structure.service';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { ObjectId } from 'bson';
 import { TestConfigService } from '../config/test.config.service';
@@ -10,13 +15,16 @@ describe('FileStructureRepository: ', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [{
-                provide: Symbol.for('IFileStructureRepository'),
-                useClass: FileStructureRepository
-            }, {
-                provide: Symbol.for('IConfigService'),
-                useClass: TestConfigService
-            }],
+            providers: [
+                {
+                    provide: Symbol.for('IFileStructureRepository'),
+                    useClass: FileStructureRepository,
+                },
+                {
+                    provide: Symbol.for('IConfigService'),
+                    useClass: TestConfigService,
+                },
+            ],
         }).compile();
 
         service = module.get<IFileStructureRepository>(Symbol.for('IFileStructureRepository'));
@@ -83,55 +91,40 @@ describe('FileStructureRepository: ', () => {
         /** Create root user folder */
         const parentFolder = await service.createUserRootFolder(user.id);
 
-        const file = await service.createFile(
-            "testFile",
-            "png",
-            parentFolder.id,
-            user.id
-        );
+        const file = await service.createFile('testFile', 'png', parentFolder.id, user.id);
 
         expect(file).toMatchObject<Omit<TFileRepository, 'id'>>({
-            extension: "png",
+            extension: 'png',
             folderId: parentFolder.id,
-            name: "testFile",
+            name: 'testFile',
             owner: user.id,
-            removed: false
+            removed: false,
         });
 
         const children3 = await service.getChildrenFiles(parentFolder.id);
         expect(children3.length).toEqual(1);
 
-        const file2 = await service.createFile(
-            "testFile2",
-            "png2",
-            parentFolder.id,
-            user.id
-        );
+        const file2 = await service.createFile('testFile2', 'png2', parentFolder.id, user.id);
 
         expect(file2).toMatchObject<Omit<TFileRepository, 'id'>>({
-            extension: "png2",
+            extension: 'png2',
             folderId: parentFolder.id,
-            name: "testFile2",
+            name: 'testFile2',
             owner: user.id,
-            removed: false
+            removed: false,
         });
 
         const children4 = await service.getChildrenFiles(parentFolder.id);
         expect(children4.length).toEqual(2);
     });
 
-    it("Remove existing file (hard and soft delete).", async () => {
+    it('Remove existing file (hard and soft delete).', async () => {
         /** Fixtures */
         const user = new User({ password: '', username: 'maksimbell' });
         /** Create root user folder */
         const parentFolder = await service.createUserRootFolder(user.id);
 
-        const file = await service.createFile(
-            "testFile",
-            "png",
-            parentFolder.id,
-            user.id
-        );
+        const file = await service.createFile('testFile', 'png', parentFolder.id, user.id);
 
         const children3 = await service.getChildrenFiles(parentFolder.id);
         expect(children3.length).toEqual(1);
@@ -148,7 +141,7 @@ describe('FileStructureRepository: ', () => {
         expect(children4.length).toEqual(0);
     });
 
-    it("Remove not existing file.", async () => {
+    it('Remove not existing file.', async () => {
         /** Fixtures */
         const user = new User({ password: '', username: 'maksimbell' });
 
@@ -166,17 +159,11 @@ describe('FileStructureRepository: ', () => {
         }
     });
 
-    it("Remove existing folder (hard and soft delete).", async () => {
+    it('Remove existing folder (hard and soft delete).', async () => {});
 
-    });
+    it('Remove not existing folder.', async () => {});
 
-    it("Remove not existing folder.", async () => {
-
-    });
-
-    it("Rename existing folder.", async () => {
-
-    });
+    it('Rename existing folder.', async () => {});
 
     afterEach(async () => {
         await service.removeAllData();

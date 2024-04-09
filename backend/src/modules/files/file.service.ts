@@ -1,10 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import path from 'node:path';
 import { IConfigService } from '../config/dev.config.service';
-import { FileStructureRepository, IFileStructureRepository, TFileRepository } from '../file-structure/file-structure.service';
+import {
+    FileStructureRepository,
+    IFileStructureRepository,
+    TFileRepository,
+} from '../file-structure/file-structure.service';
 import { IFileSystemService } from '../file-system/file-system.service';
 
-export interface IFileService { }
+export interface IFileService {}
 
 export type TRemoveFileResult = {
     folderId: string;
@@ -21,10 +25,10 @@ export class FileService implements IFileService {
     constructor(
         @Inject(Symbol.for('IFileStructureRepository')) private fileStructureService: IFileStructureRepository,
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
-        @Inject(Symbol.for('IConfigService')) private config: IConfigService
-    ) { }
+        @Inject(Symbol.for('IConfigService')) private config: IConfigService,
+    ) {}
 
-    /** 
+    /**
      * TODO: move this method to FileSystemService
      */
     private getRealPath(userFolder: string) {
@@ -56,8 +60,7 @@ export class FileService implements IFileService {
 
             const fileStream = this.fileSystem.getFileStream(realFilePath);
             return fileStream;
-        } catch (e: unknown) {
-        }
+        } catch (e: unknown) {}
     }
 
     async getFileInfoById(fileId: string, userId: string): Promise<TFileRepository> {
@@ -68,8 +71,7 @@ export class FileService implements IFileService {
              */
             const file = await this.fileStructureService.getFileById(fileId);
             return file;
-        } catch (e: unknown) {
-        }
+        } catch (e: unknown) {}
     }
 
     async removeFile(fileId: string, userId: string): Promise<TRemoveFileResult> {
@@ -87,7 +89,6 @@ export class FileService implements IFileService {
                 folderId,
                 fileId: id,
             };
-        } catch (e: unknown) {
-        }
+        } catch (e: unknown) {}
     }
 }

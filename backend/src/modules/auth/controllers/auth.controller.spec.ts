@@ -28,9 +28,9 @@ describe('AuthController', () => {
             providers: [
                 {
                     provide: Symbol.for('IConfigService'),
-                    useClass: TestConfigService
+                    useClass: TestConfigService,
                 },
-                authServiceDefaultProvider
+                authServiceDefaultProvider,
             ],
             controllers: [AuthController],
         }).compile();
