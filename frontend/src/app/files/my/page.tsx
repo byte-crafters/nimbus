@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
 // import { PathContext, ProfileContext } from '../layout-page';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Browser } from '@/components';
+import { Browser, ContextMenu } from '@/components';
 import { PathContext, ProfileContext } from '@/app/layout-page';
 
 /**
@@ -14,11 +14,38 @@ import { PathContext, ProfileContext } from '@/app/layout-page';
 
 export type TFoldersList = TFolder[];
 
-export type TFolderChilren = {
+export type TFolderChildren = {
     folders: TFolder[];
     files: TFile[];
     currentPath: TPath[];
 };
+
+function handleFolderDelete(folder: TFolder) {
+    const yes = prompt('You want to remove this file first in TRASH BIN?:');
+
+    if (yes === 'yes') {
+        fetcher.deleteFolder(folder.id, true).then(({ folder }) => {
+            console.log('RENAMED');
+            console.log(folder);
+        });
+    } else {
+        fetcher.deleteFolder(folder.id, false).then(({ folder }) => {
+            console.log('RENAMED');
+            console.log(folder);
+        });
+    }
+
+    // if (newName !== null && newName.trim() !== '') {
+    //     fetcher
+    //         .renameFolder(folder.id, newName)
+    //         .then(
+    //             ({ folder }) => {
+    //                 console.log('RENAMED');
+    //                 console.log(folder);
+    //             }
+    //         );
+    // }
+}
 
 export default function FilesContainer() {
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
@@ -61,7 +88,7 @@ export default function FilesContainer() {
         }
     }, []);
 
-    function openFolder(folder: TFolder, info: TFolderChilren) {
+    function openFolder(folder: TFolder, info: TFolderChildren) {
         const { folders, files, currentPath } = info;
 
         setShowFolders(folders);
@@ -98,6 +125,7 @@ export default function FilesContainer() {
                 files={files}
                 folders={showFoldersList}
                 openFolder={openFolder}
+                onFolderDelete={handleFolderDelete}
             />
 
             <button
