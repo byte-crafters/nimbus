@@ -1,43 +1,26 @@
-local-remove: local-down local-clear
+clear:
+	./commands/clear.sh && ./commands/down.sh
 
-local-down:
-	docker compose --file docker-compose.local.dev.yaml down -v
-	docker ps
+run:
+	./commands/rewind.sh
 
-local-clear:
-	docker container prune --force
-	docker image prune --force
-	docker volume prune --force
+nimbus: run
+
+nimbus-restart: clear run
 
 # Running services in docker
 run-caddy-docker:
 	docker compose --file docker-compose.local.dev.yaml up caddy_reverse_proxy -d --build
-
-run-postgres-docker:
-	docker compose --file docker-compose.local.dev.yaml up postgres -d --build
-
-run-postgres-gui-docker:
-	docker compose --file docker-compose.local.dev.yaml up pgadmin -d --build
-
-run-mongo-docker:
-	docker compose --file docker-compose.local.dev.yaml up mongo -d --build --force-recreate
-
-run-mongo-gui-docker:
-	docker compose --file docker-compose.local.dev.yaml up mongo-express -d --build
-
-run-redis-docker:
-	docker compose --file docker-compose.local.dev.yaml up nimbus-redis -d --build 
-
-run-api-docker:
-	docker compose --file docker-compose.local.dev.yaml up nimbus-api -d --build 
-
-run-frontend-docker:
-	docker compose --file docker-compose.local.dev.yaml up nimbus-frontend -d --build 
-
-local-start-debug-main-services-docker: run-postgres-docker run-postgres-gui-docker run-mongo-docker run-mongo-gui-docker run-redis-docker
 	
-local-start-all-services-docker: run-postgres-docker run-postgres-gui-docker run-mongo-docker run-mongo-gui-docker run-redis-docker run-api-docker run-frontend-docker
-
+local-start-debug-main-services-docker: 
+	docker compose --file docker-compose.local.dev.yaml up postgres -d --build
+	docker compose --file docker-compose.local.dev.yaml up pgadmin -d --build
+	docker compose --file docker-compose.local.dev.yaml up mongo -d --build --force-recreate
+	docker compose --file docker-compose.local.dev.yaml up mongo-express -d --build
+	docker compose --file docker-compose.local.dev.yaml up nimbus-redis -d --build
+	
+local-start-all-services-docker: 
+	./rewind.sh
 
 # Start services for debugging frontend and backend
 win-run-caddy:
@@ -47,11 +30,9 @@ win-caddy-reload:
 	caddy reload --config ./backend/caddy/Caddyfile
 
 start-dev: local-start-debug-main-services-docker run-caddy-docker
-
 win-start-dev: local-start-debug-main-services-docker win-run-caddy
 
 restart-dev: local-remove start-dev
-
 win-restart-dev: win-caddy-reload local-remove win-start-dev
 
 # Run tests

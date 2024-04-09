@@ -13,5 +13,5 @@
 
 # echo "---DONE"
 
-sleep 10s
-mongosh -u root -p root --eval "rs.initiate();"
+# sleep 10s
+# mongosh -u root -p root --eval "rs.initiate();"
