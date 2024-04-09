@@ -38,7 +38,8 @@
         "prisma:postgres:reset": "prisma migrate reset --schema ./prisma/schema.main.postgresql.prisma --force",
         "test:local:run-all": "npm run test:run-all && npm run test:e2e",
         "deploy:local": "npm run prisma:postgres:reset && npm run services:local:up && npm run postgres:prisma && npm run mongo:prisma && npm run test:run-all && npm run test:e2e",
-        "test:unit": "dotenv -e .env.local.dev -- jest --config ./jest.config.ts"
+        "test:unit": "dotenv -e .env.local.dev -- jest --config ./jest.config.ts --runInBand",
+        "migrate": "npm run be:postgres:dev:mg && npm run be:mongo:dev:sync"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",

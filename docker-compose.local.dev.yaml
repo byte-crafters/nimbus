@@ -68,13 +68,14 @@ services:
     build:
       context: ./backend
       dockerfile: ./rs.Dockerfile
-    restart: always 
+    # restart: always 
     ports:
       - 27017:27017
     volumes:
       - mongo_vol1:/etc/mongo/keys
       - mongo_vol2:/var/lib/mongo
     # command: ["mongod", "--replSet", "rs0"]
+    command: ["start.sh"]
 
   mongo-express:
     image: mongo-express
