@@ -1,6 +1,6 @@
 import { ClientRegistrationError } from '@/app/errors/ClientRegistrationError';
 import { ClientUnauthorizedError } from '@/app/errors/ClientUnauthorizedError';
-import { TFoldersList } from '@/app/files/page';
+import { TFoldersList } from '@/app/files/my/page';
 
 export const METHODS = {
     GET: 'GET',
