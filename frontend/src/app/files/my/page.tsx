@@ -125,7 +125,6 @@ export default function FilesContainer() {
                 files={files}
                 folders={showFoldersList}
                 openFolder={openFolder}
-                onFolderDelete={handleFolderDelete}
             />
 
             <button
