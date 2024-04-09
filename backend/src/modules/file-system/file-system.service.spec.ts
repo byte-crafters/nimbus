@@ -12,11 +12,13 @@ describe('FileService: file system service.', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            imports: [ConfigModule],
-            providers: [FileSystemService, {
-                provide: Symbol.for('IConfigService'),
-                useClass: TestConfigService
-            }],
+            // imports: [ConfigModule],
+            providers: [
+                FileSystemService,
+                {
+                    provide: Symbol.for('IConfigService'),
+                    useClass: TestConfigService
+                }],
         }).compile();
 
         service = module.get<FileSystemService>(FileSystemService);
@@ -66,14 +68,14 @@ describe('FileService: file system service.', () => {
         expect(fs.access(config.getStoragePath())).resolves.toBeUndefined();
 
         const filePath = path.join(config.getStoragePath(), "file.name.extension");
-        const fileContent = "TestString"
+        const fileContent = "TestString";
         await service.writeFile(
             Buffer.from(fileContent, 'utf-8'),
             filePath
-        )
-        expect(fs.access(filePath)).resolves.toBeUndefined()
+        );
+        expect(fs.access(filePath)).resolves.toBeUndefined();
 
-        const fileStream = service.getFileStream(filePath)
+        const fileStream = service.getFileStream(filePath);
         const chunks = [];
 
         for await (const chunk of fileStream) {
@@ -81,16 +83,16 @@ describe('FileService: file system service.', () => {
         }
 
         const string = Buffer.concat(chunks).toString("utf-8");
-        expect(string).toEqual(fileContent)
-    })
+        expect(string).toEqual(fileContent);
+    });
 
     it("Remove folder", async () => {
 
-    })
+    });
 
     it("Remove file", async () => {
 
-    })
+    });
 
     afterEach(async () => {
         await fs.rm(config.getStoragePath(), { recursive: true, force: true });

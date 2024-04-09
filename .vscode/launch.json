@@ -30,7 +30,11 @@
                 "<node_internals>/**"
             ],
             "cwd": "${workspaceFolder}/backend",
-            "type": "node"
+            "type": "node",
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
         },
         {
             "name": "Debug frontend (local)",

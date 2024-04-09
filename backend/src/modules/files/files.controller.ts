@@ -51,9 +51,9 @@ export class FilesController {
         const { folderName, parentFolderId } = createFolderDTO;
         const userId = request.user.sub;
 
-        const createdFolder = await this.fileStructureRepository.createUserFolder(userId, folderName, parentFolderId);
+        const createdFolder = await this.fileStructureRepository.createFolder(userId, folderName, parentFolderId);
 
-        const children = await this.fileStructureRepository.getChildrenFoldersOf(createdFolder.parentId);
+        const children = await this.fileStructureRepository.getChildrenFolders(createdFolder.parentId);
         const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
 
         return {
@@ -127,15 +127,15 @@ export class FilesController {
             const user = await this.usersService.getUserProfile(userId);
 
             /** Now we find children nodes */
-            const children = await this.fileStructureRepository.getChildrenFoldersOf(parentFolderId);
-            const folderFiles = await this.fileStructureRepository.getChildrenFilesOf(parentFolderId);
+            const children = await this.fileStructureRepository.getChildrenFolders(parentFolderId);
+            const folderFiles = await this.fileStructureRepository.getChildrenFiles(parentFolderId);
             const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
             const namesPath = await this.fileStructureRepository.getFolderPath(parentFolderId);
 
             /** When using `Promise.all` we  */
             const result = await Promise.all([
-                this.fileStructureRepository.getChildrenFoldersOf(parentFolderId),
-                this.fileStructureRepository.getChildrenFilesOf(parentFolderId),
+                this.fileStructureRepository.getChildrenFolders(parentFolderId),
+                this.fileStructureRepository.getChildrenFiles(parentFolderId),
                 this.fileStructureRepository.getFolderById(parentFolderId),
                 this.fileStructureRepository.getFolderPath(parentFolderId),
             ]);
@@ -176,7 +176,7 @@ export class FilesController {
 
         const rootFolder = await this.fileStructureRepository.getUserRootFolder(userId);
         /** Now we find children nodes */
-        const children = await this.fileStructureRepository.getChildrenFoldersOf(rootFolder.id);
+        const children = await this.fileStructureRepository.getChildrenFolders(rootFolder.id);
         return {
             parentFolder: rootFolder,
             folders: children,
@@ -210,8 +210,8 @@ export class FilesController {
         });
 
         const currentFolder = await this.fileStructureRepository.getFolderById(folderId);
-        const children = await this.fileStructureRepository.getChildrenFoldersOf(folderId);
-        const folderFiles = await this.fileStructureRepository.getChildrenFilesOf(folderId);
+        const children = await this.fileStructureRepository.getChildrenFolders(folderId);
+        const folderFiles = await this.fileStructureRepository.getChildrenFiles(folderId);
 
         return {
             currentFolder,
@@ -231,8 +231,8 @@ export class FilesController {
 
         const { fileId: removedFileId, folderId } = await this.fileService.removeFile(fileId, userId);
         const currentFolder = await this.fileStructureRepository.getFolderById(folderId);
-        const children = await this.fileStructureRepository.getChildrenFoldersOf(folderId);
-        const folderFiles = await this.fileStructureRepository.getChildrenFilesOf(folderId);
+        const children = await this.fileStructureRepository.getChildrenFolders(folderId);
+        const folderFiles = await this.fileStructureRepository.getChildrenFiles(folderId);
 
         return {
             currentFolder,
