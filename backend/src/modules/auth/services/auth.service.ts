@@ -5,7 +5,7 @@ import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueCons
 import { UserRegisterError } from '@src/modules/errors/ErrorUserRegister';
 import { CannotFullfillRequestError } from '@src/modules/errors/logic/CannotFullfillRequest';
 import { GenericServerError } from '@src/modules/errors/logic/GenericServerError';
-import { FileStructureRepository } from '@src/modules/file-structure/file-structure.service';
+import { FileStructureRepository, IFileStructureRepository } from '@src/modules/file-structure/file-structure.service';
 import { FileSystemService, IFileSystemService } from '@src/modules/file-system/file-system.service';
 
 export interface IAuthService {
@@ -18,11 +18,10 @@ export interface IAuthService {
 export class AuthService implements IAuthService {
     constructor(
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-        @Inject(FileStructureRepository)
-        private fileStructureService: FileStructureRepository,
+        @Inject(Symbol.for('IFileStructureRepository')) private fileStructureService: IFileStructureRepository,
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         private jwtService: JwtService,
-    ) {}
+    ) { }
 
     async register(username: string, password: string): Promise<any> {
         try {

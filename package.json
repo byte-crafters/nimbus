@@ -1,8 +1,15 @@
 {
-  "scripts": {
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "husky": "^9.0.11"
-  }
+    "scripts": {
+        "prepare": "husky",
+        "be:dev": "npm run --prefix backend be:start:local:dev",
+        "be:test": "npm run --prefix backend be:test:dev",
+        "be:test:unit": "npm run --prefix backend test:unit",
+        "be:test:controller": "npm run --prefix backend test:controller",
+        "be:lint": "npm run --prefix backend lint",
+        "be:lint:fix": "npm run --prefix backend lint:fix",
+        "fe:dev": "npm run --prefix frontend fe:dev"
+    },
+    "devDependencies": {
+        "husky": "^9.0.11"
+    }
 }

@@ -28,5 +28,8 @@ import { jwtConstants } from './services/constants';
             useClass: AuthGuard,
         },
     ],
+    exports: [
+        authServiceDefaultProvider
+    ]
 })
 export class AuthModule {}

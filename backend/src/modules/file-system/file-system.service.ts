@@ -8,7 +8,7 @@ import { IConfigService } from '../config/dev.config.service';
 import { CannotCreateUserRootFolderError } from '../errors/logic/CannotCreateRootFolder';
 
 export interface IFileSystemService {
-    createNestedFolder(parentFolders: string[]): void;
+    createNestedFolder(parentFolders: string[]): Promise<boolean>;
     getFileStream(filePath: string): ReadStream;
     createRootFolder(): Promise<void>;
     createUserRootFolder(userId: string): Promise<void>;
@@ -35,7 +35,7 @@ export class FileSystemService implements IFileSystemService {
         return fsAsync
             .writeFile(filePath, fileBuffer)
             .then(() => {
-                console.log('Buffer has been written to file successfully');
+                // console.log('Buffer has been written to file successfully');
             })
             .catch((err) => {
                 console.error(err);
@@ -46,7 +46,6 @@ export class FileSystemService implements IFileSystemService {
         try {
             return fsSync.rmSync(folderPath);
         } catch (e: unknown) {
-            console.log(e);
             throw e;
         }
     }
@@ -65,7 +64,7 @@ export class FileSystemService implements IFileSystemService {
     /**
      * TODO: remove - we dont need to create this folder in file system
      */
-    async createNestedFolder(parentFolders: string[]): Promise<Boolean> {
+    async createNestedFolder(parentFolders: string[]): Promise<boolean> {
         try {
             await fsAsync.mkdir(path.join(this.configService.getStoragePath(), ...parentFolders));
         } catch (e: any) {

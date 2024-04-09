@@ -35,6 +35,13 @@ export interface IFileStructureRepository {
     getChildrenFolders(folderId: string): Promise<TFolderRepository[]>;
     createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFileRepository>;
     removeFile(fileId: string, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>>;
+    getUserRootFolder(userId: string): Promise<TFolderRepository>;
+    getFolderById(folderId: string): Promise<TFolder | null>;
+    renameFolder(newFolderName: string, folderId: string): Promise<TFolderRepository>;
+    deleteFolder(folderId: string): Promise<TFolderRepository>;
+    getFolderPath(folderId: string): Promise<{ name: string, id: string; }[]>;
+    changeFolderRemovedState(folderId: string, removedState: boolean): Promise<TFolderRepository>;
+    getFileById(fileId: string): Promise<TFileRepository>;
 }
 
 @Injectable()
@@ -132,7 +139,7 @@ export class FileStructureRepository implements IFileStructureRepository {
         });
     }
 
-    getFileById(fileId: string): Promise<TFileRepository> {
+    async getFileById(fileId: string): Promise<TFileRepository> {
         try {
 
             return this.connection.file.findUnique({
@@ -174,7 +181,6 @@ export class FileStructureRepository implements IFileStructureRepository {
                 });
             }
         } catch (e: unknown) {
-            console.log(e)
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 if (e.code === 'P2025') {
                     throw new DbFileRecordDoesNotExist();
@@ -206,7 +212,7 @@ export class FileStructureRepository implements IFileStructureRepository {
         });
     }
 
-    getUserRootFolder(userId: string): Promise<TFolder> {
+    async getUserRootFolder(userId: string): Promise<TFolderRepository> {
         return this.connection.node.findFirst({
             where: {
                 name: userId,
@@ -244,14 +250,12 @@ export class FileStructureRepository implements IFileStructureRepository {
 
             return null;
         } catch (e: unknown) {
-            console.log('cauht');
-            console.log(e);
             throw e;
         }
     }
 
 
-    async renameFolder(newFolderName: string, folderId: string) {
+    async renameFolder(newFolderName: string, folderId: string): Promise<TFolderRepository> {
         const folder = await this.connection.node.update({
             where: {
                 id: folderId
@@ -264,7 +268,7 @@ export class FileStructureRepository implements IFileStructureRepository {
         return folder;
     }
 
-    async changeFolderRemovedState(folderId: string, removedState: boolean) {
+    async changeFolderRemovedState(folderId: string, removedState: boolean): Promise<TFolderRepository> {
         const folder = await this.connection.node.update({
             where: {
                 id: folderId
@@ -278,7 +282,7 @@ export class FileStructureRepository implements IFileStructureRepository {
         return folder;
     }
 
-    async deleteFolder(folderId: string) {
+    async deleteFolder(folderId: string): Promise<TFolderRepository> {
         const folder = await this.connection.node.delete({
             where: {
                 id: folderId

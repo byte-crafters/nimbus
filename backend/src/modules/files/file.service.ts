@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import path from 'node:path';
 import { IConfigService } from '../config/dev.config.service';
-import { FileStructureRepository, TFileRepository } from '../file-structure/file-structure.service';
+import { FileStructureRepository, IFileStructureRepository, TFileRepository } from '../file-structure/file-structure.service';
 import { IFileSystemService } from '../file-system/file-system.service';
 
-export interface IFileService {}
+export interface IFileService { }
 
 export type TRemoveFileResult = {
     folderId: string;
@@ -19,11 +19,10 @@ export type TGetFileResult = {
 @Injectable()
 export class FileService implements IFileService {
     constructor(
-        @Inject(FileStructureRepository)
-        private fileStructureService: FileStructureRepository,
+        @Inject(Symbol.for('IFileStructureRepository')) private fileStructureService: IFileStructureRepository,
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         @Inject(Symbol.for('IConfigService')) private config: IConfigService
-    ) {}
+    ) { }
 
     /** 
      * TODO: move this method to FileSystemService
@@ -55,10 +54,9 @@ export class FileService implements IFileService {
             const realFolderPath = this.getRealPath(userId);
             const realFilePath = path.join(realFolderPath, file.id);
 
-            const fileStream = this.fileSystem.getFileStream(realFilePath)
-            return fileStream
+            const fileStream = this.fileSystem.getFileStream(realFilePath);
+            return fileStream;
         } catch (e: unknown) {
-            console.log(e);
         }
     }
 
@@ -71,7 +69,6 @@ export class FileService implements IFileService {
             const file = await this.fileStructureService.getFileById(fileId);
             return file;
         } catch (e: unknown) {
-            console.log(e);
         }
     }
 
@@ -91,7 +88,6 @@ export class FileService implements IFileService {
                 fileId: id,
             };
         } catch (e: unknown) {
-            console.log(e);
         }
     }
 }

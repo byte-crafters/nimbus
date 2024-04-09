@@ -17,7 +17,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateFolderDTO, DeleteFolderParamsDTO, RenameFolderDTO } from '@src/types/api/request';
 import { CreateFolderResult, GetFolderResult200Decl } from '@src/types/api/response';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
-import { FileStructureRepository, TFolder } from '../file-structure/file-structure.service';
+import { FileStructureRepository, IFileStructureRepository, TFolder } from '../file-structure/file-structure.service';
 import { IFileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
@@ -33,8 +33,7 @@ export class TUploadFileDTO {
 })
 export class FilesController {
     constructor(
-        @Inject(FileStructureRepository)
-        private fileStructureRepository: FileStructureRepository,
+        @Inject(Symbol.for('IFileStructureRepository')) private fileStructureRepository: IFileStructureRepository,
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
