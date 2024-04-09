@@ -10,9 +10,6 @@ export type CreateUserRootFolderStructure = {
     id: string;
 };
 
-export interface IFileStructureService {
-    // getFolderIdPath(folderId: string): string;
-}
 
 export type TFolder = {
     id: string;
@@ -21,27 +18,42 @@ export type TFolder = {
     owner: string;
     path: string[];
 };
+export type TFileStructureRemoveAllData = Prisma.BatchPayload;
 
-export type TFile = {
-    id: string;
-    extension: string;
-    folderId: string;
-    name: string;
-    owner: string;
-};
+export type TFolderRepository = Prisma.Result<Prisma.NodeDelegate, Prisma.NodeFindUniqueArgs, 'findUnique'>;
+export type TFileRepository = Prisma.Result<Prisma.FileDelegate, Prisma.FileFindUniqueArgs, 'findUnique'>;
+
+export interface IFileStructureRepository {
+    /** 
+     * For testing purpose only!
+     * TODO: remove from production code.
+     */
+    removeAllData(): Promise<TFileStructureRemoveAllData[]>;
+    createUserRootFolder(userId: string): Promise<CreateUserRootFolderStructure>;
+    createFolder(userId: string, folderName: string, parentFolderId: string): Promise<TFolderRepository>;
+    getChildrenFiles(folderId: string): Promise<TFileRepository[]>;
+    getChildrenFolders(folderId: string): Promise<TFolderRepository[]>;
+    createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFileRepository>;
+    removeFile(fileId: string, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>>;
+}
 
 @Injectable()
-export class FileStructureRepository implements IFileStructureService {
-    private connection: MongoClient
-    
-    constructor() { 
-        this.connection = new MongoConnection().Connection
+export class FileStructureRepository implements IFileStructureRepository {
+    private connection: MongoClient;
+
+    constructor() {
+        this.connection = new MongoConnection().Connection;
+    }
+
+    async removeAllData(): Promise<TFileStructureRemoveAllData[]> {
+        return Promise.all([
+            this.connection.node.deleteMany(),
+            this.connection.file.deleteMany()
+        ]);
     }
 
     async getFolderPath(folderId: string): Promise<{ name: string, id: string; }[]> {
         try {
-            const mongoClient = this.connection
-
             const folder = await this.getFolderById(folderId);
             if (folder === null) {
                 throw new NoFolderWithThisIdError(`No folder with id ${folderId}.`);
@@ -51,7 +63,7 @@ export class FileStructureRepository implements IFileStructureService {
             const ancestorFoldersIds = folder.path.slice(1);
             console.log(ancestorFoldersIds);
 
-            const names = await mongoClient.node.findMany({
+            const names = await this.connection.node.findMany({
                 where: {
                     id: {
                         in: ancestorFoldersIds,
@@ -101,20 +113,16 @@ export class FileStructureRepository implements IFileStructureService {
         }
     }
 
-    async getChildrenFilesOf(folderId: string) {
-        const mongoClient = new MongoClient();
-
-        return mongoClient.file.findMany({
+    async getChildrenFiles(folderId: string): Promise<TFileRepository[]> {
+        return this.connection.file.findMany({
             where: {
                 folderId,
             },
         });
     }
 
-    createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFile> {
-        const mongoClient = new MongoClient();
-
-        return mongoClient.file.create({
+    async createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFileRepository> {
+        return this.connection.file.create({
             data: {
                 extension,
                 folderId,
@@ -124,11 +132,10 @@ export class FileStructureRepository implements IFileStructureService {
         });
     }
 
-    getFileById(fileId: string): Promise<TFile> {
+    getFileById(fileId: string): Promise<TFileRepository> {
         try {
-            const mongoClient = new MongoClient();
 
-            return mongoClient.file.findUnique({
+            return this.connection.file.findUnique({
                 where: {
                     id: fileId,
                 },
@@ -144,22 +151,36 @@ export class FileStructureRepository implements IFileStructureService {
         }
     }
 
-    removeFile(fileId: string): Promise<Pick<TFile, 'folderId' | 'id'>> {
+    async removeFile(fileId: string, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>> {
         try {
-            const mongoClient = new MongoClient();
-
-            return mongoClient.file.delete({
-                where: {
-                    id: fileId,
-                },
-                select: {
-                    folderId: true,
-                    id: true,
-                },
-            });
+            if (softDelete) {
+                return await this.connection.file.update({
+                    where: {
+                        id: fileId,
+                    },
+                    data: {
+                        removed: true
+                    },
+                });
+            } else {
+                return await this.connection.file.delete({
+                    where: {
+                        id: fileId,
+                    },
+                    select: {
+                        folderId: true,
+                        id: true,
+                    },
+                });
+            }
         } catch (e: unknown) {
+            console.log(e)
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 if (e.code === 'P2025') {
+                    throw new DbFileRecordDoesNotExist();
+                } else if (e.code === 'P2023') {
+                    /** TODO: add another exception class here. */
+                    /** Incorrect id format */
                     throw new DbFileRecordDoesNotExist();
                 }
             }
@@ -175,9 +196,7 @@ export class FileStructureRepository implements IFileStructureService {
     /** TODO Need to disallow some username symbols. */
     /** TODO Remake tests to pass userId */
     async createUserRootFolder(userId: string): Promise<CreateUserRootFolderStructure> {
-        const mongoClient = new MongoClient();
-
-        return mongoClient.node.create({
+        return this.connection.node.create({
             data: {
                 parentId: '',
                 name: userId,
@@ -188,19 +207,15 @@ export class FileStructureRepository implements IFileStructureService {
     }
 
     getUserRootFolder(userId: string): Promise<TFolder> {
-        const mongoClient = new MongoClient();
-
-        return mongoClient.node.findFirst({
+        return this.connection.node.findFirst({
             where: {
                 name: userId,
             },
         });
     }
 
-    getChildrenFoldersOf(folderId: string) {
-        const mongoClient = new MongoClient();
-
-        return mongoClient.node.findMany({
+    async getChildrenFolders(folderId: string): Promise<TFolderRepository[]> {
+        return this.connection.node.findMany({
             where: {
                 parentId: folderId,
             },
@@ -209,9 +224,7 @@ export class FileStructureRepository implements IFileStructureService {
 
     async getFolderById(folderId: string): Promise<TFolder | null> {
         try {
-            const mongoClient = new MongoClient();
-
-            const folder = await mongoClient.node.findFirst({
+            const folder = await this.connection.node.findFirst({
                 where: {
                     id: folderId,
                 },
@@ -239,9 +252,7 @@ export class FileStructureRepository implements IFileStructureService {
 
 
     async renameFolder(newFolderName: string, folderId: string) {
-        const mongoClient = new MongoClient();
-
-        const folder = await mongoClient.node.update({
+        const folder = await this.connection.node.update({
             where: {
                 id: folderId
             },
@@ -254,9 +265,7 @@ export class FileStructureRepository implements IFileStructureService {
     }
 
     async changeFolderRemovedState(folderId: string, removedState: boolean) {
-        const mongoClient = new MongoClient();
-
-        const folder = await mongoClient.node.update({
+        const folder = await this.connection.node.update({
             where: {
                 id: folderId
             },
@@ -270,9 +279,7 @@ export class FileStructureRepository implements IFileStructureService {
     }
 
     async deleteFolder(folderId: string) {
-        const mongoClient = new MongoClient();
-
-        const folder = await mongoClient.node.delete({
+        const folder = await this.connection.node.delete({
             where: {
                 id: folderId
             }
@@ -281,16 +288,14 @@ export class FileStructureRepository implements IFileStructureService {
         return folder;
     }
 
-    async createUserFolder(userId: string, folderName: string, parentFolderId: string) {
-        const mongoClient = new MongoClient();
-
-        const parentFolder = await mongoClient.node.findUnique({
+    async createFolder(userId: string, folderName: string, parentFolderId: string): Promise<TFolderRepository> {
+        const parentFolder = await this.connection.node.findUnique({
             where: {
                 id: parentFolderId,
             },
         });
 
-        return mongoClient.node.create({
+        return this.connection.node.create({
             data: {
                 parentId: parentFolderId,
                 name: folderName,

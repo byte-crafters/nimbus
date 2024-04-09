@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import path from 'node:path';
-import { FileStructureRepository, TFile } from '../file-structure/file-structure.service';
+import { IConfigService } from '../config/dev.config.service';
+import { FileStructureRepository, TFileRepository } from '../file-structure/file-structure.service';
 import { IFileSystemService } from '../file-system/file-system.service';
-import { FILES } from './constants';
 
 export interface IFileService {}
 
@@ -22,10 +22,14 @@ export class FileService implements IFileService {
         @Inject(FileStructureRepository)
         private fileStructureService: FileStructureRepository,
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
+        @Inject(Symbol.for('IConfigService')) private config: IConfigService
     ) {}
 
+    /** 
+     * TODO: move this method to FileSystemService
+     */
     private getRealPath(userFolder: string) {
-        return path.join(FILES.FILES_PATH, userFolder);
+        return path.join(this.config.getStoragePath(), userFolder);
     }
 
     async saveFileToFolder(
@@ -58,7 +62,7 @@ export class FileService implements IFileService {
         }
     }
 
-    async getFileInfoById(fileId: string, userId: string): Promise<TFile> {
+    async getFileInfoById(fileId: string, userId: string): Promise<TFileRepository> {
         try {
             /**
              * TODO
@@ -77,7 +81,7 @@ export class FileService implements IFileService {
              * TODO
              * Run this code only as a transaction
              */
-            const { folderId, id } = await this.fileStructureService.removeFile(fileId);
+            const { folderId, id } = await this.fileStructureService.removeFile(fileId, false);
             const realFolderPath = this.getRealPath(userId);
             const realFilePath = path.join(realFolderPath, id);
             await this.fileSystem.removeFile(realFilePath);

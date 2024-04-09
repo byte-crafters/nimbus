@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '@modules/app/app.module';
 import { User } from '@modules/user/models/User';
 
