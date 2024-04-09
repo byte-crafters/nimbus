@@ -5,6 +5,12 @@ update:
 clear:
 	./commands/clear.sh && ./commands/down.sh
 
+be:
+	npm run be:dev
+
+fe:
+	npm run fe:dev
+
 run:
 	./commands/rewind.sh
 
