@@ -56,7 +56,6 @@ export const ContextMenu = ({
             ref={contextMenuRef}
             className={styles['container' + (toggled ? '__visible' : '')]}
         >
-
             {canRename && (
                 <MenuItem onClick={handleSmth}>
                     <ListItemIcon>
