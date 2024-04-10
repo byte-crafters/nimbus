@@ -8,11 +8,13 @@ clear:
 run:
 	./commands/rewind.sh
 
-nimbus: run
-nimbus-restart: clear run
+win-run:
+	./commands/win-rewind.sh
 
-# nimbus-win: run
-# nimbus-restart-win: clear run
+nimbus: run
+win-nimbus: win-run
+nimbus-restart: clear run
+win-nimbus-restart: clear win-run 
 
 # Running services in docker
 local-start-debug-main-services-docker: 
