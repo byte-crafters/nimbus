@@ -1,0 +1,27 @@
+[class].card {
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    height: 140px;
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    &:hover {
+        background-color: rgba(120, 120, 120, 0.2);
+        border-radius: 5px;
+    }
+
+    &__name {
+    }
+
+    &__image {
+        width: 80px;
+        height: 80px;
+    }
+
+    &__selected {
+        background-color: rgba(240, 240, 240, 0.808);
+        border-radius: 5px;
+    }
+}

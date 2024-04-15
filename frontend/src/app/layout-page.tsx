@@ -1,4 +1,5 @@
 'use client';
+import { ModalProvider } from '@/components/Modal';
 import { TFolder, fetcher } from '@/libs/request';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useEffect, useState } from 'react';
@@ -51,7 +52,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
     return (
         <ProfileContext.Provider value={{ loggedUser, setLoggedUser }}>
             <PathContext.Provider value={{ openedFolder, setOpenedFolder }}>
-                {children}
+                <ModalProvider>{children}</ModalProvider>
             </PathContext.Provider>
         </ProfileContext.Provider>
     );
