@@ -6,6 +6,9 @@ import Image from 'next/image';
 import { ContextMenu } from '@/components';
 import clsx from 'clsx';
 import { TFolderChildren } from '@/app/files/my/page';
+import { BrowserItem } from './components/BrowserItem';
+import { StringDialog } from '../StringDialog';
+import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
 
 const FOLDER_IMG = '/folder.png';
 const FILE_IMG = '/file.png';
@@ -17,7 +20,7 @@ interface IProps {
 }
 
 export function Browser({ files, folders, openFolder }: IProps) {
-    const contextMenuRef = useRef(null);
+    const contextMenuRef = useRef<any>(null);
     const [contextMenu, setContextMenu] = useState({
         position: { x: 0, y: 0 },
         toggled: false,
@@ -27,7 +30,7 @@ export function Browser({ files, folders, openFolder }: IProps) {
     const [selectedFiles, setSelectedFiles] = useState<TFile[]>([]);
     const [selectedFolders, setSelectedFolders] = useState<TFolder[]>([]);
 
-    function handleContextMenu(e: React.MouseEvent, id: string) {
+    function handleContextMenu(e: React.MouseEvent) {
         e.preventDefault();
 
         const contextMenuAttr = contextMenuRef.current?.getBoundingClientRect();
@@ -60,11 +63,11 @@ export function Browser({ files, folders, openFolder }: IProps) {
     }
 
     useEffect(() => {
-        function handler(e: React.MouseEvent) {
+        function handler(e: any): void {
             if (contextMenuRef?.current) {
-                if (!contextMenuRef.current.contains(e.target)) {
+                if (!contextMenuRef.current?.contains(e.target)) {
                     resetContextMenu();
-                    resetSelection(); //can lead to some shit
+                    resetSelection();
                 }
             }
         }
@@ -79,93 +82,88 @@ export function Browser({ files, folders, openFolder }: IProps) {
     return (
         <>
             <List className={styles.container}>
-                {folders.map((folder) => (
-                    <ListItem
-                        className={clsx(
-                            styles.card,
-                            selectedFolders.includes(folder)
-                                ? styles.card__selected
-                                : null
-                        )}
-                        key={folder.id}
-                        onClick={(e) => {
-                            if (e.ctrlKey) {
-                                if (selectedFolders.includes(folder)) {
-                                    setSelectedFolders([
-                                        ...selectedFolders.filter(
-                                            (item) => item !== folder
-                                        ),
-                                    ]);
-                                } else {
-                                    setSelectedFolders([
-                                        ...selectedFolders,
-                                        folder,
-                                    ]);
+                {folders.map((folder) => {
+                    const selected = selectedFolders.includes(folder);
+                    return (
+                        <BrowserItem
+                            item={folder}
+                            image={FOLDER_IMG}
+                            selected={selected}
+                            handleClick={(e) => {
+                                if (e.ctrlKey) {
+                                    if (selectedFolders.includes(folder)) {
+                                        setSelectedFolders([
+                                            ...selectedFolders.filter(
+                                                (item) => item !== folder
+                                            ),
+                                        ]);
+                                    } else {
+                                        setSelectedFolders([
+                                            ...selectedFolders,
+                                            folder,
+                                        ]);
+                                    }
                                 }
-                            }
-                        }}
-                        onDoubleClick={() => {
-                            fetcher.getChildren(folder.id).then((info) => {
-                                openFolder(folder, info);
-                            });
-                        }}
-                        onContextMenu={(e) => handleContextMenu(e, folder.id)}
-                    >
-                        <Image
-                            src={FOLDER_IMG}
-                            alt=""
-                            className={styles.card__image}
-                            width={100}
-                            height={100}
+                            }}
+                            handleDoubleClick={() => {
+                                fetcher.getChildren(folder.id).then((info) => {
+                                    openFolder(folder, info);
+                                });
+                            }}
+                            handleContextMenu={(e) => {
+                                if (!selected) {
+                                    setSelectedFolders([folder]);
+                                    setSelectedFiles([]);
+                                }
+                                handleContextMenu(e);
+                            }}
+                            key={folder.id}
                         />
-                        {folder.name}
-                    </ListItem>
-                ))}
+                    );
+                })}
 
-                {files.map((file) => (
-                    <ListItem
-                        className={clsx(
-                            styles.card,
-                            selectedFiles.includes(file)
-                                ? styles.card__selected
-                                : null
-                        )}
-                        key={file.id}
-                        onClick={(e) => {
-                            if (e.ctrlKey) {
-                                if (selectedFiles.includes(file)) {
-                                    setSelectedFiles([
-                                        ...selectedFiles.filter(
-                                            (item) => item !== file
-                                        ),
-                                    ]);
-                                    console.log('!!!');
-                                } else {
-                                    setSelectedFiles([...selectedFiles, file]);
-                                    console.log('???');
+                {files.map((file) => {
+                    const selected = selectedFiles.includes(file);
+                    return (
+                        <BrowserItem
+                            item={file}
+                            image={FILE_IMG}
+                            selected={selected}
+                            handleClick={(e) => {
+                                if (e.ctrlKey) {
+                                    if (selectedFiles.includes(file)) {
+                                        setSelectedFiles([
+                                            ...selectedFiles.filter(
+                                                (item) => item !== file
+                                            ),
+                                        ]);
+                                    } else {
+                                        setSelectedFiles([
+                                            ...selectedFiles,
+                                            file,
+                                        ]);
+                                    }
                                 }
-                            }
-                        }}
-                        onContextMenu={(e) => handleContextMenu(e, file.id)}
-                    >
-                        <Image
-                            src={FILE_IMG}
-                            alt=""
-                            className={styles.card__image}
-                            width={70}
-                            height={80}
+                            }}
+                            handleContextMenu={(e) => {
+                                if (!selected) {
+                                    setSelectedFiles([file]);
+                                    setSelectedFolders([]);
+                                }
+                                handleContextMenu(e);
+                            }}
+                            key={file.id}
                         />
-                        {file.name}
-                    </ListItem>
-                ))}
+                    );
+                })}
             </List>
             <ContextMenu
                 contextMenuRef={contextMenuRef}
                 toggled={contextMenu.toggled}
                 positionX={contextMenu.position.x}
                 positionY={contextMenu.position.y}
-                // selectedFiles={selectedFiles}
-                // selectedFolders={selectedFolders}
+                files={selectedFiles}
+                folders={selectedFolders}
             />
         </>
     );

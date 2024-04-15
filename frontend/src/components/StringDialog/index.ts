@@ -1,0 +1,1 @@
+export { StringDialog } from './StringDialog';
