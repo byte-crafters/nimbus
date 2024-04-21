@@ -14,17 +14,18 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateFolderDTO, DeleteFolderParamsDTO, RenameFolderDTO } from '@src/types/api/request';
+import { CreateFolderDTO, DeleteFolderParamsDTO, RenameFolderDTO, TApiFileId, TApiFolderId } from '@src/types/api/request';
 import { CreateFolderResult, GetFolderResult200Decl } from '@src/types/api/response';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
-import { FileStructureRepository, IFileStructureRepository, TFolder } from '../file-structure/file-structure.service';
+import { FileStructureRepository } from '../file-structure/file-structure.service';
 import { IFileSystemService } from '../file-system/file-system.service';
 import { IUserService } from '../user/services/users.service';
 import { FileService } from './file.service';
+import { IFileStructureRepository, TFolder, TFolderRepository } from '../file-structure/file-structure.type';
 
 // export class TFol
 export class TUploadFileDTO {
-    folderId: string;
+    folderId: TApiFolderId;
 }
 
 @Controller({
@@ -37,7 +38,7 @@ export class FilesController {
         @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-    ) {}
+    ) { }
 
     @ApiResponse({ status: 200, type: CreateFolderResult })
     @ApiOperation({
@@ -52,7 +53,7 @@ export class FilesController {
 
         const createdFolder = await this.fileStructureRepository.createFolder(userId, folderName, parentFolderId);
 
-        const children = await this.fileStructureRepository.getChildrenFolders(createdFolder.parentId);
+        const children = await this.fileStructureRepository.getChildrenFolders(createdFolder.parentFolderId);
         const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
 
         return {
@@ -66,7 +67,7 @@ export class FilesController {
     async renameFolder(
         @Body() renameFolderDTO: RenameFolderDTO,
         @Req() request: any,
-        @Param('folderId') folderId: string,
+        @Param('folderId') folderId: TApiFolderId,
     ) {
         const { newFolderName } = renameFolderDTO;
         const userId = request.user.sub;
@@ -83,19 +84,19 @@ export class FilesController {
     async deleteFolder(
         @Body() deleteFolderDTO: DeleteFolderParamsDTO,
         @Req() request: any,
-        @Param('folderId') folderId: string,
-    ): Promise<{ folder: TFolder; softDelete: boolean }> {
+        @Param('folderId') folderId: TApiFolderId,
+    ): Promise<{ folder: TFolder; softDelete: boolean; }> {
         const { softDelete } = deleteFolderDTO;
         const userId = request.user.sub;
 
         let deletedFolder: TFolder;
         if (!softDelete) {
+            /** TODO fix!!! */
             /** We should delete all nested subfolders */
-            deletedFolder = await this.fileStructureRepository.deleteFolder(folderId);
-            const deletedFolderFS = await this.fileSystem.removeFolder(folderId);
+            deletedFolder = await this.fileSystem.removeFolder(folderId.toString()) as any;
         } else {
             /** We should change this flag for all files in nodes subtree */
-            deletedFolder = await this.fileStructureRepository.changeFolderRemovedState(folderId, true);
+            deletedFolder = await this.fileStructureRepository.changeFolderRemovedState(folderId, true) as any;
             // const deletedFolderFS = await this.fileSystem.removeFolder(folderId)
         }
 
@@ -116,9 +117,9 @@ export class FilesController {
     })
     @ApiTags('files')
     @Get('folder/:id')
-    async getFolderChildren(@Req() request: any, @Param('id') id: string) {
+    async getFolderChildren(@Req() request: any, @Param('id') parentFolderId: TApiFolderId) {
         try {
-            const parentFolderId = id;
+            // const parentFolderId = parentFolderId;
             const userId = request.user.sub;
 
             const user = await this.usersService.getUserProfile(userId);
@@ -152,6 +153,16 @@ export class FilesController {
                 folders: children,
                 files: folderFiles,
                 currentPath: namesPath,
+                folderAccess: {
+                    downloadZip: true,
+                    downloadNestedFiles: false,
+                    editFolderInfo: false,
+                    editNestedFiles: true,
+                    removeFolder: false,
+                    removeNestedFiles: false,
+                    moveFolder: true,
+                    moveNestedFiles: true
+                }
             };
         } catch (e: unknown) {
             if (e instanceof NoFolderWithThisIdError) {
@@ -223,7 +234,7 @@ export class FilesController {
     })
     @ApiTags('files')
     @Post('remove/:fileId')
-    async removeFile(@Req() request: any, @Param('fileId') fileId: string) {
+    async removeFile(@Req() request: any, @Param('fileId') fileId: TApiFileId) {
         const userId = request.user.sub;
 
         const { fileId: removedFileId, folderId } = await this.fileService.removeFile(fileId, userId);
@@ -244,7 +255,7 @@ export class FilesController {
     })
     @ApiTags('files')
     @Get('download/:fileId')
-    async getFile(@Req() request: any, @Param('fileId') fileId: string): Promise<any> {
+    async getFile(@Req() request: any, @Param('fileId') fileId: TApiFileId): Promise<any> {
         const userId = request.user.sub;
 
         const fileStream = await this.fileService.getFileStreamById(fileId, userId);
@@ -260,7 +271,7 @@ export class FilesController {
     })
     @ApiTags('files')
     @Get('info/:fileId')
-    async getFileInfo(@Req() request: any, @Param('fileId') fileId: string): Promise<any> {
+    async getFileInfo(@Req() request: any, @Param('fileId') fileId: TApiFileId): Promise<any> {
         const userId = request.user.sub;
         const fileInfo = await this.fileService.getFileInfoById(fileId, userId);
         return fileInfo;

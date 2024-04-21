@@ -1,61 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient as MongoClient, Prisma } from '@prsm/generated/prisma-mongo-client-js';
+import { PrismaClient as PostgresClient, Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
-import { MongoConnection } from './mongo-connection';
+import { PostgresConnection } from './postgres-connection';
+import { CreateUserRootFolderStructure, IFileStructureRepository, TFileId, TFileRepository, TFileStructureRemoveAllData, TFolder, TFolderId, TFolderRepository } from './file-structure.type';
 
-export type CreateUserRootFolderStructure = {
-    parentId: string;
-    name: string;
-    id: string;
-};
-
-export type TFolder = {
-    id: string;
-    name: string;
-    parentId: string;
-    owner: string;
-    path: string[];
-};
-export type TFileStructureRemoveAllData = Prisma.BatchPayload;
-
-export type TFolderRepository = Prisma.Result<Prisma.NodeDelegate, Prisma.NodeFindUniqueArgs, 'findUnique'>;
-export type TFileRepository = Prisma.Result<Prisma.FileDelegate, Prisma.FileFindUniqueArgs, 'findUnique'>;
-
-export interface IFileStructureRepository {
-    /**
-     * For testing purpose only!
-     * TODO: remove from production code.
-     */
-    removeAllData(): Promise<TFileStructureRemoveAllData[]>;
-    createUserRootFolder(userId: string): Promise<CreateUserRootFolderStructure>;
-    createFolder(userId: string, folderName: string, parentFolderId: string): Promise<TFolderRepository>;
-    getChildrenFiles(folderId: string): Promise<TFileRepository[]>;
-    getChildrenFolders(folderId: string): Promise<TFolderRepository[]>;
-    createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFileRepository>;
-    removeFile(fileId: string, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>>;
-    getUserRootFolder(userId: string): Promise<TFolderRepository>;
-    getFolderById(folderId: string): Promise<TFolder | null>;
-    renameFolder(newFolderName: string, folderId: string): Promise<TFolderRepository>;
-    deleteFolder(folderId: string): Promise<TFolderRepository>;
-    getFolderPath(folderId: string): Promise<{ name: string; id: string }[]>;
-    changeFolderRemovedState(folderId: string, removedState: boolean): Promise<TFolderRepository>;
-    getFileById(fileId: string): Promise<TFileRepository>;
-}
 
 @Injectable()
 export class FileStructureRepository implements IFileStructureRepository {
-    private connection: MongoClient;
+    private connection: PostgresClient;
 
     constructor() {
-        this.connection = new MongoConnection().Connection;
+        this.connection = new PostgresConnection().Connection;
     }
 
     async removeAllData(): Promise<TFileStructureRemoveAllData[]> {
-        return Promise.all([this.connection.node.deleteMany(), this.connection.file.deleteMany()]);
+        return Promise.all([
+            this.connection.file.deleteMany(),
+            this.connection.folder.deleteMany()
+        ]);
     }
 
-    async getFolderPath(folderId: string): Promise<{ name: string; id: string }[]> {
+    async getFolderPath(folderId: TFolderId): Promise<Pick<TFolder, "id" | "name">[]> {
         try {
             const folder = await this.getFolderById(folderId);
             if (folder === null) {
@@ -66,7 +32,7 @@ export class FileStructureRepository implements IFileStructureRepository {
             const ancestorFoldersIds = folder.path.slice(1);
             console.log(ancestorFoldersIds);
 
-            const names = await this.connection.node.findMany({
+            const names = await this.connection.folder.findMany({
                 where: {
                     id: {
                         in: ancestorFoldersIds,
@@ -116,7 +82,7 @@ export class FileStructureRepository implements IFileStructureRepository {
         }
     }
 
-    async getChildrenFiles(folderId: string): Promise<TFileRepository[]> {
+    async getChildrenFiles(folderId: TFolderId): Promise<TFileRepository[]> {
         return this.connection.file.findMany({
             where: {
                 folderId,
@@ -124,18 +90,31 @@ export class FileStructureRepository implements IFileStructureRepository {
         });
     }
 
-    async createFile(name: string, extension: string, folderId: string, userId: string): Promise<TFileRepository> {
+    async createFile(name: string, extension: string, folderId: TFolderId, userId: string): Promise<TFileRepository> {
+
+        const folder = this.connection.folder.findUnique({
+            where: {
+                id: folderId
+            }
+        });
+
         return this.connection.file.create({
             data: {
                 extension,
-                folderId,
+                // folderId,
                 name,
                 owner: userId,
+                folder: {
+                    connect: {
+                        id: folderId
+                    }
+                },
+                // id: 'asd'
             },
         });
     }
 
-    async getFileById(fileId: string): Promise<TFileRepository> {
+    async getFileById(fileId: TFileId): Promise<TFileRepository> {
         try {
             return this.connection.file.findUnique({
                 where: {
@@ -153,7 +132,7 @@ export class FileStructureRepository implements IFileStructureRepository {
         }
     }
 
-    async removeFile(fileId: string, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>> {
+    async removeFile(fileId: TFileId, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>> {
         try {
             if (softDelete) {
                 return await this.connection.file.update({
@@ -197,35 +176,46 @@ export class FileStructureRepository implements IFileStructureRepository {
     /** TODO Need to disallow some username symbols. */
     /** TODO Remake tests to pass userId */
     async createUserRootFolder(userId: string): Promise<CreateUserRootFolderStructure> {
-        return this.connection.node.create({
-            data: {
-                parentId: '',
-                name: userId,
-                owner: userId,
-                path: [userId],
-            },
-        });
+        try {
+
+            return this.connection.folder.create({
+                data: {
+                    // parentId: '',
+                    name: userId,
+                    owner: userId,
+                    path: [],
+                    // parentFolderId: 
+                    // parentFolder: {
+                        //     create: {
+                            //     }
+                            // }
+                        },
+                    });
+        } catch (e: unknown) {
+            console.log(e)
+        }
+                
     }
 
     async getUserRootFolder(userId: string): Promise<TFolderRepository> {
-        return this.connection.node.findFirst({
+        return this.connection.folder.findFirst({
             where: {
                 name: userId,
             },
         });
     }
 
-    async getChildrenFolders(folderId: string): Promise<TFolderRepository[]> {
-        return this.connection.node.findMany({
+    async getChildrenFolders(folderId: TFolderId): Promise<TFolderRepository[]> {
+        return this.connection.folder.findMany({
             where: {
-                parentId: folderId,
+                parentFolderId: folderId,
             },
         });
     }
 
-    async getFolderById(folderId: string): Promise<TFolder | null> {
+    async getFolderById(folderId: TFolderId): Promise<TFolder | null> {
         try {
-            const folder = await this.connection.node.findFirst({
+            const folder = await this.connection.folder.findFirst({
                 where: {
                     id: folderId,
                 },
@@ -233,14 +223,16 @@ export class FileStructureRepository implements IFileStructureRepository {
                     id: true,
                     name: true,
                     owner: true,
-                    parentId: true,
+                    // parentId: true,
+                    parentFolder: true,
                     path: true,
                 },
             });
 
             console.log(`folder ${folder?.id}`);
             if (folder !== null) {
-                return folder;
+                /** TODO fix */
+                return folder as any;
             }
 
             return null;
@@ -249,8 +241,8 @@ export class FileStructureRepository implements IFileStructureRepository {
         }
     }
 
-    async renameFolder(newFolderName: string, folderId: string): Promise<TFolderRepository> {
-        const folder = await this.connection.node.update({
+    async renameFolder(newFolderName: string, folderId: TFolderId): Promise<TFolderRepository> {
+        const folder = await this.connection.folder.update({
             where: {
                 id: folderId,
             },
@@ -262,39 +254,39 @@ export class FileStructureRepository implements IFileStructureRepository {
         return folder;
     }
 
-    async changeFolderRemovedState(folderId: string, removedState: boolean): Promise<TFolderRepository> {
-        const folder = await this.connection.node.update({
-            where: {
-                id: folderId,
-            },
-            data: {
-                removed: removedState,
-            },
+    async changeFolderRemovedState(folderId: TFolderId, removedState: boolean): Promise<TFolderRepository> {
+        const folder = await this.connection.folder.update({
+            where: { id: folderId },
+            data: { removed: removedState },
         });
 
         return folder;
     }
 
-    async deleteFolder(folderId: string): Promise<TFolderRepository> {
-        const folder = await this.connection.node.delete({
+    async deleteFolder(folderId: TFolderId): Promise<TFolderRepository> {
+        const folder = await this.connection.folder.delete({
             where: {
                 id: folderId,
             },
+            // include: {
+            //     parentFolder: true
+            // }
         });
 
         return folder;
     }
 
-    async createFolder(userId: string, folderName: string, parentFolderId: string): Promise<TFolderRepository> {
-        const parentFolder = await this.connection.node.findUnique({
+    async createFolder(userId: string, folderName: string, parentFolderId: TFolderId): Promise<TFolderRepository> {
+        const parentFolder = await this.connection.folder.findUnique({
             where: {
                 id: parentFolderId,
             },
         });
 
-        return this.connection.node.create({
+        return this.connection.folder.create({
             data: {
-                parentId: parentFolderId,
+                // parentId: parentFolderId,
+                parentFolderId: parentFolderId,
                 name: folderName,
                 owner: userId,
                 path: [...parentFolder.path, parentFolderId],

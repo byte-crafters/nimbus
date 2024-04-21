@@ -41,4 +41,8 @@ describe('FilesController', () => {
     it('Should be defined', () => {
         expect(controller).toBeDefined();
     });
+
+    it('Should return file access rights info', async () => {
+        
+    })
 });
