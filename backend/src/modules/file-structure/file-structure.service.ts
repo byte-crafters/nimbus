@@ -15,10 +15,13 @@ export class FileStructureRepository implements IFileStructureRepository {
     }
 
     async removeAllData(): Promise<TFileStructureRemoveAllData[]> {
-        return Promise.all([
-            this.connection.file.deleteMany(),
-            this.connection.folder.deleteMany()
-        ]);
+        /** 
+         * Used only for tests.
+         * Need to run sequenctially to avoid `foreign key constaint violation` error.
+         */
+        const c1 = await this.connection.file.deleteMany();
+        const c2 = await this.connection.folder.deleteMany();
+        return [c1, c2];
     }
 
     async getFolderPath(folderId: TFolderId): Promise<Pick<TFolder, "id" | "name">[]> {
@@ -186,15 +189,15 @@ export class FileStructureRepository implements IFileStructureRepository {
                     path: [],
                     // parentFolderId: 
                     // parentFolder: {
-                        //     create: {
-                            //     }
-                            // }
-                        },
-                    });
+                    //     create: {
+                    //     }
+                    // }
+                },
+            });
         } catch (e: unknown) {
-            console.log(e)
+            console.log(e);
         }
-                
+
     }
 
     async getUserRootFolder(userId: string): Promise<TFolderRepository> {
