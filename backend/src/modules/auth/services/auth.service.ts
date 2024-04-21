@@ -5,7 +5,8 @@ import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueCons
 import { UserRegisterError } from '@src/modules/errors/ErrorUserRegister';
 import { CannotFullfillRequestError } from '@src/modules/errors/logic/CannotFullfillRequest';
 import { GenericServerError } from '@src/modules/errors/logic/GenericServerError';
-import { FileStructureRepository, IFileStructureRepository } from '@src/modules/file-structure/file-structure.service';
+import { FileStructureRepository } from '@src/modules/file-structure/file-structure.service';
+import { IFileStructureRepository } from '@src/modules/file-structure/file-structure.type';
 import { FileSystemService, IFileSystemService } from '@src/modules/file-system/file-system.service';
 
 export interface IAuthService {

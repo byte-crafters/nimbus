@@ -18,3 +18,55 @@ model User {
     username String  @unique
     password String?
 }
+
+model Folder {
+    id      String   @id @default(uuid()) @map("fd_id")
+    name    String?  @map("fd_name")
+    owner   String   @map("fd_owner")
+    path    String[] @map("fd_path")
+    removed Boolean  @default(false) @map("fd_removed")
+
+    parentFolder    Folder?  @relation("FolderParents", fields: [parentFolderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    childrenFolders Folder[] @relation("FolderParents")
+    parentFolderId  String?  @map("fd_parent_folder_id")
+    childrenFiles   File[]
+}
+
+model File {
+    id        String  @id @default(uuid()) @map("fl_id")
+    name      String  @map("fl_name")
+    extension String  @map("fl_extension")
+    owner     String  @map("fl_owner")
+    removed   Boolean @default(false) @map("fl_removed")
+
+    folder   Folder @relation(fields: [folderId], references: [id])
+    folderId String
+}
+
+// model FileAccessList {
+//     id          String @id
+//     file        File 
+//     fileId
+//     user        User   @relation(fields: [userId], references: [id])
+//     userId      String
+//     rightListId
+
+//     @@map("file_access_list")
+// }
+
+// model FileAccessRightsListToUsers {
+//     id String @id
+//     listId
+//     userId
+// }
+
+// model FileAccessRightsList {
+//     id      String @id
+//     rightId
+// }
+
+// model FileAccessRights {
+//     id          String @id
+//     value       String
+//     description String
+// }

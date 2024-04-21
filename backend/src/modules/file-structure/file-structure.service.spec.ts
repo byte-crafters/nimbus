@@ -1,14 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../user/models/User';
-import {
-    CreateUserRootFolderStructure,
-    FileStructureRepository,
-    IFileStructureRepository,
-    TFileRepository,
-} from './file-structure.service';
+import { FileStructureRepository } from './file-structure.service';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { ObjectId } from 'bson';
 import { TestConfigService } from '../config/test.config.service';
+import { IFileStructureRepository, CreateUserRootFolderStructure, TFileRepository } from './file-structure.type';
 
 describe('FileStructureRepository: ', () => {
     let service: IFileStructureRepository;
@@ -39,7 +35,8 @@ describe('FileStructureRepository: ', () => {
         const result = await service.createUserRootFolder(user.id);
 
         expect(result).toMatchObject<Omit<CreateUserRootFolderStructure, 'id'>>({
-            parentId: '',
+            // parentId: ,
+            parentFolderId: null,
             name: user.id,
         });
     });
@@ -58,7 +55,7 @@ describe('FileStructureRepository: ', () => {
         const nestedFolder1 = await service.createFolder(user.id, nestedFolder1Name, parentFolder.id);
         expect(nestedFolder1).toMatchObject<Omit<CreateUserRootFolderStructure, 'id'>>({
             name: nestedFolder1Name,
-            parentId: parentFolder.id,
+            parentFolderId: parentFolder.id,
         });
 
         const children = await service.getChildrenFolders(parentFolder.id);
@@ -68,7 +65,8 @@ describe('FileStructureRepository: ', () => {
         const nestedFolder2 = await service.createFolder(user.id, nestedFolder2Name, parentFolder.id);
         expect(nestedFolder2).toMatchObject<Omit<CreateUserRootFolderStructure, 'id'>>({
             name: nestedFolder2Name,
-            parentId: parentFolder.id,
+            parentFolderId: parentFolder.id,
+            
         });
 
         const children2 = await service.getChildrenFolders(parentFolder.id);
@@ -78,7 +76,7 @@ describe('FileStructureRepository: ', () => {
         const nestedFolder11 = await service.createFolder(user.id, nestedFolder11Name, nestedFolder1.id);
         expect(nestedFolder11).toMatchObject<Omit<CreateUserRootFolderStructure, 'id'>>({
             name: nestedFolder11Name,
-            parentId: nestedFolder1.id,
+            parentFolderId: nestedFolder1.id,
         });
 
         const children3 = await service.getChildrenFolders(nestedFolder1.id);
@@ -147,13 +145,13 @@ describe('FileStructureRepository: ', () => {
 
         /** Create root user folder */
         try {
-            await service.removeFile('unknown', false);
+            await service.removeFile('unkown', false);
         } catch (e: unknown) {
             expect(e).toBeInstanceOf(DbFileRecordDoesNotExist);
         }
 
         try {
-            await service.removeFile(new ObjectId().toString(), false);
+            await service.removeFile('', false);
         } catch (e: unknown) {
             expect(e).toBeInstanceOf(DbFileRecordDoesNotExist);
         }

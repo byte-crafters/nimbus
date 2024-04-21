@@ -8,13 +8,16 @@ export class SignInDTO {
     password: string;
 }
 
+export type TApiFolderId = string
+export type TApiFileId = string
+
 /** TODO Share somehow types between fe and be */
 export class CreateFolderDTO {
     @ApiProperty()
     folderName: string;
 
     @ApiProperty()
-    parentFolderId: string;
+    parentFolderId: TApiFolderId;
 }
 
 export class RenameFolderDTO {

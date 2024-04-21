@@ -3,16 +3,17 @@ import path from 'node:path';
 import { IConfigService } from '../config/dev.config.service';
 import {
     FileStructureRepository,
-    IFileStructureRepository,
-    TFileRepository,
+    // IFileStructureRepository,
+    // TFileRepository,
 } from '../file-structure/file-structure.service';
 import { IFileSystemService } from '../file-system/file-system.service';
+import { IFileStructureRepository, TFileId, TFileRepository, TFolderId } from '../file-structure/file-structure.type';
 
 export interface IFileService {}
 
 export type TRemoveFileResult = {
-    folderId: string;
-    fileId: string;
+    folderId: TFolderId;
+    fileId: TFileId;
 };
 
 export type TGetFileResult = {
@@ -38,17 +39,17 @@ export class FileService implements IFileService {
     async saveFileToFolder(
         userId: string,
         fileBuffer: Buffer,
-        folderId: string,
+        folderId: TFolderId,
         fileName: string,
         fileExtension: string,
     ): Promise<any> {
         const createdFile = await this.fileStructureService.createFile(fileName, fileExtension, folderId, userId);
         const realFolderPath = this.getRealPath(userId);
-        const realFilePath = path.join(realFolderPath, createdFile.id);
+        const realFilePath = path.join(realFolderPath, createdFile.id.toString());
         this.fileSystem.writeFile(fileBuffer, realFilePath);
     }
 
-    async getFileStreamById(fileId: string, userId: string): Promise<any> {
+    async getFileStreamById(fileId: TFileId, userId: string): Promise<any> {
         try {
             /**
              * TODO
@@ -56,14 +57,14 @@ export class FileService implements IFileService {
              */
             const file = await this.fileStructureService.getFileById(fileId);
             const realFolderPath = this.getRealPath(userId);
-            const realFilePath = path.join(realFolderPath, file.id);
+            const realFilePath = path.join(realFolderPath, file.id.toString());
 
             const fileStream = this.fileSystem.getFileStream(realFilePath);
             return fileStream;
         } catch (e: unknown) {}
     }
 
-    async getFileInfoById(fileId: string, userId: string): Promise<TFileRepository> {
+    async getFileInfoById(fileId: TFileId, userId: string): Promise<TFileRepository> {
         try {
             /**
              * TODO
@@ -74,7 +75,7 @@ export class FileService implements IFileService {
         } catch (e: unknown) {}
     }
 
-    async removeFile(fileId: string, userId: string): Promise<TRemoveFileResult> {
+    async removeFile(fileId: TFileId, userId: string): Promise<TRemoveFileResult> {
         try {
             /**
              * TODO
@@ -82,7 +83,7 @@ export class FileService implements IFileService {
              */
             const { folderId, id } = await this.fileStructureService.removeFile(fileId, false);
             const realFolderPath = this.getRealPath(userId);
-            const realFilePath = path.join(realFolderPath, id);
+            const realFilePath = path.join(realFolderPath, id.toString());
             await this.fileSystem.removeFile(realFilePath);
 
             return {
