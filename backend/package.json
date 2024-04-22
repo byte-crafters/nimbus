@@ -21,7 +21,7 @@
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:run-all": "jest --config ./jest.config.ts",
-        "be:test:e2e": "jest --config ./src/test/jest-e2e.json",
+        "be:test:e2e": "dotenv -e .env.local.dev -- jest --config ./src/test/jest-e2e.json",
         "be:test:dev": "dotenv -e .env.local.dev -- jest --config ./jest.config.ts --runInBand",
         "be:start:b": "nest start -b swc",
         "app:run": "tsc ./app/app.ts && node ./app/app.js",
@@ -39,7 +39,8 @@
         "test:local:run-all": "npm run test:run-all && npm run test:e2e",
         "deploy:local": "npm run prisma:postgres:reset && npm run services:local:up && npm run postgres:prisma && npm run mongo:prisma && npm run test:run-all && npm run test:e2e",
         "test:unit": "dotenv -e .env.local.dev -- jest --config ./jest.config.ts --runInBand",
-        "migrate": "npm run be:postgres:dev:mg && npm run be:mongo:dev:sync"
+        "migrate-old": "npm run be:postgres:dev:mg && npm run be:mongo:dev:sync",
+        "migrate": "npm run be:postgres:dev:mg"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",

@@ -113,7 +113,7 @@ export class FileStructureRepository implements IFileStructureRepository {
                         connect: {
                             id: folderId
                         },
-                    },
+                    }
                 },
             });
         } catch (e: unknown) {
@@ -211,11 +211,21 @@ export class FileStructureRepository implements IFileStructureRepository {
     }
 
     async getUserRootFolder(userId: string): Promise<TFolderRepository> {
-        return this.connection.folder.findFirst({
+        const user = await this.connection.user.findUnique({
             where: {
-                name: userId,
+                id: userId
             },
-        });
+            include: {
+                rootFolder: true
+            }
+        })
+
+        return (user as any).rootFolder
+        // return this.connection.folder.findFirst({
+        //     where: {
+        //         name: userId,
+        //     },
+        // });
     }
 
     async getChildrenFolders(folderId: TFolderId): Promise<TFolderRepository[]> {
@@ -242,7 +252,6 @@ export class FileStructureRepository implements IFileStructureRepository {
                 },
             });
 
-            console.log(`folder ${folder?.id}`);
             if (folder !== null) {
                 /** TODO fix */
                 return folder as any;

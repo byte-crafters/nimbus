@@ -37,6 +37,24 @@
             ]
         },
         {
+            "name": "Debug backend e2e tests (local)",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "be:test:e2e"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            // "cwd": "${workspaceFolder}/backend",
+            "type": "node",
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ]
+        },
+        {
             "name": "Debug frontend (local)",
             "request": "launch",
             "runtimeArgs": [

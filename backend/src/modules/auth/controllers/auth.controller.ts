@@ -97,7 +97,9 @@ export class AuthController implements IAuthController {
     @Post('register')
     async register(@Body() registerDTO: RegisterDTO, @Res() response: Response) {
         try {
+            // return response.status(405).send('asd')
             const accessToken = await this.authService.register(registerDTO.username, registerDTO.password);
+            // console.error(accessToken)
             response.cookie('access_token', accessToken.access_token, {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 24,
