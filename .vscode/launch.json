@@ -23,13 +23,13 @@
             "request": "launch",
             "runtimeArgs": [
                 "run",
-                "be:test:dev"
+                "be:test"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "cwd": "${workspaceFolder}/backend",
+            // "cwd": "${workspaceFolder}/backend",
             "type": "node",
             "resolveSourceMapLocations": [
                 "${workspaceFolder}/**",
