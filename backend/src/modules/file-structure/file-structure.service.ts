@@ -1,24 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient as PostgresClient, Prisma } from '@prsm/generated/prisma-postgres-client-js';
+import { Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
-import { PostgresConnection } from './postgres-connection';
+import { PostgresConnection } from '../storage/postgres-connection';
 import { CreateUserRootFolderStructure, IFileStructureRepository, TFileId, TFileRepository, TFileStructureRemoveAllData, TFolder, TFolderId, TFolderRepository } from './file-structure.type';
+import { createReadStream } from 'fs';
 
 
 @Injectable()
 export class FileStructureRepository implements IFileStructureRepository {
-    private connection: PostgresClient;
+    private connection: PostgresConnection;
 
     constructor() {
-        this.connection = new PostgresConnection().Connection;
+        this.connection = new PostgresConnection();
     }
 
     async removeAllData(): Promise<TFileStructureRemoveAllData[]> {
         /** 
          * Used only for tests.
-         * Need to run sequenctially to avoid `foreign key constaint violation` error.
+         * Need to run sequentially to avoid `foreign key constaint violation` error.
          */
+        const c4 = await this.connection.fileAccess.deleteMany()
+        const c3 = await this.connection.user.deleteMany();
         const c1 = await this.connection.file.deleteMany();
         const c2 = await this.connection.folder.deleteMany();
         return [c1, c2];
@@ -94,27 +97,28 @@ export class FileStructureRepository implements IFileStructureRepository {
     }
 
     async createFile(name: string, extension: string, folderId: TFolderId, userId: string): Promise<TFileRepository> {
+        try {
 
-        const folder = this.connection.folder.findUnique({
-            where: {
-                id: folderId
-            }
-        });
-
-        return this.connection.file.create({
-            data: {
-                extension,
-                // folderId,
-                name,
-                owner: userId,
-                folder: {
-                    connect: {
-                        id: folderId
-                    }
+            return this.connection.file.create({
+                data: {
+                    extension,
+                    // folderId,
+                    name,
+                    owner: {
+                        connect: {
+                            id: userId
+                        }
+                    },
+                    folder: {
+                        connect: {
+                            id: folderId
+                        },
+                    },
                 },
-                // id: 'asd'
-            },
-        });
+            });
+        } catch (e: unknown) {
+            console.error(e)
+        }
     }
 
     async getFileById(fileId: TFileId): Promise<TFileRepository> {
@@ -185,7 +189,13 @@ export class FileStructureRepository implements IFileStructureRepository {
                 data: {
                     // parentId: '',
                     name: userId,
-                    owner: userId,
+                    owner: {
+                        connect: {
+                            id: userId
+                        }
+                    },
+
+
                     path: [],
                     // parentFolderId: 
                     // parentFolder: {
@@ -280,20 +290,35 @@ export class FileStructureRepository implements IFileStructureRepository {
     }
 
     async createFolder(userId: string, folderName: string, parentFolderId: TFolderId): Promise<TFolderRepository> {
-        const parentFolder = await this.connection.folder.findUnique({
-            where: {
-                id: parentFolderId,
-            },
-        });
+        try {
 
-        return this.connection.folder.create({
-            data: {
-                // parentId: parentFolderId,
-                parentFolderId: parentFolderId,
-                name: folderName,
-                owner: userId,
-                path: [...parentFolder.path, parentFolderId],
-            },
-        });
+        
+            const parentFolder = await this.connection.folder.findUnique({
+                where: {
+                    id: parentFolderId,
+                },
+            });
+
+            return this.connection.folder.create({
+                data: {
+                    // parentId: parentFolderId,
+                    // parentFolderId: parentFolderId,
+                    parentFolder: {
+                        connect: {
+                            id: parentFolderId
+                        }
+                    },
+                    name: folderName,
+                    owner: {
+                        connect: {
+                            id: userId
+                        }
+                    },
+                    path: [...parentFolder.path, parentFolderId],
+                },
+            });
+        } catch (e: unknown) {
+            console.error(e)
+        }
     }
 }

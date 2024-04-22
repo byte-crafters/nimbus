@@ -6,11 +6,12 @@ import { UsersModule } from '../user/users.module';
 import { FileService } from './file.service';
 import { FilesController } from './files.controller';
 import { ConfigModule } from '../config/config.module';
+import { FileAccessRepository } from './file-access.service';
 
 @Module({
     imports: [AuthModule, UsersModule, FilesStructureModule, FilesSystemModule, ConfigModule],
     controllers: [FilesController],
-    providers: [FileService],
-    exports: [FileService],
+    providers: [FileService, FileAccessRepository],
+    exports: [FileService, FileAccessRepository],
 })
 export class FilesModule {}
