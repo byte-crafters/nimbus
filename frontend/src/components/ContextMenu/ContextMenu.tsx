@@ -1,5 +1,6 @@
+'use client';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { TFile, TFolder, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
 import {
     Divider,
     ListItemIcon,
@@ -17,8 +18,7 @@ interface IProps {
     positionX: number;
     positionY: number;
     toggled: boolean;
-    folders: TFolder[];
-    files: TFile[];
+    selectedItems: TFSItem[];
     contextMenuRef: any;
 }
 
@@ -27,13 +27,10 @@ export const ContextMenu = ({
     positionY,
     toggled,
     contextMenuRef,
-    files,
-    folders,
+    selectedItems,
 }: PropsWithChildren<IProps>) => {
-    const { canDelete, canRename, canDownload, canShare } = useOperations(
-        files,
-        folders
-    );
+    const { canDelete, canRename, canDownload, canShare } =
+        useOperations(selectedItems);
     const [showRename, setShowRename] = useState(false);
 
     function handleSmth() {
@@ -41,26 +38,48 @@ export const ContextMenu = ({
     }
 
     useEffect(() => {
-        if (folders.length == 1) {
+        if (selectedItems.length == 1) {
             setShowRename(true);
         } else {
             setShowRename(false);
         }
-    }, [files, folders]);
+    }, [selectedItems]);
 
     const { showModal } = useModalContext();
 
     const showRenameModal = () => {
         showModal(MODAL_TYPE.RENAME, {
-            items: files.length > folders.length ? files[0] : folders[0],
+            items: selectedItems,
         });
     };
 
-    // const showDeleteModal = () => {
-    //     showModal(MODAL_TYPE.DELETE, {
-    //         items: files.length > folders.length ? files[0] : folders[0]
-    //     });
-    // };
+    const showDeleteModal = () => {
+        showModal(MODAL_TYPE.DELETE, {
+            items: selectedItems,
+        });
+    };
+
+    const downloadFile = () => {
+        for (const item of selectedItems) {
+            if (item?.extension) {
+                Promise.all([
+                    fetcher.downloadFile(item.id),
+                    fetcher.getFileInfo(item.id),
+                ]).then(([blob, fileInfo]) => {
+                    console.log(blob, fileInfo);
+                    if (blob != null) {
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'temp+' + fileInfo.name;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    }
+                });
+            }
+        }
+    };
 
     return (
         <>
@@ -70,7 +89,7 @@ export const ContextMenu = ({
                 className={styles['container' + (toggled ? '__visible' : '')]}
             >
                 {showRename && canRename && (
-                    <MenuItem onClick={handleSmth}>
+                    <MenuItem onClick={showRenameModal}>
                         <ListItemIcon>
                             <Edit fontSize="small" />
                         </ListItemIcon>
@@ -86,7 +105,7 @@ export const ContextMenu = ({
                     </MenuItem>
                 )}
                 {canDownload && (
-                    <MenuItem onClick={handleSmth}>
+                    <MenuItem onClick={downloadFile}>
                         <ListItemIcon>
                             <Download fontSize="small" />
                         </ListItemIcon>
@@ -96,7 +115,7 @@ export const ContextMenu = ({
                 {canDelete && (
                     <>
                         <Divider variant="middle" />
-                        <MenuItem onClick={handleSmth}>
+                        <MenuItem onClick={showDeleteModal}>
                             <ListItemIcon>
                                 <Delete fontSize="small" />
                             </ListItemIcon>

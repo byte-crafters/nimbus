@@ -9,12 +9,12 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material';
-import { TFile, TFolder } from '@/libs/request';
+import { TFSItem, TFile, TFolder } from '@/libs/request';
 import { useModalContext } from '../Modal/ModalProvider';
 
 interface IProps {
     message: string;
-    onSubmit: (item: TFile | TFolder) => void;
+    onSubmit: (items: TFSItem[]) => void;
 }
 
 export const ConfirmationDialog = ({
@@ -24,14 +24,14 @@ export const ConfirmationDialog = ({
     const { hideModal, store } = useModalContext();
 
     const { modalProps, modalType } = store || {};
-    const { item } = modalProps || {};
+    const { items } = modalProps || {};
 
     const handleModalToggle = () => {
         hideModal();
     };
 
     const handleSubmit = () => {
-        onSubmit(item);
+        onSubmit(items);
         hideModal();
     };
 

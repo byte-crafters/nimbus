@@ -7,6 +7,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { Browser, ContextMenu } from '@/components';
 import { PathContext, ProfileContext } from '@/app/layout-page';
+import { Box } from '@mui/material';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -121,11 +122,12 @@ export default function FilesContainer() {
                 ))}
             </Breadcrumbs>
 
-            <Browser
-                files={files}
-                folders={showFoldersList}
-                openFolder={openFolder}
-            />
+            <Box>
+                <Browser
+                    items={[...showFoldersList, ...files]}
+                    openFolder={openFolder}
+                />
+            </Box>
 
             <button
                 onClick={() => {

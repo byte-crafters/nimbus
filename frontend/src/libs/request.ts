@@ -77,6 +77,8 @@ export type TRemoveFileResult = {
     currentFolder: TFolder;
 };
 
+export type TFSItem = TFolder | TFile;
+
 export type TDownloadFile = void;
 
 export class Requester {
