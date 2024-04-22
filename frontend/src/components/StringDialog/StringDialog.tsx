@@ -9,29 +9,29 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material';
-import { TFile, TFolder } from '@/libs/request';
+import { TFSItem, TFile, TFolder } from '@/libs/request';
 import { useModalContext } from '../Modal/ModalProvider';
 
 interface IProps {
-    onSubmit: (item: TFile | TFolder, newName: string) => void;
+    onSubmit: (items: TFSItem[], newName: string) => void;
 }
 
 export const StringDialog = ({ onSubmit }: PropsWithChildren<IProps>) => {
     const { hideModal, store } = useModalContext();
 
     const { modalProps, modalType } = store || {};
-    const { item } = modalProps || {};
+    const { items } = modalProps || {};
 
     const handleModalToggle = () => {
         hideModal();
     };
 
     const handleSubmit = () => {
-        onSubmit(item, data);
+        onSubmit(items, data);
         hideModal();
     };
 
-    const [data, setData] = useState<string>(item.name);
+    const [data, setData] = useState<string>(items[0].name);
 
     return (
         <Dialog onClose={handleModalToggle} open={true}>

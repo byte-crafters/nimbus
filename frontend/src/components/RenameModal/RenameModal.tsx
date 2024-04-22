@@ -9,22 +9,24 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material';
-import { TFile, TFolder, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
 import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
 import { StringDialog } from '../StringDialog';
 
 interface IProps {}
 
 export const RenameModal = ({}: PropsWithChildren<IProps>) => {
-    const handleRename = (item: TFolder | TFile, newName: string) => {
-        //folders only
-        fetcher.renameFolder(item.id, newName).then(({ folder }) => {
-            console.log('RENAMED');
-            console.log(folder);
-        });
+    const handleRename = (items: TFSItem[], newName: string) => {
+        const item = items[0];
+        if (!item?.extension) {
+            fetcher.renameFolder(item.id, newName).then(({ folder }) => {
+                console.log('RENAMED');
+                console.log(folder);
+            });
+        }
     };
 
-    return <StringDialog title={MODAL_TYPE.RENAME} onSubmit={handleRename} />;
+    return <StringDialog onSubmit={handleRename} />;
 };
 
 //stringConfirmation

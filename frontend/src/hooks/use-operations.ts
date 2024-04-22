@@ -1,6 +1,6 @@
-import { TFile, TFolder } from '@/libs/request';
+import { TFSItem, TFile, TFolder } from '@/libs/request';
 
-export const useOperations = (files: TFile[], folders: TFolder[]) => {
+export const useOperations = (seletctedItems: TFSItem[]) => {
     return {
         canDelete: true,
         canRename: true,

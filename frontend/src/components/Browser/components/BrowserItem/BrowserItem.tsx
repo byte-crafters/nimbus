@@ -5,9 +5,11 @@ import { ListItem } from '@mui/material';
 import clsx from 'clsx';
 import { TFile, TFolder } from '@/libs/request';
 
+const FOLDER_IMG = '/folder.png';
+const FILE_IMG = '/file.png';
+
 interface IProps {
     item: TFolder | TFile;
-    image: string;
     selected: boolean;
     handleClick: (e: React.MouseEvent) => void;
     handleDoubleClick?: (e: React.MouseEvent) => void;
@@ -16,7 +18,6 @@ interface IProps {
 
 export const BrowserItem = ({
     item,
-    image,
     selected,
     handleClick,
     handleDoubleClick,
@@ -33,7 +34,7 @@ export const BrowserItem = ({
             onContextMenu={handleContextMenu}
         >
             <Image
-                src={image}
+                src={item?.extension ? FILE_IMG : FOLDER_IMG}
                 alt=""
                 className={styles.card__image}
                 width={70}

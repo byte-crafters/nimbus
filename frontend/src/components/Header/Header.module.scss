@@ -1,0 +1,18 @@
+[class].bar {
+    box-shadow: none;
+}
+
+[class].container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+[class].search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 400px;
+    // border-radius: 5px;
+    // border: 1px solid red;
+}

@@ -1,5 +1,6 @@
+'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { TFile, TFolder, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
 import { List, ListItem } from '@mui/material';
 import styles from './Browser.module.scss';
 import Image from 'next/image';
@@ -10,25 +11,19 @@ import { BrowserItem } from './components/BrowserItem';
 import { StringDialog } from '../StringDialog';
 import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
 
-const FOLDER_IMG = '/folder.png';
-const FILE_IMG = '/file.png';
-
 interface IProps {
-    files: TFile[];
-    folders: TFolder[];
+    items: TFSItem[];
     openFolder: (folder: TFolder, info: TFolderChildren) => void;
 }
 
-export function Browser({ files, folders, openFolder }: IProps) {
+export function Browser({ items, openFolder }: IProps) {
     const contextMenuRef = useRef<any>(null);
     const [contextMenu, setContextMenu] = useState({
         position: { x: 0, y: 0 },
         toggled: false,
     });
 
-    /** Selected files and folders */
-    const [selectedFiles, setSelectedFiles] = useState<TFile[]>([]);
-    const [selectedFolders, setSelectedFolders] = useState<TFolder[]>([]);
+    const [selectedItems, setSelectedItems] = useState<TFSItem[]>([]);
 
     function handleContextMenu(e: React.MouseEvent) {
         e.preventDefault();
@@ -58,8 +53,7 @@ export function Browser({ files, folders, openFolder }: IProps) {
     }
 
     function resetSelection() {
-        setSelectedFiles([]);
-        setSelectedFolders([]);
+        setSelectedItems([]);
     }
 
     useEffect(() => {
@@ -82,77 +76,43 @@ export function Browser({ files, folders, openFolder }: IProps) {
     return (
         <>
             <List className={styles.container}>
-                {folders.map((folder) => {
-                    const selected = selectedFolders.includes(folder);
+                {items.map((item) => {
+                    const selected = selectedItems.includes(item);
                     return (
                         <BrowserItem
-                            item={folder}
-                            image={FOLDER_IMG}
+                            item={item}
                             selected={selected}
                             handleClick={(e) => {
                                 if (e.ctrlKey) {
-                                    if (selectedFolders.includes(folder)) {
-                                        setSelectedFolders([
-                                            ...selectedFolders.filter(
-                                                (item) => item !== folder
+                                    if (selectedItems.includes(item)) {
+                                        setSelectedItems([
+                                            ...selectedItems.filter(
+                                                (i) => i !== item
                                             ),
                                         ]);
                                     } else {
-                                        setSelectedFolders([
-                                            ...selectedFolders,
-                                            folder,
+                                        setSelectedItems([
+                                            ...selectedItems,
+                                            item,
                                         ]);
                                     }
                                 }
                             }}
                             handleDoubleClick={() => {
-                                fetcher.getChildren(folder.id).then((info) => {
-                                    openFolder(folder, info);
-                                });
+                                if (!item?.extension)
+                                    fetcher
+                                        .getChildren(item.id)
+                                        .then((info) => {
+                                            openFolder(item, info);
+                                        });
                             }}
                             handleContextMenu={(e) => {
                                 if (!selected) {
-                                    setSelectedFolders([folder]);
-                                    setSelectedFiles([]);
+                                    setSelectedItems([item]);
                                 }
                                 handleContextMenu(e);
                             }}
-                            key={folder.id}
-                        />
-                    );
-                })}
-
-                {files.map((file) => {
-                    const selected = selectedFiles.includes(file);
-                    return (
-                        <BrowserItem
-                            item={file}
-                            image={FILE_IMG}
-                            selected={selected}
-                            handleClick={(e) => {
-                                if (e.ctrlKey) {
-                                    if (selectedFiles.includes(file)) {
-                                        setSelectedFiles([
-                                            ...selectedFiles.filter(
-                                                (item) => item !== file
-                                            ),
-                                        ]);
-                                    } else {
-                                        setSelectedFiles([
-                                            ...selectedFiles,
-                                            file,
-                                        ]);
-                                    }
-                                }
-                            }}
-                            handleContextMenu={(e) => {
-                                if (!selected) {
-                                    setSelectedFiles([file]);
-                                    setSelectedFolders([]);
-                                }
-                                handleContextMenu(e);
-                            }}
-                            key={file.id}
+                            key={item.id}
                         />
                     );
                 })}
@@ -162,8 +122,7 @@ export function Browser({ files, folders, openFolder }: IProps) {
                 toggled={contextMenu.toggled}
                 positionX={contextMenu.position.x}
                 positionY={contextMenu.position.y}
-                files={selectedFiles}
-                folders={selectedFolders}
+                selectedItems={selectedItems}
             />
         </>
     );
