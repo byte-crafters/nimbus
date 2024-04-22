@@ -6,6 +6,7 @@ import { CreateUserDTO } from './mock.users.service';
 import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueConstaint';
 import { PostgresConnection } from '@src/modules/storage/postgres-connection';
 import { TFolder } from '@src/modules/file-structure/file-structure.type';
+import { DbConnectionException } from '@src/modules/errors/db/DbConnectionException';
 
 export interface IUserService {
     findOne(username: string): Promise<User | undefined>;
@@ -34,7 +35,7 @@ export class UsersRepository implements IUserService {
     constructor(
         @Inject(PostgresConnection) private connection: PostgresConnection
     ) {
-        this.connection = new PostgresConnection();
+        // this.connection = new PostgresConnection();
     }
 
     async findOne(username: string): Promise<User | undefined> {
@@ -64,6 +65,10 @@ export class UsersRepository implements IUserService {
                 password,
             };
 
+            // const client = new PostgresClient()
+
+            // console.error(this.connection)
+
             const db_user = await this.connection.user.create({
                 data: {
                     email: user.email,
@@ -75,8 +80,15 @@ export class UsersRepository implements IUserService {
                     }
                 },
                 include: {
-                    rootFolder: true
-                }
+                    rootFolder: true,
+                },
+                // select: {
+                //     email: true,
+                //     password: true,
+                //     rootFolder: true,
+                //     username: true,
+                //     id: true
+                // }
             });
 
             return db_user as any;
@@ -85,6 +97,8 @@ export class UsersRepository implements IUserService {
                 if (e.code === 'P2002') {
                     throw new DbUserUniqueConstraintError('username');
                 }
+            } else if (e instanceof Prisma.PrismaClientInitializationError) {
+                throw new DbConnectionException()
             }
 
             throw e;

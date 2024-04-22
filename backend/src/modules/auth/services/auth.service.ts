@@ -40,8 +40,9 @@ export class AuthService implements IAuthService {
                 access_token: await this.jwtService.signAsync(payload),
             };
 
-            await this.fileSystem.createUserRootFolder(user.id);
-            await this.fileStructureService.createUserRootFolder(user.id);
+            const rootFolderId = (user as any).rootFolderId
+            await this.fileSystem.createUserRootFolder(rootFolderId);
+            // await this.fileStructureService.createUserRootFolder(user.id);
 
             return result;
         } catch (e: unknown) {

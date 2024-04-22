@@ -17,6 +17,8 @@ import { PostgresConnection } from '../storage/postgres-connection';
 import { StorageModule } from '../storage/storage.module';
 import { FileSystemService, IFileSystemService } from '../file-system/file-system.service';
 import { TRights } from './file.type';
+import path from 'node:path';
+import { constants } from 'node:fs';
 
 describe('FileService', () => {
     let fileService: FileService;
@@ -96,7 +98,7 @@ describe('FileService', () => {
 
 
 
-        const folder = await fileService.saveFileToFolder(
+        const createdFile = await fileService.saveFileToFolder(
             userSaved.id,
             Buffer.from('asd', 'utf-8'),
             rootFolder.id,
@@ -105,19 +107,17 @@ describe('FileService', () => {
         );
         // console.log(folder);
 
-        expect(
-            fs.access(
-                fsService.getUserRootFolderPathStringSync(rootFolder.id) + "/" + folder.id
-            )
-        ).resolves.toBeUndefined();
+        const p = fsService.getUserRootFolderPathStringSync(rootFolder.id);
+        const fullP = path.join(p, createdFile.id);
+        expect(fs.access(fullP, constants.F_OK)).resolves.toBeUndefined();
 
 
-        const rights = await fileAccessService.create("01010111", userSaved.id, folder.id);
+        const rights = await fileAccessService.create("01010111", userSaved.id, createdFile.id);
         // console.log(a);
 
         expect(rights).toMatchObject({
             userRights: "01010111"
-        })
+        });
     });
 
     afterEach(async () => {

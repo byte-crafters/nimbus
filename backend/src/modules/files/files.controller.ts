@@ -206,9 +206,9 @@ export class FilesController {
         const userId = request.user.sub;
         const { folderId } = uploadFileDTO;
 
-        files.forEach((file) => {
+        files.forEach(async (file) => {
             const { buffer, originalname, mimetype, size } = file;
-            this.fileService.saveFileToFolder(
+            await this.fileService.saveFileToFolder(
                 userId,
                 file.buffer,
                 uploadFileDTO.folderId,
