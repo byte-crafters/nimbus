@@ -11,7 +11,7 @@ export interface IFileSystemService {
     createNestedFolder(parentFolders: string[]): Promise<boolean>;
     getFileStream(filePath: string): ReadStream;
     createRootFolder(): Promise<void>;
-    createUserRootFolder(userId: string): Promise<void>;
+    createUserRootFolder(folderId: string): Promise<void>;
     getUserRootFolderPathStringSync(username: string): string;
     writeFile(fileBuffer: Buffer, filePath: string): Promise<void>;
     removeFolder(folderPath: string): Promise<void>;
@@ -23,7 +23,9 @@ export interface IFileSystemService {
  */
 @Injectable()
 export class FileSystemService implements IFileSystemService {
-    constructor(@Inject(Symbol.for('IConfigService')) private configService: IConfigService) {}
+    constructor(
+        @Inject(Symbol.for('IConfigService')) private configService: IConfigService
+    ) { }
 
     getFileStream(filePath: string) {
         return createReadStream(filePath);
@@ -114,18 +116,18 @@ export class FileSystemService implements IFileSystemService {
     }
 
     /** Just generates string value WITHOUT creating folders. */
-    getUserRootFolderPathStringSync(username: string): string {
-        return path.join(this.configService.getStoragePath(), username);
+    getUserRootFolderPathStringSync(rootFolderId: string): string {
+        return path.join(this.configService.getStoragePath(), rootFolderId);
     }
 
     /** TODO Need to disallow some username symbols. */
-    async createUserRootFolder(userId: string): Promise<void> {
+    async createUserRootFolder(folderId: string): Promise<void> {
         try {
             const rootFolderExists = await this.checkIfRootFolderExists();
 
             if (!rootFolderExists) await this.createRootFolder();
 
-            const path = this.getUserRootFolderPathStringSync(userId);
+            const path = this.getUserRootFolderPathStringSync(folderId);
             await this.createUserRootFolderByPath(path);
         } catch (e: unknown) {
             // if (e instanceof CannotCreateUserRootFolderError) {

@@ -1,5 +1,5 @@
 import { AuthService } from '@modules/auth/services/auth.service';
-import { UsersService } from '@src/modules/user/services/users.service';
+import { UsersRepository } from '@src/modules/user/services/users.service';
 
 export const TYPES = {
     AUTH_SERVICE: Symbol.for('IAuthService'),
@@ -11,7 +11,11 @@ export const authServiceDefaultProvider = {
     useClass: AuthService,
 };
 
+/**
+ * TODO
+ * Rename it to `databaseprovider`
+ */
 export const userServiceDefaultProvider = {
     provide: Symbol.for('IUserService'),
-    useClass: UsersService,
+    useClass: UsersRepository,
 };

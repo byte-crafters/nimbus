@@ -1,5 +1,6 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { User } from '../models/User';
+import { TFolderId } from '@src/modules/file-structure/file-structure.type';
 
 export const mockUsersCollection = [
     new User({ password: '123', username: 'one' }),

@@ -42,12 +42,18 @@ export class FileService implements IFileService {
         folderId: TFolderId,
         fileName: string,
         fileExtension: string,
-    ): Promise<any> {
+    ): Promise<TFileRepository> {
         const createdFile = await this.fileStructureService.createFile(fileName, fileExtension, folderId, userId);
-        const realFolderPath = this.getRealPath(userId);
+        const realFolderPath = this.getRealPath(folderId);
         const realFilePath = path.join(realFolderPath, createdFile.id.toString());
         this.fileSystem.writeFile(fileBuffer, realFilePath);
+
+        return createdFile
     }
+
+    // async createFolder() {
+
+    // }
 
     async getFileStreamById(fileId: TFileId, userId: string): Promise<any> {
         try {

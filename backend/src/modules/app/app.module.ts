@@ -6,6 +6,7 @@ import { FilesSystemModule } from '../file-system/file-system.module';
 import { FilesModule } from '../files/files.module';
 import { UsersModule } from '../user/users.module';
 import { ConfigModule } from '../config/config.module';
+import { StorageModule } from '../storage/storage.module';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { ConfigModule } from '../config/config.module';
         FilesStructureModule,
         UsersModule,
         ConfigModule,
+        StorageModule
     ],
 })
 export class AppModule {}
