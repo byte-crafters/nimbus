@@ -116,14 +116,17 @@ export class Requester {
 
     async getMySharedFolders() {
         try {
-            return await fetch(`${this.host}/api/v1/files/get-my-shared-folders`, {
-                method: METHODS.GET,
-                credentials: 'include',
-                headers: {
-                    [HEADER.Accept]: HEADERS_VALUE.JSON,
-                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                },
-            }).then(this.handleResponse);
+            return await fetch(
+                `${this.host}/api/v1/files/get-my-shared-folders`,
+                {
+                    method: METHODS.GET,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                }
+            ).then(this.handleResponse);
         } catch (e: unknown) {
             console.error(e);
             throw e;
@@ -132,14 +135,17 @@ export class Requester {
 
     async getMySharedFiles() {
         try {
-            return await fetch(`${this.host}/api/v1/files/get-my-shared-files`, {
-                method: METHODS.GET,
-                credentials: 'include',
-                headers: {
-                    [HEADER.Accept]: HEADERS_VALUE.JSON,
-                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                },
-            }).then(this.handleResponse);
+            return await fetch(
+                `${this.host}/api/v1/files/get-my-shared-files`,
+                {
+                    method: METHODS.GET,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                }
+            ).then(this.handleResponse);
         } catch (e: unknown) {
             console.error(e);
             throw e;
@@ -148,14 +154,17 @@ export class Requester {
 
     async getSharedWithMeFiles() {
         try {
-            return await fetch(`${this.host}/api/v1/files/get-shared-with-me-files`, {
-                method: METHODS.GET,
-                credentials: 'include',
-                headers: {
-                    [HEADER.Accept]: HEADERS_VALUE.JSON,
-                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                },
-            }).then(this.handleResponse);
+            return await fetch(
+                `${this.host}/api/v1/files/get-shared-with-me-files`,
+                {
+                    method: METHODS.GET,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                }
+            ).then(this.handleResponse);
         } catch (e: unknown) {
             console.error(e);
             throw e;
@@ -164,14 +173,17 @@ export class Requester {
 
     async getSharedWithMeFolders() {
         try {
-            return await fetch(`${this.host}/api/v1/files/get-shared-with-me-folders`, {
-                method: METHODS.GET,
-                credentials: 'include',
-                headers: {
-                    [HEADER.Accept]: HEADERS_VALUE.JSON,
-                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                },
-            }).then(this.handleResponse);
+            return await fetch(
+                `${this.host}/api/v1/files/get-shared-with-me-folders`,
+                {
+                    method: METHODS.GET,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                }
+            ).then(this.handleResponse);
         } catch (e: unknown) {
             console.error(e);
             throw e;
@@ -187,10 +199,10 @@ export class Requester {
                             userId,
                             fileId,
                             value: {
-                                view: true
-                            }
-                        }
-                    ]
+                                view: true,
+                            },
+                        },
+                    ],
                 }),
                 method: METHODS.POST,
                 credentials: 'include',
@@ -214,10 +226,10 @@ export class Requester {
                             userId,
                             folderId,
                             value: {
-                                view: true
-                            }
-                        }
-                    ]
+                                view: true,
+                            },
+                        },
+                    ],
                 }),
                 method: METHODS.POST,
                 credentials: 'include',
@@ -241,7 +253,7 @@ export class Requester {
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
                     [HEADER.ContentType]: HEADERS_VALUE.JSON,
-                }
+                },
             }
         );
 
