@@ -11,10 +11,11 @@ import { ShareController } from './controllers/share.controller';
 import { AccessRepository } from './services/access.repository';
 import { AccessService } from './services/access.service';
 import { FileService } from './services/file.service';
+import { RemoveController } from './controllers/remove.controller';
 
 @Module({
     imports: [AuthModule, UsersModule, FilesStructureModule, FilesSystemModule, ConfigModule, StorageModule],
-    controllers: [FilesController, ShareController, LoadController],
+    controllers: [FilesController, ShareController, LoadController, RemoveController],
     providers: [FileService, AccessRepository, AccessService],
     exports: [FileService, AccessRepository, AccessService],
 })

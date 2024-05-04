@@ -3,7 +3,7 @@ import { User } from '@modules/user/models/User';
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IFileStructureRepository } from '@src/modules/file-structure/file-structure.type';
+import { IDataRepository } from '@src/modules/file-structure/file-structure.type';
 import request from 'supertest';
 import cookieParser from 'cookie-parser';
 import * as fs from 'node:fs/promises';
@@ -14,7 +14,7 @@ import { TestConfigService } from '@src/modules/config/test.config.service';
 describe('File (e2e)', () => {
     let app: INestApplication;
     let jwtService: JwtService;
-    let helper: IFileStructureRepository;
+    let helper: IDataRepository;
     let config: IConfigService;
 
     beforeEach(async () => {
@@ -30,7 +30,7 @@ describe('File (e2e)', () => {
         app.use(cookieParser());
 
         jwtService = moduleFixture.get<JwtService>(JwtService);
-        helper = moduleFixture.get<IFileStructureRepository>(Symbol.for('IFileStructureRepository'));
+        helper = moduleFixture.get<IDataRepository>(Symbol.for('IFileStructureRepository'));
         config = moduleFixture.get<IConfigService>(Symbol.for('IConfigService'));
 
         await app.init();

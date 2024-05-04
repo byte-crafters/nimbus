@@ -15,7 +15,7 @@ export type TFolder = {
     name: string;
     // parentFolder: string;
     parentFolder: Omit<TFolder, "parentFolder">;
-    owner: string;
+    owner: any;
     path: TFolderId[];
 };
 export type TFileStructureRemoveAllData = Prisma.BatchPayload;
@@ -23,7 +23,7 @@ export type TFileStructureRemoveAllData = Prisma.BatchPayload;
 export type TFolderRepository = Prisma.Result<Prisma.FolderDelegate, Prisma.FolderFindUniqueArgs, 'findUnique'>;
 export type TFileRepository = Prisma.Result<Prisma.FileDelegate, Prisma.FileFindUniqueArgs, 'findUnique'>;
 
-export interface IFileStructureRepository {
+export interface IDataRepository {
     getClosestSharedFolder(folderId: string, userId: string, access?: number): Promise<any>;
     /**
      * For testing purpose only!
@@ -35,7 +35,16 @@ export interface IFileStructureRepository {
     getChildrenFiles(folderId: TFolderId): Promise<TFileRepository[]>;
     getChildrenFolders(folderId: TFolderId): Promise<TFolderRepository[]>;
     createFile(name: string, extension: string, folderId: TFolderId, userId: string): Promise<TFileRepository>;
+
+    getRemovedFiles(userId: string): Promise<any>;
+    getRemovedFolders(userId: string): Promise<any>;
     removeFile(fileId: TFileId, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>>;
+    removeFolder(folderId: TFileId, softDelete: boolean): Promise<any>;
+
+    recoverFile(fileId: TFileId, userId: string): Promise<any>;
+    recoverFolder(folderId: TFileId, userId: string): Promise<any>;
+
+    
     getUserRootFolder(userId: string): Promise<TFolderRepository>;
     getFolderById(folderId: TFolderId): Promise<TFolder | null>;
     renameFolder(newFolderName: string, folderId: TFolderId): Promise<TFolderRepository>;

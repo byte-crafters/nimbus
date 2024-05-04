@@ -3,12 +3,12 @@ import { Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
 import { PostgresConnection } from '../storage/postgres-connection';
-import { CreateUserRootFolderStructure, IFileStructureRepository, TFileId, TFileRepository, TFileStructureRemoveAllData, TFolder, TFolderId, TFolderRepository } from './file-structure.type';
+import { CreateUserRootFolderStructure, IDataRepository as IDataRepository, TFileId, TFileRepository, TFileStructureRemoveAllData, TFolder, TFolderId, TFolderRepository } from './file-structure.type';
 import { createReadStream } from 'fs';
 
 
 @Injectable()
-export class FileStructureRepository implements IFileStructureRepository {
+export class DataRepository implements IDataRepository {
     private connection: PostgresConnection;
 
     constructor() {
@@ -214,8 +214,8 @@ export class FileStructureRepository implements IFileStructureRepository {
     async getAllFoldersOfUser(userId: string) {
         try {
             const allf = await this.connection.folder.findMany({
-                include: {owner: true}
-            })
+                include: { owner: true }
+            });
 
             return this.connection.folder.findMany({
                 where: {
@@ -359,6 +359,40 @@ export class FileStructureRepository implements IFileStructureRepository {
         }
     }
 
+    async getRemovedFiles(userId: string) {
+        try {
+            const result = await this.connection.file.findMany({
+                where: {
+                    removed: true,
+                    owner: {
+                        id: userId
+                    }
+                }
+            });
+
+            return result;
+        } catch (e: unknown) {
+            throw e;
+        }
+    }
+
+    async getRemovedFolders(userId: string) {
+        try {
+            const result = await this.connection.folder.findMany({
+                where: {
+                    removed: true,
+                    owner: {
+                        id: userId
+                    }
+                }
+            });
+
+            return result;
+        } catch (e: unknown) {
+            throw e;
+        }
+    }
+
     async removeFile(fileId: TFileId, softDelete: boolean): Promise<Pick<TFileRepository, 'folderId' | 'id'>> {
         try {
             if (softDelete) {
@@ -369,6 +403,10 @@ export class FileStructureRepository implements IFileStructureRepository {
                     data: {
                         removed: true,
                     },
+                    select: {
+                        folderId: true,
+                        id: true
+                    }
                 });
             } else {
                 return await this.connection.file.delete({
@@ -381,6 +419,108 @@ export class FileStructureRepository implements IFileStructureRepository {
                     },
                 });
             }
+        } catch (e: unknown) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
+                    throw new DbFileRecordDoesNotExist();
+                } else if (e.code === 'P2023') {
+                    /** TODO: add another exception class here. */
+                    /** Incorrect id format */
+                    throw new DbFileRecordDoesNotExist();
+                }
+            }
+
+            throw e;
+        }
+    }
+
+    async removeFolder(folderId: TFileId, softDelete: boolean): Promise<any> {
+        try {
+            if (softDelete) {
+                return await this.connection.folder.update({
+                    where: {
+                        id: folderId,
+                    },
+                    data: {
+                        removed: true,
+                    },
+                    select: {
+                        id: true
+                    }
+                });
+            } else {
+                return await this.connection.folder.delete({
+                    where: {
+                        id: folderId,
+                    },
+                    select: {
+                        id: true,
+                    },
+                });
+            }
+        } catch (e: unknown) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
+                    throw new DbFileRecordDoesNotExist();
+                } else if (e.code === 'P2023') {
+                    /** TODO: add another exception class here. */
+                    /** Incorrect id format */
+                    throw new DbFileRecordDoesNotExist();
+                }
+            }
+
+            throw e;
+        }
+    }
+    async recoverFile(fileId: TFileId, userId: string): Promise<Pick<TFileRepository, 'folderId' | 'id'>> {
+        try {
+            return await this.connection.file.update({
+                where: {
+                    id: fileId,
+                    owner: {
+                        id: userId
+                    }
+                },
+                data: {
+                    removed: false,
+                },
+                select: {
+                    folderId: true,
+                    id: true
+                }
+            });
+
+        } catch (e: unknown) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2025') {
+                    throw new DbFileRecordDoesNotExist();
+                } else if (e.code === 'P2023') {
+                    /** TODO: add another exception class here. */
+                    /** Incorrect id format */
+                    throw new DbFileRecordDoesNotExist();
+                }
+            }
+
+            throw e;
+        }
+    }
+
+    async recoverFolder(folderId: TFileId, userId: string): Promise<any> {
+        try {
+            return await this.connection.folder.update({
+                where: {
+                    id: folderId,
+                    owner: {
+                        id: userId
+                    }
+                },
+                data: {
+                    removed: false,
+                },
+                select: {
+                    id: true
+                }
+            });
         } catch (e: unknown) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 if (e.code === 'P2025') {
@@ -464,6 +604,7 @@ export class FileStructureRepository implements IFileStructureRepository {
                     id: true,
                     name: true,
                     owner: true,
+                    ownerId: true,
                     // parentId: true,
                     parentFolder: true,
                     path: true,

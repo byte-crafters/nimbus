@@ -7,8 +7,8 @@ import { IConfigService } from '../../config/dev.config.service';
 import { TestConfigService } from '../../config/test.config.service';
 import { UserGrantAccessUnauthorized } from '../../errors/logic/CannotCreateRootFolder';
 import { FilesStructureModule } from '../../file-structure/file-structure.module';
-import { FileStructureRepository } from '../../file-structure/file-structure.service';
-import { IFileStructureRepository } from '../../file-structure/file-structure.type';
+import { DataRepository } from '../../file-structure/data.repository';
+import { IDataRepository } from '../../file-structure/file-structure.type';
 import { FilesSystemModule } from '../../file-system/file-system.module';
 import { FileSystemService, IFileSystemService } from '../../file-system/file-system.service';
 import { StorageModule } from '../../storage/storage.module';
@@ -24,7 +24,7 @@ describe('FileService: share file', () => {
     let config: IConfigService;
     let accessService: AccessService;
     let userService: IUserService;
-    let helper: IFileStructureRepository;
+    let helper: IDataRepository;
     let fsService: IFileSystemService;
 
 
@@ -41,7 +41,7 @@ describe('FileService: share file', () => {
             providers: [
                 FileSystemService,
                 FileService,
-                FileStructureRepository,
+                DataRepository,
                 {
                     provide: TestConfigService,
                     // provide: Symbol.for('IConfigService'),
@@ -61,7 +61,7 @@ describe('FileService: share file', () => {
         config = module.get<IConfigService>(TestConfigService);
         userService = module.get<IUserService>(Symbol.for('IUserService'));
         accessService = module.get<AccessService>(AccessService);
-        helper = module.get<IFileStructureRepository>(Symbol.for('IFileStructureRepository'));
+        helper = module.get<IDataRepository>(Symbol.for('IFileStructureRepository'));
 
     });
 

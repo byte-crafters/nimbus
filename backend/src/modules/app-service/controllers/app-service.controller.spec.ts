@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppServiceController } from './app-service.controller';
-import { FileStructureRepository } from '@src/modules/file-structure/file-structure.service';
+import { DataRepository } from '@src/modules/file-structure/file-structure.service';
 import { FilesStructureModule } from '@src/modules/file-structure/file-structure.module';
 import { FilesSystemModule } from '@src/modules/file-system/file-system.module';
 
@@ -13,7 +13,7 @@ describe('AppServiceController', () => {
             providers: [
                 {
                     provide: Symbol.for('IFileStructureRepository'),
-                    useClass: FileStructureRepository,
+                    useClass: DataRepository,
                 },
             ],
             controllers: [AppServiceController],

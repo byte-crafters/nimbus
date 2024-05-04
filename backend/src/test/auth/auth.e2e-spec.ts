@@ -3,14 +3,14 @@ import { User } from '@modules/user/models/User';
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { IFileStructureRepository } from '@src/modules/file-structure/file-structure.type';
+import { IDataRepository } from '@src/modules/file-structure/file-structure.type';
 // import { IFileService } from '@src/modules/files/file.service';
 import request from 'supertest';
 
 describe('AppServiceController (e2e)', () => {
     let app: INestApplication;
     let jwtService: JwtService;
-    let helper: IFileStructureRepository;
+    let helper: IDataRepository;
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -20,7 +20,7 @@ describe('AppServiceController (e2e)', () => {
         app = moduleFixture.createNestApplication();
 
         jwtService = moduleFixture.get<JwtService>(JwtService);
-        helper = moduleFixture.get<IFileStructureRepository>(Symbol.for('IFileStructureRepository'));
+        helper = moduleFixture.get<IDataRepository>(Symbol.for('IFileStructureRepository'));
 
         await app.init();
     });
