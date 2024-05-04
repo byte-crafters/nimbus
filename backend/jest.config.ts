@@ -7,8 +7,8 @@ const jestConfig: JestConfigWithTsJest = {
         "ts"
     ],
     rootDir: "./src",
-    testRegex: ".*\\.spec\\.ts$",
-    // testRegex: "./src/modules/files/services/file.service.spec.ts",
+    // testRegex: ".*\\.spec\\.ts$",
+    testRegex: "./src/modules/user/controllers/users.controller.spec.ts",
     // testRegex: "./src/test/redis-client.spec.ts",
 
     // testMatch: [

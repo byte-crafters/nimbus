@@ -20,11 +20,11 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateFolderDTO, DeleteFolderParamsDTO, RenameFolderDTO, TApiFileId, TApiFolderId } from '@src/types/api/request';
 import { CreateFolderResult, GetFolderResult200Decl } from '@src/types/api/response';
 import { NoFolderWithThisIdError } from '../../errors/logic/NoFolderWithThisIdError';
-import { FileStructureRepository } from '../../file-structure/file-structure.service';
+import { DataRepository } from '../../file-structure/data.repository';
 import { IFileSystemService } from '../../file-system/file-system.service';
 import { IUserService } from '../../user/services/users.service';
 import { FileService } from '../services/file.service';
-import { IFileStructureRepository, TFolder, TFolderRepository } from '../../file-structure/file-structure.type';
+import { IDataRepository, TFolder, TFolderRepository } from '../../file-structure/file-structure.type';
 import { AccessService } from '../services/access.service';
 import { Response } from 'express';
 
@@ -39,11 +39,9 @@ export class TUploadFileDTO {
 })
 export class FilesController {
     constructor(
-        @Inject(Symbol.for('IFileStructureRepository')) private fileStructureRepository: IFileStructureRepository,
-        @Inject(Symbol.for('IFileSystemService')) private fileSystem: IFileSystemService,
+        @Inject(Symbol.for('IFileStructureRepository')) private fileStructureRepository: IDataRepository,
         @Inject(FileService) private fileService: FileService,
         @Inject(Symbol.for('IUserService')) private usersService: IUserService,
-        @Inject(AccessService) private accessService: AccessService,
 
     ) { }
 
@@ -86,32 +84,7 @@ export class FilesController {
         };
     }
 
-    @ApiTags('files')
-    @Post('folder/delete/:folderId')
-    async deleteFolder(
-        @Body() deleteFolderDTO: DeleteFolderParamsDTO,
-        @Req() request: any,
-        @Param('folderId') folderId: TApiFolderId,
-    ): Promise<{ folder: TFolder; softDelete: boolean; }> {
-        const { softDelete } = deleteFolderDTO;
-        const userId = request.user.sub;
 
-        let deletedFolder: TFolder;
-        if (!softDelete) {
-            /** TODO fix!!! */
-            /** We should delete all nested subfolders */
-            deletedFolder = await this.fileSystem.removeFolder(folderId.toString()) as any;
-        } else {
-            /** We should change this flag for all files in nodes subtree */
-            deletedFolder = await this.fileStructureRepository.changeFolderRemovedState(folderId, true) as any;
-            // const deletedFolderFS = await this.fileSystem.removeFolder(folderId)
-        }
-
-        return {
-            folder: deletedFolder,
-            softDelete,
-        };
-    }
 
     @ApiResponse({
         status: 200,
@@ -134,18 +107,19 @@ export class FilesController {
             /** Now we find children nodes */
 
             const f = await this.fileStructureRepository.getClosestSharedFolder(parentFolderId, userId);
+            const folder = await this.fileStructureRepository.getFolderById(parentFolderId);
 
-            if (f === null) {
+            if (f === null && folder.owner.id !== userId) {
                 /** No parent folder that user has access to at least view this folder content */
                 // return {};
                 throw new Error('Not found folder or you have no access to it.');
             } else {
-                const access = f.folderAccess[0];
-                console.log(access);
+                // const access = f.folderAccess[0];
+                // console.log(access);
 
                 const children = await this.fileStructureRepository.getChildrenFolders(parentFolderId);
                 const folderFiles = await this.fileStructureRepository.getChildrenFiles(parentFolderId);
-                const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
+                // const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
                 const namesPath = await this.fileStructureRepository.getFolderPath(parentFolderId);
 
                 /** When using `Promise.all` we  */
@@ -167,7 +141,7 @@ export class FilesController {
                  */
 
                 return {
-                    parentFolder,
+                    parentFolder: folder,
                     folders: children,
                     files: folderFiles,
                     currentPath: namesPath,
@@ -195,7 +169,7 @@ export class FilesController {
                 }
             }
 
-            throw new InternalServerErrorException('Server error.');
+            throw new InternalServerErrorException('Nimbus server error.');
         }
     }
 
@@ -217,29 +191,8 @@ export class FilesController {
         };
     }
 
-    
 
 
-    @ApiOperation({
-        summary: 'Remove file.',
-        description: 'Remove file with specified parameters.',
-    })
-    @ApiTags('files')
-    @Post('remove/:fileId')
-    async removeFile(@Req() request: any, @Param('fileId') fileId: TApiFileId) {
-        const userId = request.user.sub;
-
-        const { fileId: removedFileId, folderId } = await this.fileService.removeFile(fileId, userId);
-        const currentFolder = await this.fileStructureRepository.getFolderById(folderId);
-        const children = await this.fileStructureRepository.getChildrenFolders(folderId);
-        const folderFiles = await this.fileStructureRepository.getChildrenFiles(folderId);
-
-        return {
-            currentFolder,
-            folders: children,
-            files: folderFiles,
-        };
-    }
 
 
 

@@ -15,8 +15,8 @@ CREATE TABLE "Folder" (
     "fd_name" TEXT,
     "fd_path" TEXT[],
     "fd_removed" BOOLEAN NOT NULL DEFAULT false,
-    "parentFolderId" TEXT NOT NULL,
-    "ownerId" TEXT,
+    "parentFolderId" TEXT,
+    "ownerId" TEXT NOT NULL,
 
     CONSTRAINT "Folder_pkey" PRIMARY KEY ("fd_id")
 );
@@ -28,7 +28,7 @@ CREATE TABLE "File" (
     "fl_extension" TEXT NOT NULL,
     "fl_removed" BOOLEAN NOT NULL DEFAULT false,
     "folderId" TEXT NOT NULL,
-    "ownerId" TEXT,
+    "ownerId" TEXT NOT NULL,
 
     CONSTRAINT "File_pkey" PRIMARY KEY ("fl_id")
 );
@@ -64,16 +64,16 @@ CREATE UNIQUE INDEX "User_rootFolderId_key" ON "User"("rootFolderId");
 ALTER TABLE "User" ADD CONSTRAINT "User_rootFolderId_fkey" FOREIGN KEY ("rootFolderId") REFERENCES "Folder"("fd_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Folder" ADD CONSTRAINT "Folder_parentFolderId_fkey" FOREIGN KEY ("parentFolderId") REFERENCES "Folder"("fd_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Folder" ADD CONSTRAINT "Folder_parentFolderId_fkey" FOREIGN KEY ("parentFolderId") REFERENCES "Folder"("fd_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Folder" ADD CONSTRAINT "Folder_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Folder" ADD CONSTRAINT "Folder_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "File" ADD CONSTRAINT "File_folderId_fkey" FOREIGN KEY ("folderId") REFERENCES "Folder"("fd_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "File" ADD CONSTRAINT "File_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "File" ADD CONSTRAINT "File_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "FileAccess" ADD CONSTRAINT "FileAccess_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "File"("fl_id") ON DELETE RESTRICT ON UPDATE CASCADE;

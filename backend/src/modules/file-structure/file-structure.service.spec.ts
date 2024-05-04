@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../user/models/User';
-import { FileStructureRepository } from './file-structure.service';
+import { DataRepository } from './data.repository';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { ObjectId } from 'bson';
 import { TestConfigService } from '../config/test.config.service';
-import { IFileStructureRepository, CreateUserRootFolderStructure, TFileRepository } from './file-structure.type';
+import { IDataRepository, CreateUserRootFolderStructure, TFileRepository } from './file-structure.type';
 import { userServiceDefaultProvider } from '@src/dependencies/providers';
 import { IUserService } from '../user/services/users.service';
 import { StorageModule } from '../storage/storage.module';
 
 describe('FileStructureRepository: ', () => {
-    let service: IFileStructureRepository;
+    let service: IDataRepository;
     let userService: IUserService
 
     beforeEach(async () => {
@@ -21,7 +21,7 @@ describe('FileStructureRepository: ', () => {
             providers: [
                 {
                     provide: Symbol.for('IFileStructureRepository'),
-                    useClass: FileStructureRepository,
+                    useClass: DataRepository,
                 },
                 {
                     provide: Symbol.for('IConfigService'),
@@ -31,7 +31,7 @@ describe('FileStructureRepository: ', () => {
             ],
         }).compile();
 
-        service = module.get<IFileStructureRepository>(Symbol.for('IFileStructureRepository'));
+        service = module.get<IDataRepository>(Symbol.for('IFileStructureRepository'));
         userService = module.get<IUserService>(Symbol.for('IUserService'))
     });
 

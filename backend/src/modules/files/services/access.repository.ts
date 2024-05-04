@@ -15,6 +15,28 @@ export class AccessRepository {
         // this.connection = new PostgresConnection();
     }
 
+    async getAccessForFolder(folderId: string, userId: string) {
+        const result = await this.connection.folderAccess.findFirst({
+            where: {
+                folderId,
+                userId
+            }
+        });
+
+        return result;
+    }
+
+    async getAccessForFile(fileId: string, userId: string) {
+        const result = await this.connection.fileAccess.findFirst({
+            where: {
+                fileId,
+                userId
+            }
+        });
+
+        return result;
+    }
+
     async getFilesSharedWithUser(
         userId: string
     ) {

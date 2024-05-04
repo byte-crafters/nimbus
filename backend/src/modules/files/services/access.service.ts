@@ -34,6 +34,16 @@ export class AccessService {
         @Inject(AccessRepository) private accessRepository: AccessRepository
     ) { }
 
+    async getAccessForFile(fileId: string, userId: string) {
+        const result = await this.accessRepository.getAccessForFile(fileId, userId)
+        return result
+    }
+
+    async getAccessForFolder(folderId: string, userId: string) {
+        const result = await this.accessRepository.getAccessForFolder(folderId, userId);
+        return result;
+    }
+
     async getFileShares(fileId: TFileId) {
         const fileShares = await this.accessRepository.getFileShares(fileId);
         return fileShares;

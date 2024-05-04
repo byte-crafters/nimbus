@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Param, Post, Req, StreamableFile, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { IFileStructureRepository } from "@src/modules/file-structure/file-structure.type";
+import { IDataRepository } from "@src/modules/file-structure/file-structure.type";
 import { TApiFileId } from "@src/types/api/request";
 import { FileService } from "../services/file.service";
 import { TUploadFileDTO } from "./files.controller";
@@ -12,7 +12,7 @@ import { TUploadFileDTO } from "./files.controller";
 })
 export class LoadController {
     constructor(
-        @Inject(Symbol.for('IFileStructureRepository')) private fileStructureRepository: IFileStructureRepository,
+        @Inject(Symbol.for('IFileStructureRepository')) private fileStructureRepository: IDataRepository,
         @Inject(FileService) private fileService: FileService,
     ) { }
 
