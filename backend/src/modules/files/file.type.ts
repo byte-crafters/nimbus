@@ -1,1 +1,1 @@
-export type TRights = string
+export type TRights = number

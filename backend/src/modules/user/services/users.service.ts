@@ -77,6 +77,7 @@ export class UsersRepository implements IUserService {
                     id: uuidv4(),
                     rootFolder: {
                         create: {}
+                        
                     }
                 },
                 include: {

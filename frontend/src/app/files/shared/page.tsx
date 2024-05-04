@@ -11,263 +11,186 @@ import { PathContext, ProfileContext } from '../../layout-page';
 
 export type TFoldersList = TFolder[];
 
-export default function FilesContainer() {
-    const { openedFolder, setOpenedFolder } = useContext(PathContext);
-    const { loggedUser } = useContext(ProfileContext);
-    const [showFoldersList, setShowFolders] = useState<TFoldersList>([]);
-    const [files, setFiles] = useState<TFile[]>([]);
+export const FilesController = () => {
+    const shareFileIdRef = useRef<any>();
 
-    const router = useRouter();
-
-    const filesInput = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        /**
-         * TODO: move this logic in template or layout
-         */
-        if (loggedUser === null) {
-            router.push('/login');
-        } else {
-            if (openedFolder) {
-                const folderId = openedFolder.id;
-                fetcher.getChildren(folderId).then(({ folders, files }) => {
-                    setShowFolders(folders);
-                    setFiles(files);
-                });
-            }
-        }
-    }, [loggedUser]);
-
-    useEffect(() => {
-        if (openedFolder === null) {
-            fetcher
-                .getUserRootFolder()
-                .then(({ folders }) => setShowFolders(folders));
-        } else {
-            const folderId = openedFolder.id;
-            fetcher
-                .getChildren(folderId)
-                .then(({ folders }) => setShowFolders(folders));
-        }
-    }, []);
-
+    const shareFileUserIdRef = useRef<any>();
     return (
         <>
-            <h1>Shared files</h1>
-            <h2>Current user: `{loggedUser}`</h2>
-            <h2>Current path: `{openedFolder?.id}`</h2>
-            <br />
-
-            <button
-                onClick={() => {
-                    if (openedFolder) {
-                        const folderId = openedFolder.parentId;
+            <div>
+                <h1>All my files</h1>
+                <label htmlFor="">Get all my files</label>
+                <button
+                    onClick={() => {
                         fetcher
-                            .getChildren(folderId)
-                            .then(({ folders, parentFolder, files }) => {
-                                setShowFolders(folders);
-                                setOpenedFolder?.(parentFolder);
-                                setFiles(files);
-                            });
-                    }
-                }}
-            >
-                Get on upper level
-            </button>
-
-            <button
-                onClick={() => {
-                    const folderName = prompt('Folder name:');
-
-                    if (folderName !== null) {
-                        const parentFolderId = openedFolder!.id;
-
+                            .getAllFiles()
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    get all my files
+                </button>
+            </div>
+            <div>
+                <h1>Get my files that i share with others</h1>
+                <label htmlFor="">Get all my shared files</label>
+                <button
+                    onClick={() => {
                         fetcher
-                            .postCreateFolder(folderName, parentFolderId)
-                            .then(({ folders }) => {
-                                setShowFolders(folders);
-                            });
-                    }
-                }}
-            >
-                Create folder
-            </button>
-
-            <input
-                ref={filesInput}
-                type="file"
-                name="files"
-                multiple
-                onClick={() => {}}
-            ></input>
-            <button
-                onClick={() => {
-                    const data = new FormData();
-
-                    for (const file of filesInput.current!.files!) {
-                        data.append('files', file, file.name);
-                    }
-
-                    if (openedFolder) {
+                            .getMySharedFiles()
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    get all my files
+                </button>
+            </div>
+            <div>
+                <h1>Get shared with me files</h1>
+                <label htmlFor="">Get all files that are shared with me</label>
+                <button
+                    onClick={() => {
                         fetcher
-                            .uploadFiles(data, openedFolder?.id)
-                            .then(({ folders, currentFolder, files }) => {
-                                setFiles(files);
-                                setShowFolders(folders);
-                                setOpenedFolder?.(currentFolder);
-                            });
-                    }
-                }}
-            >
-                Save
-            </button>
+                            .getSharedWithMeFiles()
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    get all my files
+                </button>
+            </div>
+            <div>
+                <h1>Share file</h1>
+                <label htmlFor="">Share file id</label>
+                <input placeholder='file id' type="text" name="" id="" ref={shareFileIdRef} />
+                <button
+                    onClick={() => {
+                        fetcher
+                            .shareFiles(shareFileIdRef.current.value, shareFileUserIdRef.current.value)
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    share this file with user
+                </button>
+                <input placeholder='user id' type="text" name="" id="" ref={shareFileUserIdRef} />
+            </div>
+        </>
+    );
+};
 
-            <h6>folders:</h6>
-            <ul>
-                {showFoldersList.map((folder: TFolder) => {
-                    return (
-                        <li
-                            onClick={() => {
-                                fetcher
-                                    .getChildren(folder.id)
-                                    .then(({ folders, files }) => {
-                                        setShowFolders(folders);
-                                        setOpenedFolder?.(folder);
-                                        setFiles(files);
-                                    });
-                            }}
-                            id={`folder-item-${folder.id}`}
-                            key={folder.id}
-                        >
-                            {/* <div>asd</div> */}
-                            <div>
-                                <button
-                                    onClick={() => {
-                                        const newName = prompt(
-                                            'Enter new folder name:'
-                                        );
-                                        if (
-                                            newName !== null &&
-                                            newName.trim() !== ''
-                                        ) {
-                                            fetcher
-                                                .renameFolder(
-                                                    folder.id,
-                                                    newName
-                                                )
-                                                .then(({ folder }) => {
-                                                    console.log('RENAMED');
-                                                    console.log(folder);
-                                                });
-                                        }
-                                    }}
-                                >
-                                    rename
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        const yes = prompt(
-                                            'You want to remove this file first in TRASH BIN?:'
-                                        );
+export const FoldersController = () => {
+    const shareFolderIdRef = useRef<any>();
 
-                                        if (yes === 'yes') {
-                                            fetcher
-                                                .deleteFolder(folder.id, true)
-                                                .then(({ folder }) => {
-                                                    console.log('RENAMED');
-                                                    console.log(folder);
-                                                });
-                                        } else {
-                                            fetcher
-                                                .deleteFolder(folder.id, false)
-                                                .then(({ folder }) => {
-                                                    console.log('RENAMED');
-                                                    console.log(folder);
-                                                });
-                                        }
+    const shareFolderUserIdRef = useRef<any>();
+    return (
+        <>
+            <div>
+                <h1>All my folders</h1>
+                <label htmlFor="">Get all my folders</label>
+                <button
+                    onClick={() => {
+                        fetcher
+                            .getAllFolders()
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    get all my folders
+                </button>
+            </div>
+            <div>
+                <h1>Get my folders that i share with others</h1>
+                <label htmlFor="">Get all my shared folders</label>
+                <button
+                    onClick={() => {
+                        fetcher
+                            .getMySharedFolders()
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    get all my folders
+                </button>
+            </div>
+            <div>
+                <h1>Get shared with me folders</h1>
+                <label htmlFor="">Get all folders that are shared with me</label>
+                <button
+                    onClick={() => {
+                        fetcher
+                            .getSharedWithMeFolders()
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    get all my folders
+                </button>
+            </div>
+            <div>
+                <h1>Share folder</h1>
+                <label htmlFor="">Share folder id</label>
+                <input placeholder='folder id' type="text" name="" id="" ref={shareFolderIdRef} />
+                <button
+                    onClick={() => {
+                        fetcher
+                            .shareFolders(shareFolderIdRef.current.value, shareFolderUserIdRef.current.value)
+                            .then(
+                                (response) => {
+                                    console.log(response);
+                                }
+                            );
+                    }}
+                >
+                    share this folder with user
+                </button>
+                <input placeholder='user id' type="text" name="" id="" ref={shareFolderUserIdRef} />
+            </div>
+        </>
+    );
+};
 
-                                        // if (newName !== null && newName.trim() !== '') {
-                                        //     fetcher
-                                        //         .renameFolder(folder.id, newName)
-                                        //         .then(
-                                        //             ({ folder }) => {
-                                        //                 console.log('RENAMED');
-                                        //                 console.log(folder);
-                                        //             }
-                                        //         );
-                                        // }
-                                    }}
-                                >
-                                    delete
-                                </button>
-                                ./{folder.name} - {folder.id}
-                            </div>
-                        </li>
-                    );
-                })}
-            </ul>
 
-            <h6>files:</h6>
-            <ul>
-                {files.map((file: TFile) => {
-                    return (
-                        <li id={`file-item-${file.id}`} key={file.id}>
-                            <button
-                                onClick={() => {
-                                    fetcher
-                                        .removeFile(file.id)
-                                        .then(
-                                            ({
-                                                folders,
-                                                files,
-                                                currentFolder,
-                                            }) => {
-                                                setShowFolders(folders);
-                                                setOpenedFolder?.(
-                                                    currentFolder
-                                                );
-                                                setFiles(files);
-                                            }
-                                        );
-                                }}
-                            >
-                                delete
-                            </button>
-                            <button
-                                onClick={() => {
-                                    Promise.all([
-                                        fetcher.downloadFile(file.id),
-                                        fetcher.getFileInfo(file.id),
-                                    ]).then(([blob, fileInfo]) => {
-                                        console.log(blob, fileInfo);
-                                        if (blob != null) {
-                                            var url =
-                                                window.URL.createObjectURL(
-                                                    blob
-                                                );
-                                            var a = document.createElement('a');
-                                            a.href = url;
-                                            a.download =
-                                                'temp+' + fileInfo.name;
-                                            document.body.appendChild(a);
-                                            a.click();
-                                            a.remove();
-                                        }
-                                    });
-                                }}
-                            >
-                                download
-                            </button>
-                            {file.name}
-                        </li>
-                    );
-                })}
-            </ul>
+export default function FilesContainer() {
 
-            <Link href={'/login'}>Login</Link>
-            <br />
-            <Link href={'/register'}>Register</Link>
-            <br />
+
+
+    return (
+
+        <>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'row'
+            }}>
+                <div>
+                    <FilesController />
+                </div>
+
+                <div>
+                    <FoldersController />
+                </div>
+            </div>
         </>
     );
 }
