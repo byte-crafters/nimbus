@@ -4,7 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IFileStructureRepository } from '@src/modules/file-structure/file-structure.type';
-import { IFileService } from '@src/modules/files/file.service';
+// import { IFileService } from '@src/modules/files/file.service';
 import request from 'supertest';
 
 describe('AppServiceController (e2e)', () => {
