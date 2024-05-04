@@ -42,4 +42,12 @@ export interface IFileStructureRepository {
     getFolderPath(folderId: TFolderId): Promise<Pick<TFolder, "id" | "name">[]>;
     changeFolderRemovedState(folderId: TFolderId, removedState: boolean): Promise<TFolderRepository>;
     getFileById(fileId: TFileId): Promise<TFileRepository>;
+
+    getAllFilesOfUser(userId: string): Promise<any>
+    getAllFoldersOfUser(userId: string): Promise<any>
+    getAllMySharedFiles(myId: string): Promise<any>;
+    getAllMySharedFolders(myId: string): Promise<any>;
+    getSharedWithMeFiles(myId: string): Promise<any>;
+
+    getSharedWithMeFolders(myId: string): Promise<any>;
 }

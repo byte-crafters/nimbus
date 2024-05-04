@@ -82,6 +82,173 @@ export type TDownloadFile = void;
 export class Requester {
     private host: string = process.env.NEXT_PUBLIC_NIMBUS_API_HOST ?? '';
 
+    async getAllFiles() {
+        try {
+            return await fetch(`${this.host}/api/v1/files/get-all-files`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getAllFolders() {
+        try {
+            return await fetch(`${this.host}/api/v1/files/get-all-folders`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getMySharedFolders() {
+        try {
+            return await fetch(`${this.host}/api/v1/files/get-my-shared-folders`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getMySharedFiles() {
+        try {
+            return await fetch(`${this.host}/api/v1/files/get-my-shared-files`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getSharedWithMeFiles() {
+        try {
+            return await fetch(`${this.host}/api/v1/files/get-shared-with-me-files`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getSharedWithMeFolders() {
+        try {
+            return await fetch(`${this.host}/api/v1/files/get-shared-with-me-folders`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async shareFiles(fileId: string, userId: string) {
+        try {
+            return await fetch(`${this.host}/api/v1/files/share/files`, {
+                body: JSON.stringify({
+                    access: [
+                        {
+                            userId,
+                            fileId,
+                            value: {
+                                view: true
+                            }
+                        }
+                    ]
+                }),
+                method: METHODS.POST,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async shareFolders(folderId: string, userId: string) {
+        try {
+            return await fetch(`${this.host}/api/v1/files/share/folders`, {
+                body: JSON.stringify({
+                    access: [
+                        {
+                            userId,
+                            folderId,
+                            value: {
+                                view: true
+                            }
+                        }
+                    ]
+                }),
+                method: METHODS.POST,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getFileShares(fileId: string) {
+        const response = await fetch(
+            `${this.host}/api/v1/files/share/file/${fileId}`,
+            {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                }
+            }
+        );
+
+        const jsonResponse = await this.handleResponse(response);
+        return jsonResponse;
+    }
+
     async register(login: string, password: string) {
         try {
             return await fetch(`${this.host}/api/v1/auth/register`, {

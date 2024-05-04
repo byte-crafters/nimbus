@@ -15,15 +15,235 @@ export class FileStructureRepository implements IFileStructureRepository {
         this.connection = new PostgresConnection();
     }
 
+    async getClosestSharedFolder(folderId: string, userId: string, access: number) {
+        try {
+            const requestedFolder = await this.connection.folder.findFirst({
+                where: {
+                    id: folderId
+                },
+                select: {
+                    path: true
+                }
+            });
+
+            const nearestSharedFolder = await this.connection.folder.findMany({
+                where: {
+                    id: {
+                        in: requestedFolder.path
+                    },
+                    folderAccess: {
+                        some: {
+                            userId: userId,
+                            userRights: {
+                                gte: access
+                            }
+                        }
+                    },
+                },
+                include: {
+                    folderAccess: true
+                }
+            });
+
+            return nearestSharedFolder;
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+    async getSharedWithMeFiles(userId: string) {
+        try {
+            const accs = await this.connection.fileAccess.findMany();
+
+            return await this.connection.file.findMany({
+                where: {
+                    ownerId: {
+                        not: {
+                            equals: userId
+                        }
+                    },
+                    fileAccess: {
+                        some: {
+                            userId: userId,
+                            userRights: {
+                                gt: 0
+                            }
+                        }
+                    },
+                },
+                include: {
+                    fileAccess: {
+                        select: {
+                            userRights: true
+                        }
+                    }
+                }
+            });
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+    async getAllMySharedFiles(userId: string) {
+        try {
+            const accs = await this.connection.fileAccess.findMany();
+
+
+            return await this.connection.file.findMany({
+                where: {
+                    ownerId: userId,
+                    fileAccess: {
+                        some: {
+                            userId: {
+                                not: userId
+                            },
+                            userRights: {
+                                gt: 0
+                            }
+                        }
+                    },
+                },
+                include: {
+                    fileAccess: {
+                        select: {
+                            userRights: true
+                        }
+                    }
+                }
+            });
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+    async getAllFilesOfUser(userId: string) {
+        try {
+            return this.connection.file.findMany({
+                where: {
+                    ownerId: userId
+                }
+            });
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    async getSharedWithMeFolders(userId: string) {
+        try {
+            const accs = await this.connection.folderAccess.findMany();
+
+            return await this.connection.folder.findMany({
+                where: {
+                    owner: {
+                        id: {
+                            not: {
+                                equals: userId
+                            }
+                        }
+                    },
+                    folderAccess: {
+                        some: {
+                            userId: userId,
+                            userRights: {
+                                gt: 0
+                            }
+                        }
+                    },
+                },
+                include: {
+                    folderAccess: {
+                        select: {
+                            userRights: true
+                        }
+                    }
+                }
+            });
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+    async getAllMySharedFolders(userId: string) {
+        try {
+            const accs = await this.connection.folderAccess.findMany();
+
+
+            return await this.connection.folder.findMany({
+                where: {
+                    owner: {
+                        id: userId
+                    },
+                    folderAccess: {
+                        some: {
+                            userId: {
+                                not: userId
+                            },
+                            userRights: {
+                                gt: 0
+                            }
+                        }
+                    },
+                },
+                include: {
+                    folderAccess: {
+                        select: {
+                            userRights: true
+                        }
+                    }
+                }
+            });
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
+    async getAllFoldersOfUser(userId: string) {
+        try {
+            const allf = await this.connection.folder.findMany({
+                include: {owner: true}
+            })
+
+            return this.connection.folder.findMany({
+                where: {
+                    owner: {
+                        id: userId
+                    }
+                }
+            });
+        } catch (e: unknown) {
+            console.log(e);
+        }
+    }
+
     async removeAllData(): Promise<TFileStructureRemoveAllData[]> {
         /** 
          * Used only for tests.
          * Need to run sequentially to avoid `foreign key constaint violation` error.
-         */
-        const c4 = await this.connection.fileAccess.deleteMany()
+        */
+
+        await this.connection.fileAccess.deleteMany();
+        await this.connection.folderAccess.deleteMany();
+
+        const c4 = await this.connection.fileAccess.deleteMany();
         const c3 = await this.connection.user.deleteMany();
         const c1 = await this.connection.file.deleteMany();
         const c2 = await this.connection.folder.deleteMany();
+
+
         return [c1, c2];
     }
 
@@ -117,7 +337,7 @@ export class FileStructureRepository implements IFileStructureRepository {
                 },
             });
         } catch (e: unknown) {
-            console.error(e)
+            console.error(e);
         }
     }
 
@@ -194,8 +414,6 @@ export class FileStructureRepository implements IFileStructureRepository {
                             id: userId
                         }
                     },
-
-
                     path: [],
                     // parentFolderId: 
                     // parentFolder: {
@@ -218,9 +436,9 @@ export class FileStructureRepository implements IFileStructureRepository {
             include: {
                 rootFolder: true
             }
-        })
+        });
 
-        return (user as any).rootFolder
+        return (user as any).rootFolder;
         // return this.connection.folder.findFirst({
         //     where: {
         //         name: userId,
@@ -300,8 +518,6 @@ export class FileStructureRepository implements IFileStructureRepository {
 
     async createFolder(userId: string, folderName: string, parentFolderId: TFolderId): Promise<TFolderRepository> {
         try {
-
-        
             const parentFolder = await this.connection.folder.findUnique({
                 where: {
                     id: parentFolderId,
@@ -327,7 +543,7 @@ export class FileStructureRepository implements IFileStructureRepository {
                 },
             });
         } catch (e: unknown) {
-            console.error(e)
+            console.error(e);
         }
     }
 }

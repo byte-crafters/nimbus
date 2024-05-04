@@ -10,7 +10,7 @@
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "start": "nest start --exec 'C/Program Files/nodejs/node -r tsconfig-paths/register -r ts-node/register ./src/main.ts'",
         "dev": "dotenv -e .env.local.dev -- nest start --debug --watch",
-        "be:start:dev": "npm run be:postgres:dev:mg && npm run be:mongo:dev:sync && dotenv -e .env.local.dev -- nest start --debug --watch",
+        "be:start:dev": "dotenv -e .env.local.dev -- nest start --debug --watch",
         "prepare-dist": "rm -rf ./dist && mkdirp ./dist/prisma/generated/ && cp -r ./prisma/generated/* ./dist/prisma/generated/",
         "start:debug": "nest start --debug --watch",
         "be:start:prod": "node dist/src/main",
