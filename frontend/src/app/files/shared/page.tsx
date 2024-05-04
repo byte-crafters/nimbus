@@ -22,13 +22,9 @@ export const FilesController = () => {
                 <label htmlFor="">Get all my files</label>
                 <button
                     onClick={() => {
-                        fetcher
-                            .getAllFiles()
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                        fetcher.getAllFiles().then((response) => {
+                            console.log(response);
+                        });
                     }}
                 >
                     get all my files
@@ -39,13 +35,9 @@ export const FilesController = () => {
                 <label htmlFor="">Get all my shared files</label>
                 <button
                     onClick={() => {
-                        fetcher
-                            .getMySharedFiles()
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                        fetcher.getMySharedFiles().then((response) => {
+                            console.log(response);
+                        });
                     }}
                 >
                     get all my files
@@ -56,13 +48,9 @@ export const FilesController = () => {
                 <label htmlFor="">Get all files that are shared with me</label>
                 <button
                     onClick={() => {
-                        fetcher
-                            .getSharedWithMeFiles()
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                        fetcher.getSharedWithMeFiles().then((response) => {
+                            console.log(response);
+                        });
                     }}
                 >
                     get all my files
@@ -71,21 +59,34 @@ export const FilesController = () => {
             <div>
                 <h1>Share file</h1>
                 <label htmlFor="">Share file id</label>
-                <input placeholder='file id' type="text" name="" id="" ref={shareFileIdRef} />
+                <input
+                    placeholder="file id"
+                    type="text"
+                    name=""
+                    id=""
+                    ref={shareFileIdRef}
+                />
                 <button
                     onClick={() => {
                         fetcher
-                            .shareFiles(shareFileIdRef.current.value, shareFileUserIdRef.current.value)
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                            .shareFiles(
+                                shareFileIdRef.current.value,
+                                shareFileUserIdRef.current.value
+                            )
+                            .then((response) => {
+                                console.log(response);
+                            });
                     }}
                 >
                     share this file with user
                 </button>
-                <input placeholder='user id' type="text" name="" id="" ref={shareFileUserIdRef} />
+                <input
+                    placeholder="user id"
+                    type="text"
+                    name=""
+                    id=""
+                    ref={shareFileUserIdRef}
+                />
             </div>
         </>
     );
@@ -102,13 +103,9 @@ export const FoldersController = () => {
                 <label htmlFor="">Get all my folders</label>
                 <button
                     onClick={() => {
-                        fetcher
-                            .getAllFolders()
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                        fetcher.getAllFolders().then((response) => {
+                            console.log(response);
+                        });
                     }}
                 >
                     get all my folders
@@ -119,13 +116,9 @@ export const FoldersController = () => {
                 <label htmlFor="">Get all my shared folders</label>
                 <button
                     onClick={() => {
-                        fetcher
-                            .getMySharedFolders()
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                        fetcher.getMySharedFolders().then((response) => {
+                            console.log(response);
+                        });
                     }}
                 >
                     get all my folders
@@ -133,16 +126,14 @@ export const FoldersController = () => {
             </div>
             <div>
                 <h1>Get shared with me folders</h1>
-                <label htmlFor="">Get all folders that are shared with me</label>
+                <label htmlFor="">
+                    Get all folders that are shared with me
+                </label>
                 <button
                     onClick={() => {
-                        fetcher
-                            .getSharedWithMeFolders()
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                        fetcher.getSharedWithMeFolders().then((response) => {
+                            console.log(response);
+                        });
                     }}
                 >
                     get all my folders
@@ -151,38 +142,48 @@ export const FoldersController = () => {
             <div>
                 <h1>Share folder</h1>
                 <label htmlFor="">Share folder id</label>
-                <input placeholder='folder id' type="text" name="" id="" ref={shareFolderIdRef} />
+                <input
+                    placeholder="folder id"
+                    type="text"
+                    name=""
+                    id=""
+                    ref={shareFolderIdRef}
+                />
                 <button
                     onClick={() => {
                         fetcher
-                            .shareFolders(shareFolderIdRef.current.value, shareFolderUserIdRef.current.value)
-                            .then(
-                                (response) => {
-                                    console.log(response);
-                                }
-                            );
+                            .shareFolders(
+                                shareFolderIdRef.current.value,
+                                shareFolderUserIdRef.current.value
+                            )
+                            .then((response) => {
+                                console.log(response);
+                            });
                     }}
                 >
                     share this folder with user
                 </button>
-                <input placeholder='user id' type="text" name="" id="" ref={shareFolderUserIdRef} />
+                <input
+                    placeholder="user id"
+                    type="text"
+                    name=""
+                    id=""
+                    ref={shareFolderUserIdRef}
+                />
             </div>
         </>
     );
 };
 
-
 export default function FilesContainer() {
-
-
-
     return (
-
         <>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'row'
-            }}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                }}
+            >
                 <div>
                     <FilesController />
                 </div>

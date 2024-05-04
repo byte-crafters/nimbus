@@ -15,7 +15,7 @@ export class FileStructureRepository implements IFileStructureRepository {
         this.connection = new PostgresConnection();
     }
 
-    async getClosestSharedFolder(folderId: string, userId: string, access: number) {
+    async getClosestSharedFolder(folderId: string, userId: string, access: number = 1) {
         try {
             const requestedFolder = await this.connection.folder.findFirst({
                 where: {
@@ -26,7 +26,7 @@ export class FileStructureRepository implements IFileStructureRepository {
                 }
             });
 
-            const nearestSharedFolder = await this.connection.folder.findMany({
+            const nearestSharedFolder = await this.connection.folder.findFirst({
                 where: {
                     id: {
                         in: requestedFolder.path

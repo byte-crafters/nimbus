@@ -18,6 +18,7 @@ export interface IUserService {
         username: string;
         password: string;
     }>;
+    getUsersByUsername(username: string): Promise<any>
 }
 
 export type TCreateUserResult = {
@@ -123,4 +124,22 @@ export class UsersRepository implements IUserService {
 
         return user;
     }
+
+    async getUsersByUsername(username: string) {
+        const result = await this.connection.user.findMany({
+            where: {
+                username: {
+                    contains: username
+                }
+            },
+            select: {
+                username: true,
+                id: true
+            }
+        })
+
+        return result
+    }
+
+    
 }

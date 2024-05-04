@@ -132,48 +132,67 @@ export class FilesController {
             const user = await this.usersService.getUserProfile(userId);
 
             /** Now we find children nodes */
-            const children = await this.fileStructureRepository.getChildrenFolders(parentFolderId);
-            const folderFiles = await this.fileStructureRepository.getChildrenFiles(parentFolderId);
-            const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
-            const namesPath = await this.fileStructureRepository.getFolderPath(parentFolderId);
 
-            /** When using `Promise.all` we  */
-            const result = await Promise.all([
-                this.fileStructureRepository.getChildrenFolders(parentFolderId),
-                this.fileStructureRepository.getChildrenFiles(parentFolderId),
-                this.fileStructureRepository.getFolderById(parentFolderId),
-                this.fileStructureRepository.getFolderPath(parentFolderId),
-            ]);
+            const f = await this.fileStructureRepository.getClosestSharedFolder(parentFolderId, userId);
 
-            const rootUserFolder = await this.fileStructureRepository.getUserRootFolder(userId);
+            if (f === null) {
+                /** No parent folder that user has access to at least view this folder content */
+                // return {};
+                throw new Error('Not found folder or you have no access to it.');
+            } else {
+                const access = f.folderAccess[0];
+                console.log(access);
 
-            namesPath.unshift({
-                id: rootUserFolder.id,
-                name: rootUserFolder.name,
-            });
-            /**
-             * Get names paths in usual names
-             */
+                const children = await this.fileStructureRepository.getChildrenFolders(parentFolderId);
+                const folderFiles = await this.fileStructureRepository.getChildrenFiles(parentFolderId);
+                const parentFolder = await this.fileStructureRepository.getFolderById(parentFolderId);
+                const namesPath = await this.fileStructureRepository.getFolderPath(parentFolderId);
 
-            return {
-                parentFolder,
-                folders: children,
-                files: folderFiles,
-                currentPath: namesPath,
-                folderAccess: {
-                    downloadZip: true,
-                    downloadNestedFiles: false,
-                    editFolderInfo: false,
-                    editNestedFiles: true,
-                    removeFolder: false,
-                    removeNestedFiles: false,
-                    moveFolder: true,
-                    moveNestedFiles: true
-                }
-            };
+                /** When using `Promise.all` we  */
+                const result = await Promise.all([
+                    this.fileStructureRepository.getChildrenFolders(parentFolderId),
+                    this.fileStructureRepository.getChildrenFiles(parentFolderId),
+                    this.fileStructureRepository.getFolderById(parentFolderId),
+                    this.fileStructureRepository.getFolderPath(parentFolderId),
+                ]);
+
+                const rootUserFolder = await this.fileStructureRepository.getUserRootFolder(userId);
+
+                namesPath.unshift({
+                    id: rootUserFolder.id,
+                    name: rootUserFolder.name,
+                });
+                /**
+                 * Get names paths in usual names
+                 */
+
+                return {
+                    parentFolder,
+                    folders: children,
+                    files: folderFiles,
+                    currentPath: namesPath,
+                    folderAccess: {
+                        downloadZip: true,
+                        downloadNestedFiles: false,
+                        editFolderInfo: false,
+                        editNestedFiles: true,
+                        removeFolder: false,
+                        removeNestedFiles: false,
+                        moveFolder: true,
+                        moveNestedFiles: true
+                    }
+                };
+            }
+
+
         } catch (e: unknown) {
             if (e instanceof NoFolderWithThisIdError) {
                 throw new BadRequestException(e.message);
+            }
+            if (e instanceof Error) {
+                if (e.message === 'Not found folder or you have no access to it.') {
+                    throw new BadRequestException(e.message);
+                }
             }
 
             throw new InternalServerErrorException('Server error.');
@@ -404,7 +423,7 @@ export class FilesController {
 
 
 
-    
+
     /** File */
     @Get('get-all-files')
     async getAllFiles(

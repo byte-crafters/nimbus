@@ -24,6 +24,7 @@ export type TFolderRepository = Prisma.Result<Prisma.FolderDelegate, Prisma.Fold
 export type TFileRepository = Prisma.Result<Prisma.FileDelegate, Prisma.FileFindUniqueArgs, 'findUnique'>;
 
 export interface IFileStructureRepository {
+    getClosestSharedFolder(folderId: string, userId: string, access?: number): Promise<any>;
     /**
      * For testing purpose only!
      * TODO: remove from production code.
@@ -43,8 +44,8 @@ export interface IFileStructureRepository {
     changeFolderRemovedState(folderId: TFolderId, removedState: boolean): Promise<TFolderRepository>;
     getFileById(fileId: TFileId): Promise<TFileRepository>;
 
-    getAllFilesOfUser(userId: string): Promise<any>
-    getAllFoldersOfUser(userId: string): Promise<any>
+    getAllFilesOfUser(userId: string): Promise<any>;
+    getAllFoldersOfUser(userId: string): Promise<any>;
     getAllMySharedFiles(myId: string): Promise<any>;
     getAllMySharedFolders(myId: string): Promise<any>;
     getSharedWithMeFiles(myId: string): Promise<any>;
