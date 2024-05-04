@@ -18,7 +18,7 @@ export interface IUserService {
         username: string;
         password: string;
     }>;
-    getUsersByUsername(username: string): Promise<any>
+    getUsersByUsername(username: string): Promise<any>;
 }
 
 export type TCreateUserResult = {
@@ -26,7 +26,7 @@ export type TCreateUserResult = {
     email: string;
     username: string;
     password: string;
-    rootFolder: TFolder
+    rootFolder: TFolder;
 };
 
 @Injectable()
@@ -70,6 +70,10 @@ export class UsersRepository implements IUserService {
 
             // console.error(this.connection)
 
+            // const rootf = await this.connection.folder.create({
+            //     data: {}
+            // })
+
             const db_user = await this.connection.user.create({
                 data: {
                     email: user.email,
@@ -78,7 +82,6 @@ export class UsersRepository implements IUserService {
                     id: uuidv4(),
                     rootFolder: {
                         create: {}
-                        
                     }
                 },
                 include: {
@@ -93,6 +96,26 @@ export class UsersRepository implements IUserService {
                 // }
             });
 
+
+
+            const fs = await this.connection.folder.update({
+                // where: {
+                //     rootUserOwner: {
+                //         id: db_user.id
+                //     }
+                // }, 
+                where: {
+                    id: db_user.rootFolderId,
+                },
+                data: {
+                    owner: {
+                        connect: {
+                            id: db_user.id
+                        }
+                    }
+                }
+            });
+
             return db_user as any;
         } catch (e: unknown) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -100,7 +123,7 @@ export class UsersRepository implements IUserService {
                     throw new DbUserUniqueConstraintError('username');
                 }
             } else if (e instanceof Prisma.PrismaClientInitializationError) {
-                throw new DbConnectionException()
+                throw new DbConnectionException();
             }
 
             throw e;
@@ -136,10 +159,10 @@ export class UsersRepository implements IUserService {
                 username: true,
                 id: true
             }
-        })
+        });
 
-        return result
+        return result;
     }
 
-    
+
 }

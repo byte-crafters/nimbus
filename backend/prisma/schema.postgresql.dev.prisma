@@ -18,8 +18,8 @@ model User {
     username String  @unique
     password String?
 
-    rootFolder   Folder @relation("RootFolder", fields: [rootFolderId], references: [id])
-    rootFolderId String @unique
+    rootFolder   Folder? @relation("RootFolder", fields: [rootFolderId], references: [id])
+    rootFolderId String? @unique
 
     file   File[]   @relation(name: "FileOwner")
     folder Folder[] @relation(name: "FolderOwner")

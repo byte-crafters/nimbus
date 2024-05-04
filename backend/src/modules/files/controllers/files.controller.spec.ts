@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FilesController } from './files.controller';
-import { FileStructureRepository } from '../file-structure/file-structure.service';
-import { FilesStructureModule } from '../file-structure/file-structure.module';
-import { FilesSystemModule } from '../file-system/file-system.module';
-import { FileSystemService } from '../file-system/file-system.service';
-import { TestConfigService } from '../config/test.config.service';
-import { FilesModule } from './files.module';
-import { FileService } from './file.service';
-import { UsersModule } from '../user/users.module';
+import { FileStructureRepository } from '../../file-structure/file-structure.service';
+import { FilesStructureModule } from '../../file-structure/file-structure.module';
+import { FilesSystemModule } from '../../file-system/file-system.module';
+import { FileSystemService } from '../../file-system/file-system.service';
+import { TestConfigService } from '../../config/test.config.service';
+import { FilesModule } from '../files.module';
+import { FileService } from '../services/file.service';
+import { UsersModule } from '../../user/users.module';
 import { userServiceDefaultProvider } from '@src/dependencies/providers';
 
 describe('FilesController', () => {
