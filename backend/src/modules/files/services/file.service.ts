@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import path from 'node:path';
-import { IConfigService } from '../config/dev.config.service';
+import { IConfigService } from '../../config/dev.config.service';
 import {
     FileStructureRepository,
     // IFileStructureRepository,
     // TFileRepository,
-} from '../file-structure/file-structure.service';
-import { IFileSystemService } from '../file-system/file-system.service';
-import { IFileStructureRepository, TFileId, TFileRepository, TFolderId } from '../file-structure/file-structure.type';
+} from '../../file-structure/file-structure.service';
+import { IFileSystemService } from '../../file-system/file-system.service';
+import { IFileStructureRepository, TFileId, TFileRepository, TFolderId } from '../../file-structure/file-structure.type';
 
 export interface IFileService { }
 

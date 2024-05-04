@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TFileId, TFolder, TFolderId } from '../file-structure/file-structure.type';
-import { PostgresConnection } from '../storage/postgres-connection';
-import { TRights } from './file.type';
+import { TFileId, TFolder, TFolderId } from '../../file-structure/file-structure.type';
+import { PostgresConnection } from '../../storage/postgres-connection';
+import { TRights } from '../file.type';
 import { AccessRepository } from './access.repository';
-import { UserGrantAccessUnauthorized } from '../errors/logic/CannotCreateRootFolder';
+import { UserGrantAccessUnauthorized } from '../../errors/logic/CannotCreateRootFolder';
 
 export type TFileRights = {
     view?: boolean;
@@ -19,8 +19,6 @@ export type TFolderRights = {
 export const FILE_NONE = 0;
 export const FILE_VIEW = 1;
 export const FILE_EDIT = 2;
-
-
 
 export const FOLDER_NONE = 0;
 export const FOLDER_VIEW = 1;

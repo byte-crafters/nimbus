@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TFileId, TFolder, TFolderId } from '../file-structure/file-structure.type';
-import { PostgresConnection } from '../storage/postgres-connection';
-import { TRights } from './file.type';
+import { TFileId, TFolder, TFolderId } from '../../file-structure/file-structure.type';
+import { PostgresConnection } from '../../storage/postgres-connection';
+import { TRights } from '../file.type';
 import { Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { FILE_VIEW, FOLDER_VIEW } from './access.service';
 
@@ -160,6 +160,7 @@ export class AccessRepository {
                 id: folderId
             },
             select: {
+                // rootUserOwner: true
                 owner: true
             }
         });
