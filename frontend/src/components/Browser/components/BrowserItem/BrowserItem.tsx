@@ -40,7 +40,17 @@ export const BrowserItem = ({
                 width={70}
                 height={80}
             />
-            {item.name}
+            <p
+                style={{
+                    fontSize: '13px',
+                    maxWidth: '80px',
+                    overflowWrap: 'anywhere',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                }}
+            >
+                {item.name}
+            </p>
         </ListItem>
     );
 };

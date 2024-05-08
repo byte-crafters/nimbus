@@ -20,7 +20,7 @@ export const StringDialog = ({ onSubmit }: PropsWithChildren<IProps>) => {
     const { hideModal, store } = useModalContext();
 
     const { modalProps, modalType } = store || {};
-    const { items } = modalProps || {};
+    const { items, handler } = modalProps || {};
 
     const handleModalToggle = () => {
         hideModal();
@@ -28,6 +28,7 @@ export const StringDialog = ({ onSubmit }: PropsWithChildren<IProps>) => {
 
     const handleSubmit = () => {
         onSubmit(items, data);
+        handler(items[0], data);
         hideModal();
     };
 
@@ -48,8 +49,12 @@ export const StringDialog = ({ onSubmit }: PropsWithChildren<IProps>) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleModalToggle}>Cancel</Button>
-                <Button onClick={handleSubmit}>Save</Button>
+                <Button color="secondary" onClick={handleModalToggle}>
+                    Cancel
+                </Button>
+                <Button color="secondary" onClick={handleSubmit}>
+                    Save
+                </Button>
             </DialogActions>
         </Dialog>
     );

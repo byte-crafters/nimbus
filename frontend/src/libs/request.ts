@@ -323,7 +323,7 @@ export class Requester {
             return jsonResponse;
         } catch (e: unknown) {
             // console.error(e);
-            throw new ClientRegistrationError();
+            // throw new ClientRegistrationError();
         }
     }
 
