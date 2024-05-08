@@ -9,6 +9,7 @@ import {
     TSetUserProfileShort,
 } from '../layout-page';
 import { register } from '../lib/register-actions';
+import styles from './page.module.scss';
 
 export default function Auth() {
     const loginRef = useRef<HTMLInputElement>(null);
@@ -19,42 +20,61 @@ export default function Auth() {
     const router = useRouter();
 
     return (
-        <>
-            <h1>Register</h1>
-            <form
-                onSubmit={async (e: FormEvent<HTMLFormElement>) => {
-                    try {
-                        e.preventDefault();
+        <div className={styles.container}>
+            <div>
+                <h1>Register</h1>
+                <form
+                    onSubmit={async (e: FormEvent<HTMLFormElement>) => {
+                        try {
+                            e.preventDefault();
 
-                        const userProfile = await register(
-                            loginRef.current!.value,
-                            passwordRef.current!.value
-                        );
+                            const userProfile = await register(
+                                loginRef.current!.value,
+                                passwordRef.current!.value
+                            );
 
-                        if (userProfile !== null) {
-                            setLoggedUser?.(userProfile.id);
-                            setOpenedFolder?.(userProfile.rootFolder);
-                            router.push('/files');
-                        }
-                    } catch (e: unknown) {}
-                }}
-            >
-                <div>
+                            if (userProfile !== null) {
+                                setLoggedUser?.(userProfile.id);
+                                setOpenedFolder?.(userProfile.rootFolder);
+                                router.push('/files');
+                            }
+                        } catch (e: unknown) {}
+                    }}
+                >
                     <div>
-                        <label htmlFor="login">Username:</label>
+                        <div>
+                            <label htmlFor="login">Username:</label>
+                        </div>
+                        <input
+                            ref={loginRef}
+                            type="text"
+                            name="login"
+                            className={styles.input}
+                            autoComplete="off"
+                        />
                     </div>
-                    <input ref={loginRef} type="text" name="login" />
-                </div>
-                <div>
                     <div>
-                        <label htmlFor="password">Password:</label>
+                        <div>
+                            <label htmlFor="password">Password:</label>
+                        </div>
+                        <input
+                            ref={passwordRef}
+                            type="password"
+                            name="password"
+                            className={styles.input}
+                            autoComplete="off"
+                            formNoValidate
+                        />
                     </div>
-                    <input ref={passwordRef} type="password" name="password" />
-                </div>
-                <input type="submit" value="Register" />
-            </form>
-            <Link href={'/login'}>Login</Link>
-            <br />
-        </>
+                    <input
+                        type="submit"
+                        value="Register"
+                        className={styles.button}
+                    />
+                </form>
+                <Link href={'/login'}>Login</Link>
+                <br />
+            </div>
+        </div>
     );
 }

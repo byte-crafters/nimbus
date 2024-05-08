@@ -1,5 +1,5 @@
 'use client';
-import { TFile, TFolder, TPath, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -7,7 +7,9 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { Browser, ContextMenu } from '@/components';
 import { PathContext, ProfileContext } from '@/app/layout-page';
-import { Box } from '@mui/material';
+import { Box, ListItem } from '@mui/material';
+import { Sidebar } from '@/components/Sidebar';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -53,7 +55,7 @@ export default function FilesContainer() {
     const { loggedUser } = useContext(ProfileContext);
     const [showFoldersList, setShowFolders] = useState<TFoldersList>([]);
     const [files, setFiles] = useState<TFile[]>([]);
-    const [path, setPath] = useState<TPath[]>([]);
+    const [path, setPath] = useState<TPath[]>(null);
 
     const router = useRouter();
 
@@ -78,13 +80,14 @@ export default function FilesContainer() {
 
     useEffect(() => {
         if (openedFolder === null) {
-            fetcher
-                .getUserRootFolder()
-                .then(({ folders }) => setShowFolders(folders));
+            fetcher.getUserRootFolder().then(({ folders }) => {
+                setShowFolders(folders);
+            });
         } else {
             const folderId = openedFolder.id;
             fetcher.getChildren(folderId).then(({ folders, currentPath }) => {
                 setShowFolders(folders);
+                setPath(currentPath);
             });
         }
     }, []);
@@ -98,38 +101,127 @@ export default function FilesContainer() {
         setPath(currentPath);
     }
 
+    function handleRename(item: TFSItem, name: string) {
+        //folder
+
+        let newItem: TFolder = null,
+            arr = [];
+
+        for (let i = 0; i < showFoldersList.length; i++) {
+            if (showFoldersList[i].id == item.id) {
+                newItem = showFoldersList[i];
+                newItem.name = name;
+                arr.push(newItem);
+            } else {
+                arr.push(showFoldersList[i]);
+            }
+        }
+
+        setShowFolders(arr);
+    }
+
+    function handleDelete(items: TFSItem[]) {
+        let newFiles: TFile[] = [],
+            newFolders: TFolder[] = [];
+
+        for (let i = 0; i < showFoldersList.length; i++) {
+            if (!items.find((item) => item.id == showFoldersList[i].id)) {
+                newFolders.push(showFoldersList[i]);
+            }
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            if (!items.find((item) => item.id == files[i].id)) {
+                newFiles.push(files[i]);
+            }
+        }
+
+        setFiles(newFiles);
+        setShowFolders(newFolders);
+    }
+
+    function handleCreateFolder() {
+        const folderName = prompt('Folder name:');
+
+        if (folderName !== null) {
+            const parentFolderId = openedFolder!.id;
+
+            fetcher
+                .postCreateFolder(folderName, parentFolderId)
+                .then(({ folders }) => {
+                    setShowFolders(folders);
+                });
+        }
+    }
+
+    function handleFileUpload(data: FormData) {
+        if (openedFolder) {
+            fetcher
+                .uploadFiles(data, openedFolder?.id)
+                .then(({ folders, currentFolder, files }) => {
+                    setFiles(files);
+                    setShowFolders(folders);
+                    setOpenedFolder?.(currentFolder);
+                });
+        }
+    }
+
+    console.log(path);
     return (
-        <>
-            <Breadcrumbs aria-label="breadcrumb">
-                {path.map((item) => (
-                    <div
-                        onClick={() => {
-                            const folderId = item.id;
-                            fetcher
-                                .getChildren(folderId)
-                                .then(({ folders, files, currentPath }) => {
-                                    setShowFolders(folders);
-                                    setOpenedFolder?.(folderId); //fix that
-                                    setFiles(files);
-                                    setPath(currentPath);
-                                    console.log(currentPath);
-                                });
-                        }}
-                        key={item.id}
-                    >
-                        {item.name}
-                    </div>
-                ))}
-            </Breadcrumbs>
+        <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+            <Sidebar
+                onCreateFolder={handleCreateFolder}
+                onUploadFile={handleFileUpload}
+            />
+            <div>
+                <Breadcrumbs
+                    sx={{ margin: 2 }}
+                    aria-label="breadcrumb"
+                    separator={<NavigateNextIcon fontSize="small" />}
+                >
+                    {path ? (
+                        path.map((item, index) => (
+                            <div
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                    const folderId = item.id;
+                                    fetcher
+                                        .getChildren(folderId)
+                                        .then(
+                                            ({
+                                                folders,
+                                                files,
+                                                currentPath,
+                                            }) => {
+                                                setShowFolders(folders);
+                                                setOpenedFolder?.(folderId); //fix that
+                                                setFiles(files);
+                                                setPath(currentPath);
+                                                console.log(currentPath);
+                                            }
+                                        );
+                                }}
+                                key={item.id}
+                            >
+                                {index ? item.name : 'Home'}
+                            </div>
+                        ))
+                    ) : (
+                        <div>Home</div>
+                    )}
+                </Breadcrumbs>
 
-            <Box>
-                <Browser
-                    items={[...showFoldersList, ...files]}
-                    openFolder={openFolder}
-                />
-            </Box>
+                <Box sx={{ margin: 2 }}>
+                    <Browser
+                        items={[...showFoldersList, ...files]}
+                        openFolder={openFolder}
+                        onRename={handleRename}
+                        onDelete={handleDelete}
+                    />
+                </Box>
+            </div>
 
-            <button
+            {/* <button
                 onClick={() => {
                     const folderName = prompt('Folder name:');
 
@@ -194,7 +286,7 @@ export default function FilesContainer() {
                             id={`folder-item-${folder.id}`}
                             key={folder.id}
                         >
-                            {/* <div>asd</div> */}
+                            <div>asd</div>
                             <div>
                                 <button
                                     onClick={() => {
@@ -241,16 +333,16 @@ export default function FilesContainer() {
                                                 });
                                         }
 
-                                        // if (newName !== null && newName.trim() !== '') {
-                                        //     fetcher
-                                        //         .renameFolder(folder.id, newName)
-                                        //         .then(
-                                        //             ({ folder }) => {
-                                        //                 console.log('RENAMED');
-                                        //                 console.log(folder);
-                                        //             }
-                                        //         );
-                                        // }
+                                        if (newName !== null && newName.trim() !== '') {
+                                            fetcher
+                                                .renameFolder(folder.id, newName)
+                                                .then(
+                                                    ({ folder }) => {
+                                                        console.log('RENAMED');
+                                                        console.log(folder);
+                                                    }
+                                                );
+                                        }
                                     }}
                                 >
                                     delete
@@ -260,9 +352,9 @@ export default function FilesContainer() {
                         </li>
                     );
                 })}
-            </ul>
+            </ul> */}
 
-            <h6>files:</h6>
+            {/* <h6>files:</h6>
             <ul>
                 {files.map((file: TFile) => {
                     return (
@@ -317,12 +409,12 @@ export default function FilesContainer() {
                         </li>
                     );
                 })}
-            </ul>
+            </ul> */}
 
-            <Link href={'/login'}>Login</Link>
+            {/* <Link href={'/login'}>Login</Link>
             <br />
             <Link href={'/register'}>Register</Link>
-            <br />
-        </>
+            <br /> */}
+        </div>
     );
 }

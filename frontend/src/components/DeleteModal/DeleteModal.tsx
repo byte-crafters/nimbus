@@ -28,10 +28,13 @@ export const DeleteModal = ({}: PropsWithChildren<IProps>) => {
                         // setFiles(files);
                     });
             } else {
-                fetcher.deleteFolder(item.id, true).then(({ folder }) => {
-                    console.log('RENAMED');
-                    console.log(folder);
-                });
+                fetcher
+                    .deleteFolder(item.id, false)
+                    .then(({ folder }) => {
+                        // console.log('RENAMED');
+                        console.log(folder);
+                    })
+                    .catch((e) => console.log(e));
             }
         });
     };

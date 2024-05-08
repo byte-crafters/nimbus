@@ -14,9 +14,11 @@ import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
 interface IProps {
     items: TFSItem[];
     openFolder: (folder: TFolder, info: TFolderChildren) => void;
+    onRename: (item: TFSItem, name: string) => void;
+    onDelete: (items: TFSItem[]) => void;
 }
 
-export function Browser({ items, openFolder }: IProps) {
+export function Browser({ items, openFolder, onRename, onDelete }: IProps) {
     const contextMenuRef = useRef<any>(null);
     const [contextMenu, setContextMenu] = useState({
         position: { x: 0, y: 0 },
@@ -123,6 +125,8 @@ export function Browser({ items, openFolder }: IProps) {
                 positionX={contextMenu.position.x}
                 positionY={contextMenu.position.y}
                 selectedItems={selectedItems}
+                onRename={onRename}
+                onDelete={onDelete}
             />
         </>
     );

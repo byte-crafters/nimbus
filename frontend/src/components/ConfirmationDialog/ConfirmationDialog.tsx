@@ -24,7 +24,7 @@ export const ConfirmationDialog = ({
     const { hideModal, store } = useModalContext();
 
     const { modalProps, modalType } = store || {};
-    const { items } = modalProps || {};
+    const { items, handler } = modalProps || {};
 
     const handleModalToggle = () => {
         hideModal();
@@ -32,6 +32,7 @@ export const ConfirmationDialog = ({
 
     const handleSubmit = () => {
         onSubmit(items);
+        handler(items)
         hideModal();
     };
 
@@ -42,8 +43,12 @@ export const ConfirmationDialog = ({
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleModalToggle}>Cancel</Button>
-                <Button onClick={handleSubmit}>OK</Button>
+                <Button color="secondary" onClick={handleModalToggle}>
+                    Cancel
+                </Button>
+                <Button color="secondary" onClick={handleSubmit}>
+                    OK
+                </Button>
             </DialogActions>
         </Dialog>
     );

@@ -20,6 +20,8 @@ interface IProps {
     toggled: boolean;
     selectedItems: TFSItem[];
     contextMenuRef: any;
+    onRename: (item: TFSItem, name: string) => void;
+    onDelete: (items: TFSItem[]) => void;
 }
 
 export const ContextMenu = ({
@@ -28,6 +30,8 @@ export const ContextMenu = ({
     toggled,
     contextMenuRef,
     selectedItems,
+    onRename,
+    onDelete,
 }: PropsWithChildren<IProps>) => {
     const { canDelete, canRename, canDownload, canShare } =
         useOperations(selectedItems);
@@ -50,12 +54,14 @@ export const ContextMenu = ({
     const showRenameModal = () => {
         showModal(MODAL_TYPE.RENAME, {
             items: selectedItems,
+            handler: onRename,
         });
     };
 
     const showDeleteModal = () => {
         showModal(MODAL_TYPE.DELETE, {
             items: selectedItems,
+            handler: onDelete
         });
     };
 

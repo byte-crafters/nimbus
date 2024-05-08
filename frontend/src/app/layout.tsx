@@ -5,6 +5,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Roboto } from 'next/font/google';
 import React from 'react';
 import Link from 'next/link';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
