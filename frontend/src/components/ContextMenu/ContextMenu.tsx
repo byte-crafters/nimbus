@@ -61,7 +61,7 @@ export const ContextMenu = ({
     const showDeleteModal = () => {
         showModal(MODAL_TYPE.DELETE, {
             items: selectedItems,
-            handler: onDelete
+            handler: onDelete,
         });
     };
 
