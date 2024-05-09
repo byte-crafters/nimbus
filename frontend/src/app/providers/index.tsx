@@ -41,7 +41,7 @@ export const PathContext = createContext<TSetOpenedFolder>({
     setOpenedFolder: null,
 });
 
-export const Providers = ({ children }: { children: React.ReactNode }) => {
+const App = ({ children }: { children: React.ReactNode }) => {
     const [loggedUser, setLoggedUser] = useState<string | null>(null);
     const [openedFolder, setOpenedFolder] = useState<TFolder | null>(null);
 
@@ -74,3 +74,5 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
         </ProfileContext.Provider>
     );
 };
+
+export default App;

@@ -32,7 +32,7 @@ export const ConfirmationDialog = ({
 
     const handleSubmit = () => {
         onSubmit(items);
-        handler(items)
+        handler(items);
         hideModal();
     };
 

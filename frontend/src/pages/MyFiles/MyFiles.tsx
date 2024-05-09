@@ -1,15 +1,14 @@
 'use client';
+
+import { PathContext, ProfileContext } from '@/app/providers';
+import { Browser } from '@/components';
+import { Sidebar } from '@/components/Sidebar';
 import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
-import Link from 'next/link';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Box } from '@mui/material';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
-// import { PathContext, ProfileContext } from '../layout-page';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Browser, ContextMenu } from '@/components';
-import { PathContext, ProfileContext } from '@/app/layout-page';
-import { Box, ListItem } from '@mui/material';
-import { Sidebar } from '@/components/Sidebar';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -50,7 +49,7 @@ function handleFolderDelete(folder: TFolder) {
     // }
 }
 
-export default function FilesContainer() {
+export function MyFiles() {
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
     const { loggedUser } = useContext(ProfileContext);
     const [showFoldersList, setShowFolders] = useState<TFoldersList>([]);
@@ -166,7 +165,6 @@ export default function FilesContainer() {
         }
     }
 
-    console.log(path);
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             <Sidebar

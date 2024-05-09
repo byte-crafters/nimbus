@@ -1,34 +1,44 @@
 'use client';
-import React, { FormEvent, useContext, useRef } from 'react';
-import { login } from '../lib/login-actions';
-import { ProfileContext, TSetUserProfileShort } from '../layout-page';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import styles from './page.module.scss';
+import { useRouter } from 'next/navigation';
+import { FormEvent, useContext, useRef } from 'react';
+import {
+    PathContext,
+    ProfileContext,
+    TSetOpenedFolder,
+    TSetUserProfileShort,
+} from '@/app/providers';
+import { register } from '../lib/register-actions';
+import styles from './Register.module.scss';
 
-export default function Auth() {
+export function Register() {
     const loginRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    const { loggedUser, setLoggedUser } =
-        useContext<TSetUserProfileShort>(ProfileContext);
+    const { setLoggedUser } = useContext<TSetUserProfileShort>(ProfileContext);
+    const { setOpenedFolder } = useContext<TSetOpenedFolder>(PathContext);
     const router = useRouter();
 
     return (
         <div className={styles.container}>
             <div>
-                <h1>Login</h1>
+                <h1>Register</h1>
                 <form
                     onSubmit={async (e: FormEvent<HTMLFormElement>) => {
-                        e.preventDefault();
-                        const userProfile = await login(
-                            loginRef.current!.value,
-                            passwordRef.current!.value
-                        );
-                        if (userProfile.id !== null) {
-                            setLoggedUser?.(userProfile.id);
-                            router.push('/files/my');
-                        }
+                        try {
+                            e.preventDefault();
+
+                            const userProfile = await register(
+                                loginRef.current!.value,
+                                passwordRef.current!.value
+                            );
+
+                            if (userProfile !== null) {
+                                setLoggedUser?.(userProfile.id);
+                                setOpenedFolder?.(userProfile.rootFolder);
+                                router.push('/files/my');
+                            }
+                        } catch (e: unknown) {}
                     }}
                 >
                     <div>
@@ -40,7 +50,7 @@ export default function Auth() {
                             type="text"
                             name="login"
                             className={styles.input}
-                            autoComplete='off'
+                            autoComplete="off"
                         />
                     </div>
                     <div>
@@ -52,16 +62,17 @@ export default function Auth() {
                             type="password"
                             name="password"
                             className={styles.input}
-                            autoComplete='off'
+                            autoComplete="off"
+                            formNoValidate
                         />
                     </div>
                     <input
                         type="submit"
-                        value="Login"
+                        value="Register"
                         className={styles.button}
                     />
                 </form>
-                <Link href={'/register'}>Register</Link>
+                <Link href={'/login'}>Login</Link>
                 <br />
             </div>
         </div>
