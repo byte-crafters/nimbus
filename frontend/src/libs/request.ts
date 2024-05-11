@@ -408,13 +408,16 @@ export class Requester {
         }).then(this.handleResponse);
     }
 
-    async removeFile(fileId: string, softDelete: boolean = true): Promise<TRemoveFileResult> {
+    async removeFile(
+        fileId: string,
+        softDelete: boolean = true
+    ): Promise<TRemoveFileResult> {
         try {
             return fetch(`${this.host}/api/v1/files/file/remove/${fileId}`, {
                 method: METHODS.POST,
                 credentials: 'include',
                 body: JSON.stringify({
-                    softDelete
+                    softDelete,
                 }),
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
