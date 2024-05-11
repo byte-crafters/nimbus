@@ -1,11 +1,11 @@
 'use client';
-import { Box, Button, Divider, Drawer, Stack, Toolbar } from '@mui/material';
-import styles from './Sidebar.module.scss';
-import { PropsWithChildren, useContext, useRef } from 'react';
-import UploadIcon from '@mui/icons-material/Upload';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import { fetcher } from '@/libs/request';
-import { PathContext } from '@/app/layout-page';
+import UploadIcon from '@mui/icons-material/Upload';
+import { Button, Stack, Toolbar } from '@mui/material';
+import { PropsWithChildren, useRef } from 'react';
+import styles from './Sidebar.module.scss';
+import Link from 'next/link';
+import { Link as MUILink } from '@mui/material';
 
 interface IProps {
     onCreateFolder: () => void;
@@ -22,6 +22,22 @@ export const Sidebar = ({
         <Toolbar className={styles.drawer}>
             <Stack direction="column" spacing={2}>
                 <Button
+                    variant="text"
+                    color="secondary"
+                    LinkComponent={Link}
+                    href="/files/my"
+                >
+                    My files
+                </Button>
+                <Button
+                    variant="text"
+                    color="secondary"
+                    LinkComponent={Link}
+                    href="/files/shared"
+                >
+                    Shared files
+                </Button>
+                <Button
                     variant="contained"
                     color="secondary"
                     endIcon={<CreateNewFolderIcon />}
@@ -34,7 +50,7 @@ export const Sidebar = ({
                     role={undefined}
                     variant="contained"
                     color="secondary"
-                    startIcon={<UploadIcon />}
+                    endIcon={<UploadIcon />}
                 >
                     Upload
                     <input

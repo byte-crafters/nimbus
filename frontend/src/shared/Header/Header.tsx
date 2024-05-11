@@ -1,23 +1,18 @@
-import { AccountCircle, Search } from '@mui/icons-material';
-import {
-    AppBar,
-    Avatar,
-    Badge,
-    Box,
-    Container,
-    IconButton,
-    Input,
-    InputBase,
-    Menu,
-    Toolbar,
-    Tooltip,
-    Typography,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { AccountCircle } from '@mui/icons-material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import styles from './Header.module.scss';
+import SearchIcon from '@mui/icons-material/Search';
+import {
+    AppBar,
+    Badge,
+    Box,
+    IconButton,
+    Input,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 import { PropsWithChildren } from 'react';
+import styles from './Header.module.scss';
 
 export const Header = ({}: PropsWithChildren) => {
     return (

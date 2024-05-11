@@ -119,7 +119,7 @@ export const ContextMenu = ({
                     </MenuItem>
                 )}
                 {canDelete && (
-                    <>
+                    <div>
                         <Divider variant="middle" />
                         <MenuItem onClick={showDeleteModal}>
                             <ListItemIcon>
@@ -127,7 +127,7 @@ export const ContextMenu = ({
                             </ListItemIcon>
                             <ListItemText>Delete</ListItemText>
                         </MenuItem>
-                    </>
+                    </div>
                 )}
             </MenuList>
         </>

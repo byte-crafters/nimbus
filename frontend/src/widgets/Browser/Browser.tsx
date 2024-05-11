@@ -1,19 +1,15 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
-import { List, ListItem } from '@mui/material';
-import styles from './Browser.module.scss';
-import Image from 'next/image';
+import { TFolderChildren } from '@/pages/MyFiles';
 import { ContextMenu } from '@/components';
-import clsx from 'clsx';
-import { TFolderChildren } from '@/app/files/my/page';
+import { TFSItem, TFolder, fetcher } from '@/libs/request';
+import { List } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import styles from './Browser.module.scss';
 import { BrowserItem } from './components/BrowserItem';
-import { StringDialog } from '../StringDialog';
-import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
 
 interface IProps {
     items: TFSItem[];
-    openFolder: (folder: TFolder, info: TFolderChildren) => void;
+    openFolder: (folder: TFolder) => void;
     onRename: (item: TFSItem, name: string) => void;
     onDelete: (items: TFSItem[]) => void;
 }
@@ -101,12 +97,9 @@ export function Browser({ items, openFolder, onRename, onDelete }: IProps) {
                                 }
                             }}
                             handleDoubleClick={() => {
-                                if (!item?.extension)
-                                    fetcher
-                                        .getChildren(item.id)
-                                        .then((info) => {
-                                            openFolder(item, info);
-                                        });
+                                if (!item?.extension) {
+                                    openFolder(item);
+                                }
                             }}
                             handleContextMenu={(e) => {
                                 if (!selected) {
