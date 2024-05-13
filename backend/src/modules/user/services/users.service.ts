@@ -11,7 +11,7 @@ import { DbConnectionException } from '@src/modules/errors/db/DbConnectionExcept
 export interface IUserService {
     findOne(username: string): Promise<User | undefined>;
     findAll(): Promise<User[] | null>;
-    createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult>;
+    createOne(dto: CreateUserDTO): Promise<TCreateUserResult>;
     getUserProfile(userId: string): Promise<{
         id: string;
         email: string;
@@ -56,12 +56,12 @@ export class UsersRepository implements IUserService {
     /**
      * Returns with rootFolder
      */
-    async createOne({ password, username }: CreateUserDTO): Promise<TCreateUserResult> {
+    async createOne({ password, username, email }: CreateUserDTO): Promise<TCreateUserResult> {
         try {
             // const postgresClient = new PostgresClient();
 
             const user = {
-                email: Date.now() + '@nimbus.dev',
+                email,
                 username,
                 password,
             };

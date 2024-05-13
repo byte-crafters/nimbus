@@ -10,6 +10,7 @@ export const mockUsersCollection = [
 export type CreateUserDTO = {
     password: string;
     username: string;
+    email: string;
 };
 
 @Injectable()
