@@ -34,7 +34,7 @@ export interface IDataRepository {
     createFolder(userId: string, folderName: string, parentFolderId: TFolderId): Promise<TFolderRepository>;
     getChildrenFiles(folderId: TFolderId): Promise<TFileRepository[]>;
     getChildrenFolders(folderId: TFolderId): Promise<TFolderRepository[]>;
-    createFile(name: string, extension: string, folderId: TFolderId, userId: string): Promise<TFileRepository>;
+    createFile(name: string, extension: string, folderId: TFolderId, userId: string, size: number): Promise<TFileRepository>;
 
     getRemovedFiles(userId: string): Promise<any>;
     getRemovedFolders(userId: string): Promise<any>;

@@ -39,6 +39,7 @@ export class LoadController {
                 uploadFileDTO.folderId,
                 file.originalname,
                 file.mimetype,
+                file.size
             );
         });
 

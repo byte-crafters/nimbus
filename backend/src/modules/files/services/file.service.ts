@@ -81,8 +81,9 @@ export class FileService implements IFileService {
         folderId: TFolderId,
         fileName: string,
         fileExtension: string,
+        size: number
     ): Promise<TFileRepository> {
-        const createdFile = await this.dataRepo.createFile(fileName, fileExtension, folderId, userId);
+        const createdFile = await this.dataRepo.createFile(fileName, fileExtension, folderId, userId, size);
         const realFolderPath = this.getRealPath(folderId);
         const realFilePath = path.join(realFolderPath, createdFile.id.toString());
         this.fs.writeFile(fileBuffer, realFilePath);

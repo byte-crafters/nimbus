@@ -31,10 +31,11 @@ model User {
 model Folder {
     rootUserOwner User? @relation("RootFolder")
 
-    id      String   @id @default(uuid()) @map("fd_id")
-    name    String?  @map("fd_name")
-    path    String[] @map("fd_path")
-    removed Boolean  @default(false) @map("fd_removed")
+    id          String   @id @default(uuid()) @map("fd_id")
+    name        String?  @map("fd_name")
+    path        String[] @map("fd_path")
+    removed     Boolean  @default(false) @map("fd_removed")
+    createdDate DateTime @default(now())
 
     parentFolder   Folder? @relation(name: "FolderParents", fields: [parentFolderId], references: [id])
     parentFolderId String?
@@ -49,10 +50,12 @@ model Folder {
 }
 
 model File {
-    id        String  @id @default(uuid()) @map("fl_id")
-    name      String  @map("fl_name")
-    extension String  @map("fl_extension")
-    removed   Boolean @default(false) @map("fl_removed")
+    id          String   @id @default(uuid()) @map("fl_id")
+    name        String   @map("fl_name")
+    extension   String   @map("fl_extension")
+    removed     Boolean  @default(false) @map("fl_removed")
+    createdDate DateTime @default(now())
+    size        Int
 
     folder     Folder       @relation(fields: [folderId], references: [id])
     folderId   String
