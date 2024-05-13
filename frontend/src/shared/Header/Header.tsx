@@ -1,3 +1,4 @@
+"use client";
 import { AccountCircle } from '@mui/icons-material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -13,8 +14,13 @@ import {
 } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import styles from './Header.module.scss';
+import { fetcher } from '@/libs/request';
+import { useRouter } from 'next/navigation';
 
-export const Header = ({}: PropsWithChildren) => {
+export const Header = ({ }: PropsWithChildren) => {
+
+    const router = useRouter();
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar
@@ -60,6 +66,10 @@ export const Header = ({}: PropsWithChildren) => {
                             </Badge>
                         </IconButton>
                         <IconButton
+                            onClick={async () => {
+                                await fetcher.signout();
+                                router.push('/login');
+                            }}
                             size="large"
                             edge="end"
                             aria-label="account of current user"
