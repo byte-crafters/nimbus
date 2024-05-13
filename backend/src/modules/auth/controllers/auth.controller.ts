@@ -27,7 +27,7 @@ export type TProfile = {
     path: 'auth',
 })
 export class AuthController implements IAuthController {
-    constructor(@Inject(TYPES.AUTH_SERVICE) private authService: IAuthService) {}
+    constructor(@Inject(TYPES.AUTH_SERVICE) private authService: IAuthService) { }
 
     @ApiTags('auth')
     @ApiOperation({
@@ -54,9 +54,17 @@ export class AuthController implements IAuthController {
         response.cookie('access_token', accessToken.access_token, {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24,
+            path: '/'
         });
         return response.status(200).send(accessToken);
     }
+
+    @Post('logout')
+    async signOut(@Res() response: Response) {
+        response.clearCookie('access_token');
+        return response.status(200).send({ answer: 'okeee.' });
+    }
+
 
     @ApiTags('auth')
     @ApiOperation({
@@ -97,12 +105,13 @@ export class AuthController implements IAuthController {
     @Post('register')
     async register(@Body() registerDTO: RegisterDTO, @Res() response: Response) {
         try {
-            const {username, password, email } = registerDTO 
+            const { username, password, email } = registerDTO;
             const accessToken = await this.authService.register(username, password, email);
             // console.error(accessToken)
             response.cookie('access_token', accessToken.access_token, {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 24,
+                path: '/',
             });
 
             return response.send(accessToken);
