@@ -283,13 +283,33 @@ export class Requester {
         return jsonResponse;
     }
 
-    async register(login: string, password: string, email: string = Date.now() + '@nimbus.dev') {
+    async signout() {
+        try {
+            return await fetch(`${this.host}/api/v1/auth/logout`, {
+                method: METHODS.POST,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
+    async register(
+        login: string,
+        password: string,
+        email: string = Date.now() + '@nimbus.dev'
+    ) {
         try {
             return await fetch(`${this.host}/api/v1/auth/register`, {
                 body: JSON.stringify({
                     username: login,
                     password: password,
-                    email
+                    email,
                 }),
                 method: METHODS.POST,
                 credentials: 'include',
@@ -509,12 +529,12 @@ export class Requester {
         if (response.ok) {
             return response.json();
         } else {
-            const errorMessage = await response.json();
+            const errorObject = await response.json();
             // console.error(errorMessage);
             if (response.status === 401) {
                 throw new ClientUnauthorizedError();
             } else {
-                throw new Error('Cannot handle response on client.');
+                throw new Error(errorObject.message);
             }
         }
     };
