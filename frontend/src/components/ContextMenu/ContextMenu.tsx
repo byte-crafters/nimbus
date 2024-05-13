@@ -1,6 +1,7 @@
 'use client';
-import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
+import { useOperations } from '@/hooks';
+import { TFSItem, fetcher } from '@/libs/request';
+import { Delete, Download, Edit, Share } from '@mui/icons-material';
 import {
     Divider,
     ListItemIcon,
@@ -8,11 +9,9 @@ import {
     MenuItem,
     MenuList,
 } from '@mui/material';
-import styles from './ContextMenu.module.scss';
-import { Delete, Download, Edit, Share } from '@mui/icons-material';
-import { useOperations } from '@/hooks';
-import { StringDialog } from '../StringDialog';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
+import styles from './ContextMenu.module.scss';
 
 interface IProps {
     positionX: number;
@@ -20,7 +19,7 @@ interface IProps {
     toggled: boolean;
     selectedItems: TFSItem[];
     contextMenuRef: any;
-    onRename: (item: TFSItem, name: string) => void;
+    onRename: (items: TFSItem[], name: string) => void;
     onDelete: (items: TFSItem[]) => void;
 }
 
@@ -65,6 +64,13 @@ export const ContextMenu = ({
         });
     };
 
+    const showShareModal = () => {
+        showModal(MODAL_TYPE.SHARE, {
+            items: selectedItems,
+            handler: () => {},
+        });
+    };
+
     const downloadFile = () => {
         for (const item of selectedItems) {
             if (item?.extension) {
@@ -103,7 +109,7 @@ export const ContextMenu = ({
                     </MenuItem>
                 )}
                 {canShare && (
-                    <MenuItem onClick={handleSmth}>
+                    <MenuItem onClick={showShareModal}>
                         <ListItemIcon>
                             <Share fontSize="small" />
                         </ListItemIcon>

@@ -3,10 +3,11 @@
 import { PathContext, ProfileContext } from '@/app/providers';
 import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
 import { Sidebar } from '@/shared';
-import { Breadcrumbs, Browser } from '@/widgets';
+import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
 import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
+import styles from './SharedFiles.module.scss';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -20,6 +21,11 @@ export type TFolderChildren = {
     currentPath: TPath[];
 };
 
+export const VARIANT = {
+    MINE: '1',
+    OTHERS: '2',
+};
+
 export function SharedFiles() {
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
     const { loggedUser } = useContext(ProfileContext);
@@ -28,53 +34,61 @@ export function SharedFiles() {
     const [files, setFiles] = useState<TFile[]>([]);
     const [path, setPath] = useState<TPath[]>(null);
 
+    const [variant, setVariant] = useState<string>(VARIANT.MINE);
+
     const router = useRouter();
 
     const filesInput = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        /**
-         * TODO: move this logic in template or layout
-         */
-        if (loggedUser === null) {
-            // router.push('/login');
-        } else {
+        if (setOpenedFolder) {
+            setOpenedFolder(null);
             if (openedFolder) {
-                const folderId = openedFolder.id;
+                const folderId = openedFolder!.id;
                 fetcher
                     .getChildren(folderId)
                     .then(({ currentPath, folders, files }) => {
                         setPath(currentPath);
                         setFolders(folders);
                         setFiles(files);
+                        console.log(currentPath);
                     });
+            } else {
+                updatePage();
             }
-        }
-    }, [loggedUser]);
-
-    useEffect(() => {
-        if (openedFolder === null) {
-            fetcher.getUserRootFolder().then(({ parentFolder }) => {
-                if (setOpenedFolder) {
-                    setOpenedFolder(parentFolder);
-                }
-            });
         }
     }, []);
 
     useEffect(() => {
-        if (openedFolder) {
-            const folderId = openedFolder!.id;
-            fetcher
-                .getChildren(folderId)
-                .then(({ currentPath, folders, files }) => {
-                    setPath(currentPath);
-                    setFolders(folders);
-                    setFiles(files);
-                    console.log(currentPath);
-                });
+        /**
+         * TODO: move this logic in template or layout
+         */
+        if (loggedUser === null) {
+            router.push('/login');
         }
-    }, [openedFolder]);
+    }, [loggedUser]);
+
+    useEffect(() => {
+        updatePage();
+    }, [variant]);
+
+    function updatePage() {
+        if (variant == VARIANT.MINE) {
+            fetcher.getMySharedFolders().then((folders) => {
+                setFolders(folders);
+            });
+            fetcher.getMySharedFiles().then((files) => {
+                setFiles(files);
+            });
+        } else {
+            fetcher.getSharedWithMeFolders().then((folders) => {
+                setFolders(folders);
+            });
+            fetcher.getSharedWithMeFiles().then((files) => {
+                setFiles(files);
+            });
+        }
+    }
 
     function openFolder(folder: TFolder) {
         setOpenedFolder?.(folder);
@@ -145,6 +159,10 @@ export function SharedFiles() {
         }
     }
 
+    function handleVariantChange(newVariant: string) {
+        setVariant(newVariant);
+    }
+
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             <Sidebar
@@ -152,7 +170,13 @@ export function SharedFiles() {
                 onUploadFile={handleFileUpload}
             />
             <div>
-                <Typography variant="h6">Shared files</Typography>
+                <div className={styles.topContainer}>
+                    <Typography variant="h6">Shared files</Typography>
+                    <SharedToggleGroup
+                        variant={variant}
+                        onClick={handleVariantChange}
+                    />
+                </div>
                 <Breadcrumbs list={path} onClick={openFolder} />
                 <Box sx={{ margin: 2 }}>
                     <Browser

@@ -246,6 +246,26 @@ export class Requester {
         }
     }
 
+    async getPossibleUsers(username: string) {
+        const response = await fetch(
+            `${this.host}/api/v1/users/find-by-username`,
+            {
+                body: JSON.stringify({
+                    username,
+                }),
+                method: METHODS.POST,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }
+        );
+
+        const jsonResponse = await this.handleResponse(response);
+        return jsonResponse;
+    }
+
     async getFileShares(fileId: string) {
         const response = await fetch(
             `${this.host}/api/v1/files/share/file/${fileId}`,

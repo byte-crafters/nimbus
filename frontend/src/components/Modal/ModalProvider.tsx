@@ -1,24 +1,26 @@
 'use client';
-import React, {
+import {
     PropsWithChildren,
     createContext,
     useContext,
     useState,
 } from 'react';
-import { StringDialog } from '../StringDialog';
-import { RenameModal } from '../RenameModal';
 import { DeleteModal } from '../DeleteModal/DeleteModal';
+import { RenameModal } from '../RenameModal';
+import { ShareModal } from '../ShareModal';
 
 interface IProps {}
 
 export const MODAL_TYPE = {
     RENAME: 'RENAME',
     DELETE: 'DELETE',
+    SHARE: 'SHARE',
 };
 
 const MODALS = {
     [MODAL_TYPE.RENAME]: RenameModal,
     [MODAL_TYPE.DELETE]: DeleteModal,
+    [MODAL_TYPE.SHARE]: ShareModal,
 };
 
 type GlobalModalContext = {
