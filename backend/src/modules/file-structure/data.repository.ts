@@ -277,18 +277,11 @@ export class DataRepository implements IDataRepository {
                 };
             });
 
-            /** Remove userId - it's the highest ancestor folder name. */
-            result.shift();
-
-            if (ancestorFoldersIds.length !== 0) {
-                /** Add this folder name to make path include this folder. */
-                result.push({
-                    name: folder.name,
-                    id: folder.id,
-                });
-            }
-
-            console.log(result);
+            /** Add this folder name to make path include this folder. */
+            result.push({
+                name: folder.name,
+                id: folder.id,
+            });
             return result;
         } catch (e: unknown) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
