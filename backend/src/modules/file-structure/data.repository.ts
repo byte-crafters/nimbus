@@ -309,13 +309,13 @@ export class DataRepository implements IDataRepository {
         });
     }
 
-    async createFile(name: string, extension: string, folderId: TFolderId, userId: string): Promise<TFileRepository> {
+    async createFile(name: string, extension: string, folderId: TFolderId, userId: string, size: number): Promise<TFileRepository> {
         try {
-
             return this.connection.file.create({
                 data: {
                     extension,
                     // folderId,
+                    size,
                     name,
                     owner: {
                         connect: {
