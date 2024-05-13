@@ -90,6 +90,10 @@ export function MyFiles() {
     }, []);
 
     useEffect(() => {
+        console.log(files);
+    }, [files]);
+
+    useEffect(() => {
         if (openedFolder) {
             const folderId = openedFolder!.id;
             fetcher
@@ -107,11 +111,10 @@ export function MyFiles() {
         setOpenedFolder?.(folder);
     }
 
-    function handleRename(item: TFSItem, name: string) {
-        //folder
-
+    function handleRename(items: TFSItem[], name: string) {
         let newItem: TFolder = null,
-            arr = [];
+            arr = [],
+            item = items[0];
 
         for (let i = 0; i < folders.length; i++) {
             if (folders[i].id == item.id) {

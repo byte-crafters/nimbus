@@ -15,7 +15,7 @@ export type TSetUserProfileShort = {
  */
 export type TSetOpenedFolder = {
     openedFolder: TFolder | null;
-    setOpenedFolder: ((folder: TFolder) => any) | null;
+    setOpenedFolder: ((folder: TFolder | null) => any) | null;
 };
 
 const theme = createTheme({

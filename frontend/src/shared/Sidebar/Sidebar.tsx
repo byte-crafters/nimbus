@@ -22,22 +22,6 @@ export const Sidebar = ({
         <Toolbar className={styles.drawer}>
             <Stack direction="column" spacing={2}>
                 <Button
-                    variant="text"
-                    color="secondary"
-                    LinkComponent={Link}
-                    href="/files/my"
-                >
-                    My files
-                </Button>
-                <Button
-                    variant="text"
-                    color="secondary"
-                    LinkComponent={Link}
-                    href="/files/shared"
-                >
-                    Shared files
-                </Button>
-                <Button
                     variant="contained"
                     color="secondary"
                     endIcon={<CreateNewFolderIcon />}
@@ -78,6 +62,22 @@ export const Sidebar = ({
                             onUploadFile(data);
                         }}
                     ></input>
+                </Button>
+                <Button
+                    variant="text"
+                    color="secondary"
+                    LinkComponent={Link}
+                    href="/files/my"
+                >
+                    My files
+                </Button>
+                <Button
+                    variant="text"
+                    color="secondary"
+                    LinkComponent={Link}
+                    href="/files/shared"
+                >
+                    Shared files
                 </Button>
             </Stack>
         </Toolbar>

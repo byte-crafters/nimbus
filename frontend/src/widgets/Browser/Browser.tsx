@@ -10,7 +10,7 @@ import { BrowserItem } from './components/BrowserItem';
 interface IProps {
     items: TFSItem[];
     openFolder: (folder: TFolder) => void;
-    onRename: (item: TFSItem, name: string) => void;
+    onRename: (items: TFSItem[], name: string) => void;
     onDelete: (items: TFSItem[]) => void;
 }
 

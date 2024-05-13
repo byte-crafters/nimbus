@@ -1,17 +1,5 @@
-import React, { PropsWithChildren, useState } from 'react';
-import styles from './Dialog.module.scss';
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    TextField,
-} from '@mui/material';
-import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
-import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
-import { StringDialog } from '../StringDialog';
+import { TFSItem, fetcher } from '@/libs/request';
+import { PropsWithChildren } from 'react';
 import { ConfirmationDialog } from '../ConfirmationDialog';
 
 interface IProps {}

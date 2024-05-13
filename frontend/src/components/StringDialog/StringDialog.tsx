@@ -22,20 +22,16 @@ export const StringDialog = ({ onSubmit }: PropsWithChildren<IProps>) => {
     const { modalProps, modalType } = store || {};
     const { items, handler } = modalProps || {};
 
-    const handleModalToggle = () => {
-        hideModal();
-    };
-
     const handleSubmit = () => {
         onSubmit(items, data);
-        handler(items[0], data);
+        handler(items, data);
         hideModal();
     };
 
     const [data, setData] = useState<string>(items[0].name);
 
     return (
-        <Dialog onClose={handleModalToggle} open={true}>
+        <Dialog onClose={hideModal} open={true}>
             <DialogTitle>{modalType}</DialogTitle>
             <DialogContent>
                 <TextField
@@ -49,7 +45,7 @@ export const StringDialog = ({ onSubmit }: PropsWithChildren<IProps>) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button color="secondary" onClick={handleModalToggle}>
+                <Button color="secondary" onClick={hideModal}>
                     Cancel
                 </Button>
                 <Button color="secondary" onClick={handleSubmit}>
