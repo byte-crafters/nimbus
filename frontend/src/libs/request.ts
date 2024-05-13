@@ -283,12 +283,13 @@ export class Requester {
         return jsonResponse;
     }
 
-    async register(login: string, password: string) {
+    async register(login: string, password: string, email: string = Date.now() + '@nimbus.dev') {
         try {
             return await fetch(`${this.host}/api/v1/auth/register`, {
                 body: JSON.stringify({
                     username: login,
                     password: password,
+                    email
                 }),
                 method: METHODS.POST,
                 credentials: 'include',
@@ -343,7 +344,7 @@ export class Requester {
             return jsonResponse;
         } catch (e: unknown) {
             // console.error(e);
-            // throw new ClientRegistrationError();
+            throw new ClientRegistrationError();
         }
     }
 

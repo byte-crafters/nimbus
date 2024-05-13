@@ -9,7 +9,7 @@ import { IDataRepository } from '@src/modules/file-structure/file-structure.type
 import { FileSystemService, IFileSystemService } from '@src/modules/file-system/file-system.service';
 
 export interface IAuthService {
-    register(username: string, password: string): Promise<any>;
+    register(username: string, password: string, email: string): Promise<any>;
     signIn(username: string, pass: string): Promise<any>;
     getProfile(userId: string): Promise<any>;
 }
@@ -23,11 +23,12 @@ export class AuthService implements IAuthService {
         private jwtService: JwtService,
     ) {}
 
-    async register(username: string, password: string): Promise<any> {
+    async register(username: string, password: string, email: string): Promise<any> {
         try {
             const user = await this.usersService.createOne({
                 password,
                 username,
+                email
             });
 
             const payload = {
