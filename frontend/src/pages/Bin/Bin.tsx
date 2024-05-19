@@ -3,12 +3,11 @@
 import { PathContext, ProfileContext } from '@/app/providers';
 import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
 import { Sidebar } from '@/shared';
-import { Breadcrumbs, Browser } from '@/widgets';
+import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
 import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
-
-import "./style.css"
+import styles from './Bin.module.scss';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -22,34 +21,7 @@ export type TFolderChildren = {
     currentPath: TPath[];
 };
 
-function handleFolderDelete(folder: TFolder) {
-    const yes = prompt('You want to remove this file first in TRASH BIN?:');
-
-    if (yes === 'yes') {
-        fetcher.deleteFolder(folder.id, true).then(({ folder }) => {
-            console.log('RENAMED');
-            console.log(folder);
-        });
-    } else {
-        fetcher.deleteFolder(folder.id, false).then(({ folder }) => {
-            console.log('RENAMED');
-            console.log(folder);
-        });
-    }
-
-    // if (newName !== null && newName.trim() !== '') {
-    //     fetcher
-    //         .renameFolder(folder.id, newName)
-    //         .then(
-    //             ({ folder }) => {
-    //                 console.log('RENAMED');
-    //                 console.log(folder);
-    //             }
-    //         );
-    // }
-}
-
-export function MyFiles() {
+export function Bin() {
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
     const { loggedUser } = useContext(ProfileContext);
 
@@ -62,57 +34,67 @@ export function MyFiles() {
     const filesInput = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
+        updatePage();
+    }, []);
+
+    useEffect(() => {
         /**
          * TODO: move this logic in template or layout
          */
         if (loggedUser === null) {
             router.push('/login');
-        } else {
-            if (openedFolder) {
-                const folderId = openedFolder.id;
-                fetcher
-                    .getChildren(folderId)
-                    .then(({ currentPath, folders, files }) => {
-                        setPath(currentPath);
-                        setFolders(folders);
-                        setFiles(files);
-                    });
-            }
         }
     }, [loggedUser]);
 
     useEffect(() => {
-        setOpenedFolder?.(null);
-    }, []);
+        // if (openedFolder) {
+        //     const folderId = openedFolder!.id;
+        //     fetcher
+        //         .getChildren(folderId)
+        //         .then(({ currentPath, folders, files }) => {
+        //             setPath(currentPath);
+        //             setFolders(folders);
+        //             setFiles(files);
+        //             console.log(folders.length);
+        //         });
+        // } else {
+        //     updatePage();
+        // }
+    }, [openedFolder]);
 
-    useEffect(() => {
-        if (openedFolder) {
-            const folderId = openedFolder!.id;
+    function updatePage() {
+        fetcher.getDeletedFolders().then((folders) => {
+            setFolders(folders);
+        });
+        fetcher.getDeletedFiles().then((files) => {
+            setFiles(files);
+            console.log(files);
+        });
+    }
+
+    function openFolder(folder: TFolder) {
+        if (folder) {
+            console.log(folder);
+            setOpenedFolder?.(folder);
+            const folderId = folder!.id;
             fetcher
                 .getChildren(folderId)
                 .then(({ currentPath, folders, files }) => {
                     setPath(currentPath);
                     setFolders(folders);
                     setFiles(files);
-                    console.log(currentPath);
+                    console.log(folders.length);
                 });
         } else {
-            fetcher.getUserRootFolder().then(({ parentFolder }) => {
-                if (setOpenedFolder) {
-                    setOpenedFolder(parentFolder);
-                }
-            });
+            updatePage();
         }
-    }, [openedFolder]);
-
-    function openFolder(folder: TFolder) {
-        setOpenedFolder?.(folder);
     }
 
-    function handleRename(items: TFSItem[], name: string) {
+    function handleRename(item: TFSItem, name: string) {
+        //folder
+
         let newItem: TFolder = null,
-            arr = [],
-            item = items[0];
+            arr = [];
 
         for (let i = 0; i < folders.length; i++) {
             if (folders[i].id == item.id) {
@@ -180,7 +162,7 @@ export function MyFiles() {
                 onUploadFile={handleFileUpload}
             />
             <div>
-                <Typography variant="h6">My files</Typography>
+                <Typography variant="h6">Recycle bin</Typography>
                 <Breadcrumbs list={path} onClick={openFolder} />
                 <Box sx={{ margin: 2 }}>
                     <Browser

@@ -41,22 +41,20 @@ export function SharedFiles() {
     const filesInput = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (setOpenedFolder) {
-            setOpenedFolder(null);
-            if (openedFolder) {
-                const folderId = openedFolder!.id;
-                fetcher
-                    .getChildren(folderId)
-                    .then(({ currentPath, folders, files }) => {
-                        setPath(currentPath);
-                        setFolders(folders);
-                        setFiles(files);
-                        console.log(currentPath);
-                    });
-            } else {
-                updatePage();
-            }
-        }
+        // if (openedFolder) {
+        //     const folderId = openedFolder!.id;
+        //     fetcher
+        //         .getChildren(folderId)
+        //         .then(({ currentPath, folders, files }) => {
+        //             setPath(currentPath);
+        //             setFolders(folders);
+        //             setFiles(files);
+        //             console.log(folders.length);
+        //         });
+        //     console.log('СЭР ДА СЭР');
+        // } else {
+        //     updatePage();
+        // }
     }, []);
 
     useEffect(() => {
@@ -71,6 +69,22 @@ export function SharedFiles() {
     useEffect(() => {
         updatePage();
     }, [variant]);
+
+    useEffect(() => {
+        // if (openedFolder) {
+        //     const folderId = openedFolder!.id;
+        //     fetcher
+        //         .getChildren(folderId)
+        //         .then(({ currentPath, folders, files }) => {
+        //             setPath(currentPath);
+        //             setFolders(folders);
+        //             setFiles(files);
+        //             console.log(folders.length);
+        //         });
+        // } else {
+        //     updatePage();
+        // }
+    }, [openedFolder]);
 
     function updatePage() {
         if (variant == VARIANT.MINE) {
@@ -91,7 +105,21 @@ export function SharedFiles() {
     }
 
     function openFolder(folder: TFolder) {
-        setOpenedFolder?.(folder);
+        if (folder) {
+            console.log(folder);
+            setOpenedFolder?.(folder);
+            const folderId = folder!.id;
+            fetcher
+                .getChildren(folderId)
+                .then(({ currentPath, folders, files }) => {
+                    setPath(currentPath);
+                    setFolders(folders);
+                    setFiles(files);
+                    console.log(folders.length);
+                });
+        } else {
+            updatePage();
+        }
     }
 
     function handleRename(item: TFSItem, name: string) {
