@@ -187,6 +187,14 @@ export const Sidebar = ({
                 >
                     Shared files
                 </Button>
+                <Button
+                    variant="text"
+                    color="secondary"
+                    LinkComponent={Link}
+                    href="/files/bin"
+                >
+                    Recycle bin
+                </Button>
             </Stack>
         </Toolbar>
     );

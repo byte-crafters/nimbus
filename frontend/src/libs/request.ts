@@ -342,11 +342,11 @@ export class Requester {
 
     async deleteFolder(
         folderId: string,
-        softDelete: boolean
+        softDelete: boolean = true
     ): Promise<TRenameFolder> {
         try {
             const response = await fetch(
-                `${this.host}/api/v1/files/folder/delete/${folderId}`,
+                `${this.host}/api/v1/files/folder/remove/${folderId}`,
                 {
                     method: METHODS.POST,
                     credentials: 'include',
@@ -361,6 +361,7 @@ export class Requester {
             );
 
             const jsonResponse = await this.handleResponse(response);
+            console.log(jsonResponse)
             return jsonResponse;
         } catch (e: unknown) {
             // console.error(e);
@@ -522,6 +523,38 @@ export class Requester {
         } catch (e: unknown) {
             // console.error(e);
             throw new ClientRegistrationError();
+        }
+    }
+
+    async getDeletedFiles() {
+        try {
+            return await fetch(`${this.host}/api/v1/files/file/removed`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
+        }
+    }
+
+    async getDeletedFolders() {
+        try {
+            return await fetch(`${this.host}/api/v1/folders/folder/removed`, {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }).then(this.handleResponse);
+        } catch (e: unknown) {
+            console.error(e);
+            throw e;
         }
     }
 

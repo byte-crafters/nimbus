@@ -9,7 +9,7 @@ export const DeleteModal = ({}: PropsWithChildren<IProps>) => {
         items.map((item) => {
             if (item?.extension) {
                 fetcher
-                    .removeFile(item.id)
+                    .removeFile(item.id, true)
                     .then(({ folders, files, currentFolder }) => {
                         // setShowFolders(folders);
                         // setOpenedFolder?.(currentFolder);
@@ -18,9 +18,9 @@ export const DeleteModal = ({}: PropsWithChildren<IProps>) => {
             } else {
                 fetcher
                     .deleteFolder(item.id, false)
-                    .then(({ folder }) => {
+                    .then((obj) => {
                         // console.log('RENAMED');
-                        console.log(folder);
+                        console.log(obj);
                     })
                     .catch((e) => console.log(e));
             }

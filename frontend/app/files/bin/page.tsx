@@ -1,0 +1,1 @@
+export {Bin as default} from '@/pages/Bin'

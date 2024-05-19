@@ -5,10 +5,8 @@ import { FormEvent } from 'react';
 
 export async function login(login: string, password: string) {
     try {
-        console.log(login, password);
-        console.log('00000');
         const res: { access_token: string } = await fetch(
-            `${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/login`,
+            `${process.env.NEXT_PUBLIC_NIMBUS_API_HOST ?? ''}/api/v1/auth/login`,
             {
                 body: JSON.stringify({
                     username: login,
@@ -22,12 +20,11 @@ export async function login(login: string, password: string) {
                 },
             }
         ).then((response) => response.json());
-        console.log(res);
 
         if (res.access_token) {
             console.log(res.access_token);
             const getProfile = await fetch(
-                `${process.env.NEXT_PUBLIC_NIMBUS_API_HOST}/api/v1/auth/profile`,
+                `${process.env.NEXT_PUBLIC_NIMBUS_API_HOST ?? ''}/api/v1/auth/profile`,
                 {
                     method: 'GET',
                     credentials: 'include',
