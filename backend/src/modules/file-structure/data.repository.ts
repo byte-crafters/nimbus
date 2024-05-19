@@ -305,6 +305,7 @@ export class DataRepository implements IDataRepository {
         return this.connection.file.findMany({
             where: {
                 folderId,
+                removed: false
             },
         });
     }
@@ -583,6 +584,7 @@ export class DataRepository implements IDataRepository {
         return this.connection.folder.findMany({
             where: {
                 parentFolderId: folderId,
+                removed: false
             },
         });
     }
