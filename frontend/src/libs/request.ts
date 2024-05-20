@@ -361,7 +361,7 @@ export class Requester {
             );
 
             const jsonResponse = await this.handleResponse(response);
-            console.log(jsonResponse)
+            console.log(jsonResponse);
             return jsonResponse;
         } catch (e: unknown) {
             // console.error(e);
@@ -544,7 +544,7 @@ export class Requester {
 
     async getDeletedFolders() {
         try {
-            return await fetch(`${this.host}/api/v1/folders/folder/removed`, {
+            return await fetch(`${this.host}/api/v1/files/folders/removed`, {
                 method: METHODS.GET,
                 credentials: 'include',
                 headers: {
