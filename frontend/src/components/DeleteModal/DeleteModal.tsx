@@ -17,7 +17,7 @@ export const DeleteModal = ({}: PropsWithChildren<IProps>) => {
                     });
             } else {
                 fetcher
-                    .deleteFolder(item.id, false)
+                    .deleteFolder(item.id, true)
                     .then((obj) => {
                         // console.log('RENAMED');
                         console.log(obj);

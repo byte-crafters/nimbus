@@ -65,6 +65,7 @@ export function Bin() {
     function updatePage() {
         fetcher.getDeletedFolders().then((folders) => {
             setFolders(folders);
+            console.log(folders);
         });
         fetcher.getDeletedFiles().then((files) => {
             setFiles(files);

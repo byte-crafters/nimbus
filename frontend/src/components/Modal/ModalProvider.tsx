@@ -1,10 +1,5 @@
 'use client';
-import {
-    PropsWithChildren,
-    createContext,
-    useContext,
-    useState,
-} from 'react';
+import { PropsWithChildren, createContext, useContext, useState } from 'react';
 import { DeleteModal } from '../DeleteModal/DeleteModal';
 import { RenameModal } from '../RenameModal';
 import { ShareModal } from '../ShareModal';
