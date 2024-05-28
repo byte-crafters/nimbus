@@ -3,8 +3,7 @@ import { Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
 import { PostgresConnection } from '../storage/postgres-connection';
-import { CreateUserRootFolderStructure, IDataRepository as IDataRepository, TFileId, TFileRepository, TFileStructureRemoveAllData, TFolder, TFolderId, TFolderRepository } from './file-structure.type';
-import { createReadStream } from 'fs';
+import { CreateUserRootFolderStructure, IDataRepository, TExtensionCountInfo, TExtensionSizeInfo, TFileId, TFileRepository, TFileStructureRemoveAllData, TFolder, TFolderId, TFolderRepository } from './file-structure.type';
 
 
 @Injectable()
@@ -13,6 +12,44 @@ export class DataRepository implements IDataRepository {
 
     constructor() {
         this.connection = new PostgresConnection();
+    }
+
+    async getExtensionsInfo(userId: string): Promise<TExtensionCountInfo[]> {
+        try {
+            const result = await this.connection.file.groupBy({
+                by: ['extension'],
+                where: {
+                    ownerId: userId
+                },
+                _count: {
+                    extension: true
+                }
+            });
+
+            const processed = result.map((v) => ({ count: v._count.extension, extension: v.extension }));
+            return processed;
+        } catch (e: unknown) {
+            console.error(e);
+        }
+    }
+
+    async getStorageInfo(userId: string): Promise<TExtensionSizeInfo[]> {
+        try {
+            const result = await this.connection.file.groupBy({
+                by: ['extension'],
+                where: {
+                    ownerId: userId
+                },
+                _sum: {
+                    size: true
+                }
+            });
+
+            const processed = result.map((v) => ({ size: v._sum.size, extension: v.extension }));
+            return processed;
+        } catch (e: unknown) {
+            console.error(e);
+        }
     }
 
     async getClosestSharedFolder(folderId: string, userId: string, access: number = 1) {

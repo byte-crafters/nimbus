@@ -32,6 +32,13 @@ export class FileService implements IFileService {
 
     ) { }
 
+    async getStorageInfo(myId: string) {
+        const extensions = await this.dataRepo.getExtensionsInfo(myId);
+        const size = await this.dataRepo.getStorageInfo(myId);
+
+        return { extensions, size };
+    }
+
     /** Files */
     async getSharedWithMeFiles(myId: string) {
         const files = await this.dataRepo.getSharedWithMeFiles(myId);
@@ -231,7 +238,7 @@ export class FileService implements IFileService {
 
     async recoverFile(fileId: string, requesterId: string) {
         try {
-            return await this.dataRepo.recoverFile(fileId, requesterId)
+            return await this.dataRepo.recoverFile(fileId, requesterId);
         } catch (e: unknown) {
             throw e;
         }
@@ -239,7 +246,7 @@ export class FileService implements IFileService {
 
     async recoverFolder(folderId: string, requesterId: string) {
         try {
-            return await this.dataRepo.recoverFolder(folderId, requesterId)
+            return await this.dataRepo.recoverFolder(folderId, requesterId);
         } catch (e: unknown) {
             throw e;
         }

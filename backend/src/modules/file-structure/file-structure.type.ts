@@ -44,7 +44,7 @@ export interface IDataRepository {
     recoverFile(fileId: TFileId, userId: string): Promise<any>;
     recoverFolder(folderId: TFileId, userId: string): Promise<any>;
 
-    
+
     getUserRootFolder(userId: string): Promise<TFolderRepository>;
     getFolderById(folderId: TFolderId): Promise<TFolder | null>;
     renameFolder(newFolderName: string, folderId: TFolderId): Promise<TFolderRepository>;
@@ -58,6 +58,18 @@ export interface IDataRepository {
     getAllMySharedFiles(myId: string): Promise<any>;
     getAllMySharedFolders(myId: string): Promise<any>;
     getSharedWithMeFiles(myId: string): Promise<any>;
-
     getSharedWithMeFolders(myId: string): Promise<any>;
+
+    getExtensionsInfo(userId: string): Promise<TExtensionCountInfo[]>;
+    getStorageInfo(userId: string): Promise<TExtensionSizeInfo[]>;
 }
+
+export type TExtensionSizeInfo = {
+    size: number;
+    extension: string;
+};
+
+export type TExtensionCountInfo = {
+    count: number;
+    extension: string;
+};

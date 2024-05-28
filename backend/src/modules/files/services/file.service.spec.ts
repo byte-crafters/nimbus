@@ -24,7 +24,7 @@ describe('FileService: share file', () => {
     let config: IConfigService;
     let accessService: AccessService;
     let userService: IUserService;
-    let helper: IDataRepository;
+    let dataRepo: IDataRepository;
     let fsService: IFileSystemService;
 
 
@@ -61,7 +61,7 @@ describe('FileService: share file', () => {
         config = module.get<IConfigService>(TestConfigService);
         userService = module.get<IUserService>(Symbol.for('IUserService'));
         accessService = module.get<AccessService>(AccessService);
-        helper = module.get<IDataRepository>(Symbol.for('IFileStructureRepository'));
+        dataRepo = module.get<IDataRepository>(Symbol.for('IFileStructureRepository'));
 
     });
 
@@ -81,12 +81,14 @@ describe('FileService: share file', () => {
 
         const mainUser = await userService.createOne({
             password: '123',
-            username: 'qwe'
+            username: 'qwe',
+            email: 'email1',
         });
 
         const friendUser = await userService.createOne({
             password: '456',
-            username: 'qweqw'
+            username: 'qweqw',
+            email: 'email2'
         });
 
 
@@ -109,7 +111,8 @@ describe('FileService: share file', () => {
             Buffer.from('asd', 'utf-8'),
             rootFolder.id,
             "testit",
-            ".qw"
+            ".qw",
+            11
         );
         // console.log(folder);
 
@@ -194,8 +197,60 @@ describe('FileService: share file', () => {
         expect(filesShared2.length).toEqual(0);
     });
 
+    it('Create multiple files with different extensions and get storage-extension info', async () => {
+        await fsService.createRootFolder();
+
+        const user = await userService.createOne({
+            password: '123',
+            username: 'qwe',
+            email: 'email1',
+        });
+
+        expect(user.username).toEqual('qwe');
+        const foldere = user.rootFolder;
+
+        await fsService.createUserRootFolder(foldere.id);
+        expect(
+            fs.access(
+                fsService.getUserRootFolderPathStringSync(foldere.id)
+            )
+        ).resolves.toBeUndefined();
+
+        const buff1 = Buffer.from('a', 'utf-8');
+        const buff2 = Buffer.from('aa', 'utf-8');
+        const buff3 = Buffer.from('aaa', 'utf-8');
+        const name = "testit";
+
+        const file1 = await fileService.saveFileToFolder(user.id, buff1, foldere.id, name, ".png", buff1.length);
+        const file2 = await fileService.saveFileToFolder(user.id, buff2, foldere.id, name, ".jpeg", buff2.length);
+        const file3 = await fileService.saveFileToFolder(user.id, buff3, foldere.id, name, ".jpeg", buff3.length);
+
+        const pathToFolder = fsService.getUserRootFolderPathStringSync(foldere.id);
+
+        const filePath1 = path.join(pathToFolder, file1.id);
+        const filePath2 = path.join(pathToFolder, file2.id);
+        const filePath3 = path.join(pathToFolder, file3.id);
+
+        expect(fs.access(filePath1, constants.F_OK)).resolves.toBeUndefined();
+        expect(fs.access(filePath2, constants.F_OK)).resolves.toBeUndefined();
+        expect(fs.access(filePath3, constants.F_OK)).resolves.toBeUndefined();
+
+        const extensions = await dataRepo.getExtensionsInfo(user.id);
+        const sizes = await dataRepo.getStorageInfo(user.id);
+        console.log(extensions, sizes);
+
+        expect(extensions).toHaveLength(2);
+        expect(sizes).toHaveLength(2);
+
+        expect(extensions.some((v) => v.count === 2 && v.extension === '.jpeg')).toBeTruthy();
+        expect(extensions.some((v) => v.count === 1 && v.extension === '.png')).toBeTruthy();
+
+        expect(sizes.some((v) => v.size === buff2.length + buff3.length && v.extension === '.jpeg')).toBeTruthy();
+        expect(sizes.some((v) => v.size === buff1.length && v.extension === '.png')).toBeTruthy();
+    });
+
     afterEach(async () => {
-        await helper.removeAllData();
+        await dataRepo.removeAllData();
         await fs.rm(config.getStoragePath(), { recursive: true, force: true });
     });
 });
