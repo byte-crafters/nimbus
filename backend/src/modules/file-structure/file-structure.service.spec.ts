@@ -41,7 +41,11 @@ describe('FileStructureRepository: ', () => {
 
     it('Create user structure root folder.', async () => {
         const user = new User({ password: '', username: 'maksimbell' });
-        const userSaved = await userService.createOne({ password: user.password, username: user.username })
+        const userSaved = await userService.createOne({
+            password: user.password,
+            username: user.username,
+            email: 'email'
+        })
 
         const result = userSaved.rootFolder
         // const result = await service.createUserRootFolder(user.id);
@@ -56,12 +60,16 @@ describe('FileStructureRepository: ', () => {
 
     it('Create user structure with nested folders.', async () => {
         /** Fixtures */
-        const user = new User({ password: '', username: 'maksimbell' });
+        const user = new User({ password: '', username: 'maksimbell', });
         const nestedFolder1Name = 'nested_1';
         const nestedFolder2Name = 'nested_2';
         const nestedFolder11Name = 'nested_1_1';
 
-        const userSaved = await userService.createOne({ password: user.password, username: user.username });
+        const userSaved = await userService.createOne({
+            password: user.password,
+            username: user.username,
+            email: 'email'
+        });
         const parentFolder = userSaved.rootFolder
 
         /** Create root user folder */
@@ -103,7 +111,11 @@ describe('FileStructureRepository: ', () => {
         /** Fixtures */
         const user = new User({ password: '', username: 'maksimbell' });
 
-        const userSaved = await userService.createOne({ password: user.password, username: user.username })
+        const userSaved = await userService.createOne({
+            password: user.password,
+            username: user.username,
+            email: 'email'
+        })
         const parentFolder = userSaved.rootFolder
         /** Create root user folder */
 
@@ -112,9 +124,9 @@ describe('FileStructureRepository: ', () => {
          */
         // const parentFolder = await service.createUserRootFolder(user.id);
 
-        const file = await service.createFile('testFile', 'png', parentFolder.id, userSaved.id);
+        const file = await service.createFile('testFile', 'png', parentFolder.id, userSaved.id, 11);
 
-        expect(file).toMatchObject<Omit<TFileRepository, 'id'>>({
+        expect(file).toMatchObject<any>({
             extension: 'png',
             folderId: parentFolder.id,
             name: 'testFile',
@@ -125,9 +137,9 @@ describe('FileStructureRepository: ', () => {
         const children3 = await service.getChildrenFiles(parentFolder.id);
         expect(children3.length).toEqual(1);
 
-        const file2 = await service.createFile('testFile2', 'png2', parentFolder.id, userSaved.id);
+        const file2 = await service.createFile('testFile2', 'png2', parentFolder.id, userSaved.id, 11);
 
-        expect(file2).toMatchObject<Omit<TFileRepository, 'id'>>({
+        expect(file2).toMatchObject<any>({
             extension: 'png2',
             folderId: parentFolder.id,
             name: 'testFile2',
@@ -143,13 +155,17 @@ describe('FileStructureRepository: ', () => {
         /** Fixtures */
         const user = new User({ password: '', username: 'maksimbell' });
 
-        const userSaved = await userService.createOne({ password: user.password, username: user.username });
+        const userSaved = await userService.createOne({
+            password: user.password,
+            username: user.username,
+            email: 'email'
+        });
         const parentFolder = userSaved.rootFolder
 
         /** Create root user folder */
         // const parentFolder = await service.createUserRootFolder(user.id);
 
-        const file = await service.createFile('testFile', 'png', parentFolder.id, userSaved.id);
+        const file = await service.createFile('testFile', 'png', parentFolder.id, userSaved.id, 11);
 
         const children3 = await service.getChildrenFiles(parentFolder.id);
         expect(children3.length).toEqual(1);

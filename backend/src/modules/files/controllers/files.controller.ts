@@ -214,6 +214,18 @@ export class FilesController {
         return fileInfo;
     }
 
+
+    @ApiOperation({
+        summary: 'Get user storage info.',
+        description: 'Get user storage files info in terms of used extensions and sizes.',
+    })
+    @ApiTags('files')
+    @Get('storage')
+    async getStorageInfo(@Req() request: any): Promise<any> {
+        const userId = request.user.sub;
+        const fileInfo = await this.fileService.getStorageInfo(userId);
+        return fileInfo;
+    }
 }
 
 export type TShareDTO = {
