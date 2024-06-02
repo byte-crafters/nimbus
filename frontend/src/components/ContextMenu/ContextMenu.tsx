@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import styles from './ContextMenu.module.scss';
 
 interface IProps {
@@ -119,7 +120,7 @@ export const ContextMenu = ({
                 {canDownload && (
                     <MenuItem onClick={downloadFile}>
                         <ListItemIcon>
-                            <Download fontSize="small" />
+                            <RestoreFromTrashIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText>Download</ListItemText>
                     </MenuItem>
