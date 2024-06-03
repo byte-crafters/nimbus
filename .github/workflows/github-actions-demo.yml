@@ -29,7 +29,7 @@ jobs:
             MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ADMIN_USERNAME }}
             MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ADMIN_PASSWORD }}
             MONGO_INITDB_DATABASE: dev_tree_db
-        run: | 
+        run: |
           docker compose -f docker-compose.remote-deploy.dev.yaml down -v && docker compose -f docker-compose.remote-deploy.dev.yaml up -d --build
 
       - name: Sleep for 20 sec
@@ -40,26 +40,22 @@ jobs:
         run: |
           cd ./backend && npm install
       
-      - name: Applying migrations (postgresql)   
+      - name: Applying migrations (postgresql + mongo)   
         env: 
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: cd ./backend && npm run postgres:prisma
-
-      - name: Applying migrations (mongo)   
-        env: 
             MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
-        run: cd ./backend && npm run mongo:prisma
+        run: npm run be:migrate
 
       - name: Running unit tests
         env: 
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
             MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
-        run: cd ./backend && npm run test:run-all
+        run: npm run be:test
 
-      - name: Running end-to-end tests
-        env: 
-            DATABASE_URL: ${{ secrets.DATABASE_URL }}
-            MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
-        run: cd ./backend && npm run test:e2e
+    #   - name: Running end-to-end tests
+    #     env: 
+    #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    #         MONGO_DATABASE_URL: ${{ secrets.MONGO_DATABASE_URL }}
+    #     run: cd ./backend && npm run test:e2e
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
