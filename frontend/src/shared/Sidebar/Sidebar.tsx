@@ -38,15 +38,27 @@ export const Sidebar = ({
             dropzoneRef.current.addEventListener('dragenter', (e) => {
                 e.preventDefault();
 
-                if (!dropzoneRef.current?.classList.contains(stylesDropzone.dropzone__dragover))
-                    dropzoneRef.current?.classList.toggle(stylesDropzone.dropzone__dragover);
+                if (
+                    !dropzoneRef.current?.classList.contains(
+                        stylesDropzone.dropzone__dragover
+                    )
+                )
+                    dropzoneRef.current?.classList.toggle(
+                        stylesDropzone.dropzone__dragover
+                    );
             });
 
             dropzoneRef.current.addEventListener('dragleave', (e) => {
                 e.preventDefault();
 
-                if (dropzoneRef.current?.classList.contains(stylesDropzone.dropzone__dragover))
-                    dropzoneRef.current?.classList.toggle(stylesDropzone.dropzone__dragover);
+                if (
+                    dropzoneRef.current?.classList.contains(
+                        stylesDropzone.dropzone__dragover
+                    )
+                )
+                    dropzoneRef.current?.classList.toggle(
+                        stylesDropzone.dropzone__dragover
+                    );
             });
 
             dropzoneRef.current.addEventListener('dragover', (e) => {
@@ -57,6 +69,50 @@ export const Sidebar = ({
 
         // TODO: clear
     });
+
+    const uploadFileInBox = (e: React.MouseEvent<HTMLElement>) => {
+        const data = new FormData();
+
+        for (const file of filesLoaded) {
+            data.append('files', file, file.name);
+        }
+
+        onUploadFile(data);
+    };
+
+    const onDrop = (e: DragEvent<HTMLElement>) => {
+        e.preventDefault();
+
+        console.log(e.dataTransfer.items);
+        // console.log(e.dataTransfer.files[0].name!)
+
+        if (e.dataTransfer.items) {
+            // Use DataTransferItemList interface to access the file(s)
+            [...e.dataTransfer.items].forEach((item, i) => {
+                // If dropped items aren't files, reject them
+                if (item.kind === 'file') {
+                    const file = item.getAsFile();
+                    if (file !== null) {
+                        console.log(file);
+                        console.log(`… file[${i}].name = ${file!.name}`);
+
+                        addFile(file);
+                    }
+                }
+            });
+        } else {
+            // Use DataTransfer interface to access the file(s)
+            [...e.dataTransfer.files].forEach((file, i) => {
+                console.log(`… file[${i}].name = ${file.name}`);
+            });
+        }
+    };
+
+    const onAddFileManually = () => {
+        for (const file of filesInput.current!.files!) {
+            addFile(file);
+        }
+    };
 
     return (
         <Toolbar className={styles.drawer}>
@@ -71,45 +127,28 @@ export const Sidebar = ({
                         filesInput.current?.click();
                     }}
                     ref={dropzoneRef}
-                    onDrop={(e: DragEvent<HTMLElement>) => {
-                        e.preventDefault();
-
-                        console.log(e.dataTransfer.items);
-                        // console.log(e.dataTransfer.files[0].name!)
-
-                        if (e.dataTransfer.items) {
-                            // Use DataTransferItemList interface to access the file(s)
-                            [...e.dataTransfer.items].forEach((item, i) => {
-                                // If dropped items aren't files, reject them
-                                if (item.kind === 'file') {
-                                    const file = item.getAsFile();
-                                    if (file !== null) {
-                                        console.log(file);
-                                        console.log(
-                                            `… file[${i}].name = ${file!.name}`
-                                        );
-
-                                        addFile(file);
-                                    }
-                                }
-                            });
-                        } else {
-                            // Use DataTransfer interface to access the file(s)
-                            [...e.dataTransfer.files].forEach((file, i) => {
-                                console.log(`… file[${i}].name = ${file.name}`);
-                            });
-                        }
-                    }}
-                    onDragOver={(e: DragEvent<HTMLElement>) => {
-                        // console.log('drag over:', e);
-                    }}
+                    onDrop={onDrop}
+                    onDragOver={(e: DragEvent<HTMLElement>) => {}}
                 >
-                    {
-                        filesLoaded.map((f, index) => {
-                            return <div className={stylesDropzone.dropzone_item} key={index}>{f.name}</div>;
-                        })
-                    }
+                    {filesLoaded.map((f, index) => {
+                        return (
+                            <div
+                                className={stylesDropzone.dropzone_item}
+                                key={index}
+                            >
+                                {f.name}
+                            </div>
+                        );
+                    })}
                 </div>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    endIcon={<CreateNewFolderIcon />}
+                    onClick={uploadFileInBox}
+                >
+                    Upload DND
+                </Button>
                 <Button
                     variant="contained"
                     color="secondary"
@@ -142,16 +181,7 @@ export const Sidebar = ({
                         type="file"
                         name="files"
                         multiple
-                        onChange={() => {
-                            const data = new FormData();
-
-                            for (const file of filesInput.current!.files!) {
-                                data.append('files', file, file.name);
-                                addFile(file);
-                            }
-
-                            onUploadFile(data);
-                        }}
+                        onChange={onAddFileManually}
                     ></input>
                 </Button>
                 <Button
