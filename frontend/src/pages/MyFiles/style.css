@@ -1,0 +1,30 @@
+div {
+    font-family: 'Comic Sans';
+}
+
+.dropzone {
+    border: 5px solid gray;
+    border-style: dashed;
+    border-radius: 5px;
+    width: 200px;
+    height: 200px;
+    /* background: blueviolet; */
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropzone__dragover {
+    border: 5px solid green;
+}
+
+.dropzone_item {
+    background: #d7d7d7;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 3px;
+    border-radius: 3px;
+    margin-bottom: 3px;
+}

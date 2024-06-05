@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { AccountCircle } from '@mui/icons-material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -17,8 +17,7 @@ import styles from './Header.module.scss';
 import { fetcher } from '@/libs/request';
 import { useRouter } from 'next/navigation';
 
-export const Header = ({ }: PropsWithChildren) => {
-
+export const Header = ({}: PropsWithChildren) => {
     const router = useRouter();
 
     return (

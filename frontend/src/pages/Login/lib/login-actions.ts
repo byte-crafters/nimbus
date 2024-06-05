@@ -22,7 +22,7 @@ export async function login(login: string, password: string) {
                 },
             }
         ).then((response) => response.json());
-        console.log(res)
+        console.log(res);
 
         if (res.access_token) {
             console.log(res.access_token);

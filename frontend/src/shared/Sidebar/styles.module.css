@@ -1,16 +1,9 @@
-[class].dropzone {
-    border: 5px solid gray;
-    border-style: dashed;
-    border-radius: 5px;
-    width: 200px;
-    height: 200px;
-    /* background: blueviolet; */
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer
-}
+/* [class].dropzone {
+    
+} */
 
-[class].dropzone__dragover {
+
+/* [class].dropzone__dragover {
     border: 5px solid green;
 }
 
@@ -23,4 +16,4 @@
     padding: 3px;
     border-radius: 3px;
     margin-bottom: 3px;
-}
+} */
