@@ -4,7 +4,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import { Button, Stack, Toolbar } from '@mui/material';
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import styles from './Sidebar.module.scss';
-import stylesDropzone from './styles.module.css';
+// import stylesDropzone from './styles.module.css';
 import Link from 'next/link';
 import './main.css';
 import { Link as MUILink } from '@mui/material';
@@ -24,6 +24,7 @@ export const Sidebar = ({
     const dropzoneRef = useRef<HTMLDivElement>(null);
 
     const [filesLoaded, setFilesLoaded] = useState<File[]>([]);
+    const [dropzoneActive, setDropzoneActive] = useState(false);
 
     function addFile(file: File) {
         setFilesLoaded((prev) => {
@@ -38,27 +39,13 @@ export const Sidebar = ({
             dropzoneRef.current.addEventListener('dragenter', (e) => {
                 e.preventDefault();
 
-                if (
-                    !dropzoneRef.current?.classList.contains(
-                        stylesDropzone.dropzone__dragover
-                    )
-                )
-                    dropzoneRef.current?.classList.toggle(
-                        stylesDropzone.dropzone__dragover
-                    );
+                setDropzoneActive(true)
             });
 
             dropzoneRef.current.addEventListener('dragleave', (e) => {
                 e.preventDefault();
 
-                if (
-                    dropzoneRef.current?.classList.contains(
-                        stylesDropzone.dropzone__dragover
-                    )
-                )
-                    dropzoneRef.current?.classList.toggle(
-                        stylesDropzone.dropzone__dragover
-                    );
+                setDropzoneActive(false)
             });
 
             dropzoneRef.current.addEventListener('dragover', (e) => {
@@ -106,6 +93,9 @@ export const Sidebar = ({
                 console.log(`… file[${i}].name = ${file.name}`);
             });
         }
+
+        setDropzoneActive(false);
+        console.log('DROPY')
     };
 
     const onAddFileManually = () => {
@@ -118,22 +108,19 @@ export const Sidebar = ({
         <Toolbar className={styles.drawer}>
             <Stack direction="column" spacing={2}>
                 <div
-                    className={stylesDropzone.dropzone}
+                    className={["dropzone", dropzoneActive ? "dropzone__dragover" : undefined].join(' ').trim()}
                     id="dropzone"
-                    // onDragOverCapture={(e) => {
-                    //     console.log(e)
-                    // }}
                     onClick={() => {
                         filesInput.current?.click();
                     }}
                     ref={dropzoneRef}
                     onDrop={onDrop}
-                    onDragOver={(e: DragEvent<HTMLElement>) => {}}
+                    onDragOver={(e: DragEvent<HTMLElement>) => { }}
                 >
                     {filesLoaded.map((f, index) => {
                         return (
                             <div
-                                className={stylesDropzone.dropzone_item}
+                                className="dropzone_item"
                                 key={index}
                             >
                                 {f.name}
