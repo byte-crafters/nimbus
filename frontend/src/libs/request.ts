@@ -1,6 +1,9 @@
 import { ClientRegistrationError } from '@/app/errors/ClientRegistrationError';
 import { ClientUnauthorizedError } from '@/app/errors/ClientUnauthorizedError';
 import { TFoldersList } from '@/app/files/my/page';
+import { redirect } from 'next/navigation';
+import { NextResponse, NextRequest } from 'next/server'
+
 
 export const METHODS = {
     GET: 'GET',
@@ -415,7 +418,9 @@ export class Requester {
                 [HEADER.Accept]: HEADERS_VALUE.JSON,
                 [HEADER.ContentType]: HEADERS_VALUE.JSON,
             },
-        }).then(this.handleResponse);
+        })
+            .then(this.handleResponse)
+            .catch(this.handleError);
     }
 
     getChildren(folderId: string): Promise<TGetChildren> {
@@ -575,12 +580,20 @@ export class Requester {
             const errorObject = await response.json();
             // console.error(errorMessage);
             if (response.status === 401) {
-                throw new ClientUnauthorizedError();
+                // redirect('/login')
+                
+                throw new ClientUnauthorizedError('Uauth');
             } else {
                 throw new Error(errorObject.message);
             }
         }
     };
+
+    private handleError = async (e: Error) => {
+        if (e instanceof ClientUnauthorizedError) {
+            window.location.href = '/login'
+        }
+    }
 }
 
 export const fetcher = new Requester();
