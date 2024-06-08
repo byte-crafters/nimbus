@@ -9,7 +9,7 @@ export class AuthGuard implements CanActivate {
     constructor(
         private jwtService: JwtService,
         private reflector: Reflector,
-    ) {}
+    ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -22,6 +22,8 @@ export class AuthGuard implements CanActivate {
         }
 
         const request = context.switchToHttp().getRequest();
+
+        const response = context.switchToHttp().getResponse();
         // const token = this.extractTokenFromHeader(request);
 
         const token = this.extractTokenFromCookie(request);
@@ -29,7 +31,8 @@ export class AuthGuard implements CanActivate {
         // get from cookie
 
         if (!token) {
-            throw new UnauthorizedException();
+
+            throw new UnauthorizedException('GUARD FAILEDDDDD.');
         }
 
         try {
@@ -38,6 +41,11 @@ export class AuthGuard implements CanActivate {
             });
 
             request['user'] = payload;
+            response.cookie('access_token', token, {
+                httpOnly: true,
+                maxAge: 1000 * 60 * 60 * 24,
+                path: '/'
+            });
         } catch (e: any) {
             throw new UnauthorizedException();
         }

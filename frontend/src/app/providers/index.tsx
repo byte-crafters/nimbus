@@ -49,18 +49,18 @@ const App = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         (async () => {
-            try {
-                if (loggedUser === null) {
-                    fetcher.getUserProfile().then((profile) => {
-                        console.log(profile);
-                        setLoggedUser(profile.id);
-                        setOpenedFolder(profile.rootFolder);
-                        // router.push('/files/my');
-                    });
-                }
-            } catch (e: unknown) {
-                throw e;
-            }
+            // try {
+            //     if (loggedUser === null) {
+            //         fetcher.getUserProfile().then((profile) => {
+            //             console.log(profile);
+            //             setLoggedUser(profile.id);
+            //             setOpenedFolder(profile.rootFolder);
+            //             // router.push('/files/my');
+            //         });
+            //     }
+            // } catch (e: unknown) {
+            //     throw e;
+            // }
         })();
     }, []);
 

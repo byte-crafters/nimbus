@@ -61,12 +61,14 @@ export function MyFiles() {
 
     const filesInput = useRef<HTMLInputElement>(null);
 
+    // throw Error('shit')
+
     useEffect(() => {
         /**
          * TODO: move this logic in template or layout
          */
         if (loggedUser === null) {
-            router.push('/login');
+            // router.push('/login');
         } else {
             if (openedFolder) {
                 const folderId = openedFolder.id;
