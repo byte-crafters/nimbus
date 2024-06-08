@@ -1,41 +1,50 @@
 'use client';
 
 import { PathContext, ProfileContext } from '@/app/providers';
-import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
+import { fetcher } from '@/libs/request';
 import { Sidebar } from '@/shared';
-import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
 import { Box, Typography } from '@mui/material';
+import { PieChart } from '@mui/x-charts/PieChart';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { PieChart } from '@mui/x-charts/PieChart';
-import styles from './Storage.module.scss';
+import {
+    calcGBytesFromBytes,
+    calcMBytesFromBytes,
+    calcPercentage,
+    parseDataCharts,
+    parseExtensions,
+} from './utils';
+import { TData } from './utils/parse-extensions';
+import { PieValueType } from '@mui/x-charts';
+import { TChartValue } from './utils/parse-data-charts';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
  */
 
-export type TFoldersList = TFolder[];
-
-export type TFolderChildren = {
-    folders: TFolder[];
-    files: TFile[];
-    currentPath: TPath[];
-};
-
 export function Storage() {
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
     const { loggedUser } = useContext(ProfileContext);
 
-    const [folders, setFolders] = useState<TFoldersList>([]);
-    const [files, setFiles] = useState<TFile[]>([]);
-    const [path, setPath] = useState<TPath[]>(null);
+    const MAX_KBYTES = 5 * 1024 * 1024 * 1024; //
+
+    const [storageData, setData] = useState<TData>({
+        max: MAX_KBYTES,
+        value: 0,
+        extensions: {},
+    });
+
+    const [chartsData, setCharts] = useState<PieValueType[] | []>([]);
 
     const router = useRouter();
 
     const filesInput = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        updatePage();
+        fetcher.getStorageInfo().then(({ size }) => {
+            const obj = parseExtensions(size);
+            setData({ ...obj, max: MAX_KBYTES });
+        });
     }, []);
 
     useEffect(() => {
@@ -48,88 +57,10 @@ export function Storage() {
     }, [loggedUser]);
 
     useEffect(() => {
-        // if (openedFolder) {
-        //     const folderId = openedFolder!.id;
-        //     fetcher
-        //         .getChildren(folderId)
-        //         .then(({ currentPath, folders, files }) => {
-        //             setPath(currentPath);
-        //             setFolders(folders);
-        //             setFiles(files);
-        //             console.log(folders.length);
-        //         });
-        // } else {
-        //     updatePage();
-        // }
-    }, [openedFolder]);
-
-    function updatePage() {
-        fetcher.getDeletedFolders().then((folders) => {
-            setFolders(folders);
-            console.log(folders);
-        });
-        fetcher.getDeletedFiles().then((files) => {
-            setFiles(files);
-            console.log(files);
-        });
-    }
-
-    function openFolder(folder: TFolder) {
-        if (folder) {
-            console.log(folder);
-            setOpenedFolder?.(folder);
-            const folderId = folder!.id;
-            fetcher
-                .getChildren(folderId)
-                .then(({ currentPath, folders, files }) => {
-                    setPath(currentPath);
-                    setFolders(folders);
-                    setFiles(files);
-                    console.log(folders.length);
-                });
-        } else {
-            updatePage();
-        }
-    }
-
-    function handleRename(item: TFSItem, name: string) {
-        //folder
-
-        let newItem: TFolder = null,
-            arr = [];
-
-        for (let i = 0; i < folders.length; i++) {
-            if (folders[i].id == item.id) {
-                newItem = folders[i];
-                newItem.name = name;
-                arr.push(newItem);
-            } else {
-                arr.push(folders[i]);
-            }
-        }
-
-        setFolders(arr);
-    }
-
-    function handleDelete(items: TFSItem[]) {
-        let newFiles: TFile[] = [],
-            newFolders: TFolder[] = [];
-
-        for (let i = 0; i < folders.length; i++) {
-            if (!items.find((item) => item.id == folders[i].id)) {
-                newFolders.push(folders[i]);
-            }
-        }
-
-        for (let i = 0; i < files.length; i++) {
-            if (!items.find((item) => item.id == files[i].id)) {
-                newFiles.push(files[i]);
-            }
-        }
-
-        setFiles(newFiles);
-        setFolders(newFolders);
-    }
+        console.log('AAAAAAAAAAA');
+        console.log(storageData);
+        setCharts(parseDataCharts(storageData));
+    }, [storageData]);
 
     function handleCreateFolder() {
         const folderName = prompt('Folder name:');
@@ -140,7 +71,7 @@ export function Storage() {
             fetcher
                 .postCreateFolder(folderName, parentFolderId)
                 .then(({ folders }) => {
-                    setFolders(folders);
+                    // setFolders(folders);
                 });
         }
     }
@@ -150,19 +81,12 @@ export function Storage() {
             fetcher
                 .uploadFiles(data, openedFolder?.id)
                 .then(({ folders, currentFolder, files }) => {
-                    setFiles(files);
-                    setFolders(folders);
+                    // setFiles(files);
+                    // setFolders(folders);
                     setOpenedFolder?.(currentFolder);
                 });
         }
     }
-
-    const data = [
-        { value: 35, label: 'Text files' },
-        { value: 10, label: 'Images' },
-        { value: 5, label: 'Archives' },
-        { value: 20, label: 'Other' },
-    ];
 
     const size = {
         width: 400,
@@ -192,18 +116,23 @@ export function Storage() {
                                 innerRadius: 14,
                                 outerRadius: 100,
                                 paddingAngle: 0,
-                                cornerRadius: 10,
-                                startAngle: -87,
-                                endAngle: 180,
+                                cornerRadius: 0,
+                                startAngle: 0,
+                                endAngle: 360,
                                 cx: 150,
                                 cy: 150,
-                                data,
+                                data: chartsData,
+                                // arcLabel: (item) =>
+                                //     `${item.label} (${item.value})`,
+                                // arcLabelMinAngle: 45,
                             },
                         ]}
                         {...size}
                     />
                     <Typography variant="h6">
-                        70% of storage used (3584 MB of 5 GB)
+                        {calcPercentage(storageData.value, storageData.max)}% of
+                        storage used ({calcMBytesFromBytes(storageData.value)}{' '}
+                        MB of {calcGBytesFromBytes(MAX_KBYTES)} GB)
                     </Typography>
                     <Typography variant="body1">
                         Make room for your photos, files, and more by cleaning

@@ -396,6 +396,16 @@ export class Requester {
             throw new ClientRegistrationError();
         }
     }
+    getStorageInfo(): Promise<TGetUserRootFolderChildren> {
+        return fetch(`${this.host}/api/v1/files/storage`, {
+            method: METHODS.GET,
+            credentials: 'include',
+            headers: {
+                [HEADER.Accept]: HEADERS_VALUE.JSON,
+                [HEADER.ContentType]: HEADERS_VALUE.JSON,
+            },
+        }).then(this.handleResponse);
+    }
 
     getUserRootFolder(): Promise<TGetUserRootFolderChildren> {
         return fetch(`${this.host}/api/v1/files/user/folder/root`, {
