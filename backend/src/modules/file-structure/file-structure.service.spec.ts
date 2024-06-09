@@ -11,7 +11,7 @@ import { StorageModule } from '../storage/storage.module';
 
 describe('FileStructureRepository: ', () => {
     let service: IDataRepository;
-    let userService: IUserService
+    let userService: IUserService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -32,7 +32,7 @@ describe('FileStructureRepository: ', () => {
         }).compile();
 
         service = module.get<IDataRepository>(Symbol.for('IFileStructureRepository'));
-        userService = module.get<IUserService>(Symbol.for('IUserService'))
+        userService = module.get<IUserService>(Symbol.for('IUserService'));
     });
 
     it('Should be defined.', () => {
@@ -40,14 +40,14 @@ describe('FileStructureRepository: ', () => {
     });
 
     it('Create user structure root folder.', async () => {
-        const user = new User({ password: '', username: 'maksimbell' });
+        const user = new User({ password: '', username: 'maksimbell', email: 'email' });
         const userSaved = await userService.createOne({
             password: user.password,
             username: user.username,
-            email: 'email'
-        })
+            email: user.email
+        });
 
-        const result = userSaved.rootFolder
+        const result = userSaved.rootFolder;
         // const result = await service.createUserRootFolder(user.id);
 
         expect(result).toMatchObject({
@@ -60,7 +60,7 @@ describe('FileStructureRepository: ', () => {
 
     it('Create user structure with nested folders.', async () => {
         /** Fixtures */
-        const user = new User({ password: '', username: 'maksimbell', });
+        const user = new User({ password: '', username: 'maksimbell', email: 'email' });
         const nestedFolder1Name = 'nested_1';
         const nestedFolder2Name = 'nested_2';
         const nestedFolder11Name = 'nested_1_1';
@@ -68,9 +68,9 @@ describe('FileStructureRepository: ', () => {
         const userSaved = await userService.createOne({
             password: user.password,
             username: user.username,
-            email: 'email'
+            email: user.email
         });
-        const parentFolder = userSaved.rootFolder
+        const parentFolder = userSaved.rootFolder;
 
         /** Create root user folder */
         // const parentFolder = await service.createUserRootFolder(user.id);
@@ -90,7 +90,7 @@ describe('FileStructureRepository: ', () => {
         expect(nestedFolder2).toMatchObject<Omit<CreateUserRootFolderStructure, 'id'>>({
             name: nestedFolder2Name,
             parentFolderId: parentFolder.id,
-            
+
         });
 
         const children2 = await service.getChildrenFolders(parentFolder.id);
@@ -109,14 +109,14 @@ describe('FileStructureRepository: ', () => {
 
     it('Create user structure with nested files.', async () => {
         /** Fixtures */
-        const user = new User({ password: '', username: 'maksimbell' });
+        const user = new User({ password: '', username: 'maksimbell', email: 'email' });
 
         const userSaved = await userService.createOne({
             password: user.password,
             username: user.username,
-            email: 'email'
-        })
-        const parentFolder = userSaved.rootFolder
+            email: user.email
+        });
+        const parentFolder = userSaved.rootFolder;
         /** Create root user folder */
 
         /**
@@ -153,14 +153,14 @@ describe('FileStructureRepository: ', () => {
 
     it('Remove existing file (hard and soft delete).', async () => {
         /** Fixtures */
-        const user = new User({ password: '', username: 'maksimbell' });
+        const user = new User({ password: '', username: 'maksimbell', email: 'email' });
 
         const userSaved = await userService.createOne({
             password: user.password,
             username: user.username,
-            email: 'email'
+            email: user.email
         });
-        const parentFolder = userSaved.rootFolder
+        const parentFolder = userSaved.rootFolder;
 
         /** Create root user folder */
         // const parentFolder = await service.createUserRootFolder(user.id);
@@ -200,11 +200,41 @@ describe('FileStructureRepository: ', () => {
     //     }
     // });
 
-    it('Remove existing folder (hard and soft delete).', async () => {});
+    it('Save file with cyrillic name.', async () => {
+        const user = new User({ password: '', username: 'maksimbell', email: 'email' });
 
-    it('Remove not existing folder.', async () => {});
+        const userSaved = await userService.createOne({
+            password: user.password,
+            username: user.username,
+            email: user.email
+        });
+        const parentFolder = userSaved.rootFolder;
+        /** Create root user folder */
 
-    it('Rename existing folder.', async () => {});
+        /**
+         * TODO/fix: remove 
+         */
+        // const parentFolder = await service.createUserRootFolder(user.id);
+
+        const file = await service.createFile('файл', 'png', parentFolder.id, userSaved.id, 11);
+
+        expect(file).toMatchObject<any>({
+            extension: 'png',
+            folderId: parentFolder.id,
+            name: 'файл',
+            ownerId: userSaved.id,
+            removed: false,
+        });
+
+        const children3 = await service.getChildrenFiles(parentFolder.id);
+        expect(children3.length).toEqual(1);
+    });
+
+    it('Remove existing folder (hard and soft delete).', async () => { });
+
+    it('Remove not existing folder.', async () => { });
+
+    it('Rename existing folder.', async () => { });
 
     afterEach(async () => {
         await service.removeAllData();

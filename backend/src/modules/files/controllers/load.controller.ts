@@ -33,11 +33,13 @@ export class LoadController {
 
         files.forEach(async (file) => {
             const { buffer, originalname, mimetype, size } = file;
+
+            const decodedFileName = Buffer.from(file.originalname, 'latin1').toString('utf8')
             await this.fileService.saveFileToFolder(
                 userId,
                 file.buffer,
                 uploadFileDTO.folderId,
-                file.originalname,
+                decodedFileName,
                 file.mimetype,
                 file.size
             );
