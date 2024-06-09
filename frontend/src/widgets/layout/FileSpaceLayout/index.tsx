@@ -4,9 +4,9 @@ import React from 'react';
 
 export function FileSpaceLayout({ children }: { children: React.ReactNode }) {
     return (
-        <Box sx={{ height: '100%' }}>
+        <Box>
             <Header />
-            <Box sx={{ display: 'flex', height: '639px' }}>
+            <Box sx={{ display: 'flex' }}>
                 {/* <Sidebar /> */}
                 {children}
             </Box>

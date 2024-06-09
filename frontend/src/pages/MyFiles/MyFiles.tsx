@@ -8,7 +8,7 @@ import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
 
-import "./style.css"
+import './style.css';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.

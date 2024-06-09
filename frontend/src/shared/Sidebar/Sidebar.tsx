@@ -1,13 +1,12 @@
 'use client';
+import React from 'react';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import UploadIcon from '@mui/icons-material/Upload';
 import { Button, Stack, Toolbar } from '@mui/material';
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import styles from './Sidebar.module.scss';
-// import stylesDropzone from './styles.module.css';
 import Link from 'next/link';
 import './main.css';
-import { Link as MUILink } from '@mui/material';
 
 import { DragEvent } from 'react';
 
@@ -39,13 +38,13 @@ export const Sidebar = ({
             dropzoneRef.current.addEventListener('dragenter', (e) => {
                 e.preventDefault();
 
-                setDropzoneActive(true)
+                setDropzoneActive(true);
             });
 
             dropzoneRef.current.addEventListener('dragleave', (e) => {
                 e.preventDefault();
 
-                setDropzoneActive(false)
+                setDropzoneActive(false);
             });
 
             dropzoneRef.current.addEventListener('dragover', (e) => {
@@ -95,7 +94,7 @@ export const Sidebar = ({
         }
 
         setDropzoneActive(false);
-        console.log('DROPY')
+        console.log('DROPY');
     };
 
     const onAddFileManually = () => {
@@ -108,21 +107,23 @@ export const Sidebar = ({
         <Toolbar className={styles.drawer}>
             <Stack direction="column" spacing={2}>
                 <div
-                    className={["dropzone", dropzoneActive ? "dropzone__dragover" : undefined].join(' ').trim()}
+                    className={[
+                        'dropzone',
+                        dropzoneActive ? 'dropzone__dragover' : undefined,
+                    ]
+                        .join(' ')
+                        .trim()}
                     id="dropzone"
                     onClick={() => {
                         filesInput.current?.click();
                     }}
                     ref={dropzoneRef}
                     onDrop={onDrop}
-                    onDragOver={(e: DragEvent<HTMLElement>) => { }}
+                    onDragOver={(e: DragEvent<HTMLElement>) => {}}
                 >
                     {filesLoaded.map((f, index) => {
                         return (
-                            <div
-                                className="dropzone_item"
-                                key={index}
-                            >
+                            <div className="dropzone_item" key={index}>
                                 {f.name}
                             </div>
                         );
