@@ -1,9 +1,12 @@
 'use client';
 import { ModalProvider } from '@/components/Modal';
+import store from '@/libs/redux/store';
 import { TFolder, fetcher } from '@/libs/request';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
+
 
 export type TSetUserProfileShort = {
     loggedUser: string | null;
@@ -41,7 +44,7 @@ export const PathContext = createContext<TSetOpenedFolder>({
     setOpenedFolder: null,
 });
 
-const App = ({ children }: { children: React.ReactNode }) => {
+const App = ({ children }: { children: React.ReactNode; }) => {
     const [loggedUser, setLoggedUser] = useState<string | null>(null);
     const [openedFolder, setOpenedFolder] = useState<TFolder | null>(null);
 
@@ -65,13 +68,16 @@ const App = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     return (
-        <ProfileContext.Provider value={{ loggedUser, setLoggedUser }}>
-            <PathContext.Provider value={{ openedFolder, setOpenedFolder }}>
-                <ThemeProvider theme={theme}>
-                    <ModalProvider>{children}</ModalProvider>
-                </ThemeProvider>
-            </PathContext.Provider>
-        </ProfileContext.Provider>
+        <Provider store={store}>
+
+            <ProfileContext.Provider value={{ loggedUser, setLoggedUser }}>
+                <PathContext.Provider value={{ openedFolder, setOpenedFolder }}>
+                    <ThemeProvider theme={theme}>
+                        <ModalProvider>{children}</ModalProvider>
+                    </ThemeProvider>
+                </PathContext.Provider>
+            </ProfileContext.Provider>
+        </Provider>
     );
 };
 

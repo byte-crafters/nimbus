@@ -3,8 +3,8 @@ import { User } from '../models/User';
 import { TFolderId } from '@src/modules/file-structure/file-structure.type';
 
 export const mockUsersCollection = [
-    new User({ password: '123', username: 'one' }),
-    new User({ password: 'qwe', username: 'two' }),
+    new User({ password: '123', username: 'one', email: Date.now().toString() }),
+    new User({ password: 'qwe', username: 'two', email: Date.now().toString() }),
 ];
 
 export type CreateUserDTO = {
@@ -24,7 +24,8 @@ export class MockUsersService {
     }
 
     async createOne({ password, username }: CreateUserDTO) {
-        const user = new User({ password, username });
+        /** TODO fix email */
+        const user = new User({ password, username, email: Date.now().toString() });
         mockUsersCollection.push(user);
         return user;
     }

@@ -193,10 +193,10 @@ export function SharedFiles() {
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <Sidebar
+            {/* <Sidebar
                 onCreateFolder={handleCreateFolder}
                 onUploadFile={handleFileUpload}
-            />
+            /> */}
             <div>
                 <div className={styles.topContainer}>
                     <Typography variant="h6">Shared files</Typography>

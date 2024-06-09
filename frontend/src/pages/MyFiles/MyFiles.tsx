@@ -9,6 +9,8 @@ import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
 
 import './style.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFiles, addFolders } from '@/libs/redux/my-files.reducer';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -55,7 +57,13 @@ export function MyFiles() {
 
     const [folders, setFolders] = useState<TFoldersList>([]);
     const [files, setFiles] = useState<TFile[]>([]);
-    const [path, setPath] = useState<TPath[]>(null);
+    const [path, setPath] = useState<TPath[]>([]);
+
+    const { files: myFiles, folders: myFolders } = useSelector((state) => (state as any).myFiles.value);
+
+    const s = useSelector((state) => state);
+    const dispatch = useDispatch();
+    console.log({s})
 
     const router = useRouter();
 
@@ -76,8 +84,13 @@ export function MyFiles() {
                     .getChildren(folderId)
                     .then(({ currentPath, folders, files }) => {
                         setPath(currentPath);
-                        setFolders(folders);
-                        setFiles(files);
+                        // setFolders(folders);
+                        // setFiles(files);
+
+                        console.log({files, folders})
+
+                        dispatch(addFiles(files));
+                        dispatch(addFolders(folders))
                     });
             }
         }
@@ -94,8 +107,14 @@ export function MyFiles() {
                 .getChildren(folderId)
                 .then(({ currentPath, folders, files }) => {
                     setPath(currentPath);
-                    setFolders(folders);
-                    setFiles(files);
+                    // setFolders(folders);
+                    // setFiles(files);
+
+
+                    console.log({ files, folders });
+
+                    dispatch(addFiles(files));
+                    dispatch(addFolders(folders))
                     console.log(currentPath);
                 });
         } else {
@@ -149,44 +168,44 @@ export function MyFiles() {
         setFolders(newFolders);
     }
 
-    function handleCreateFolder() {
-        const folderName = prompt('Folder name:');
+    // function handleCreateFolder() {
+    //     const folderName = prompt('Folder name:');
 
-        if (folderName !== null) {
-            const parentFolderId = openedFolder!.id;
+    //     if (folderName !== null) {
+    //         const parentFolderId = openedFolder!.id;
 
-            fetcher
-                .postCreateFolder(folderName, parentFolderId)
-                .then(({ folders }) => {
-                    setFolders(folders);
-                });
-        }
-    }
+    //         fetcher
+    //             .postCreateFolder(folderName, parentFolderId)
+    //             .then(({ folders }) => {
+    //                 setFolders(folders);
+    //             });
+    //     }
+    // }
 
-    function handleFileUpload(data: FormData) {
-        if (openedFolder) {
-            fetcher
-                .uploadFiles(data, openedFolder?.id)
-                .then(({ folders, currentFolder, files }) => {
-                    setFiles(files);
-                    setFolders(folders);
-                    setOpenedFolder?.(currentFolder);
-                });
-        }
-    }
+    // function handleFileUpload(data: FormData) {
+    //     if (openedFolder) {
+    //         fetcher
+    //             .uploadFiles(data, openedFolder?.id)
+    //             .then(({ folders, currentFolder, files }) => {
+    //                 setFiles(files);
+    //                 setFolders(folders);
+    //                 setOpenedFolder?.(currentFolder);
+    //             });
+    //     }
+    // }
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <Sidebar
+            {/* <Sidebar
                 onCreateFolder={handleCreateFolder}
                 onUploadFile={handleFileUpload}
-            />
+            /> */}
             <div>
                 <Typography variant="h6">My files</Typography>
                 <Breadcrumbs list={path} onClick={openFolder} />
                 <Box sx={{ margin: 2 }}>
                     <Browser
-                        items={[...folders, ...files]}
+                        items={[...myFolders, ...myFiles]}
                         openFolder={openFolder}
                         onRename={handleRename}
                         onDelete={handleDelete}

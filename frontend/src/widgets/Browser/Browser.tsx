@@ -1,7 +1,6 @@
 'use client';
-import { TFolderChildren } from '@/pages/MyFiles';
 import { ContextMenu } from '@/components';
-import { TFSItem, TFolder, fetcher } from '@/libs/request';
+import { TFSItem, TFolder } from '@/libs/request';
 import { List } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './Browser.module.scss';

@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useContext } from 'react';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import UploadIcon from '@mui/icons-material/Upload';
 import { Button, Stack, Toolbar } from '@mui/material';
@@ -9,6 +9,10 @@ import Link from 'next/link';
 import './main.css';
 
 import { DragEvent } from 'react';
+import { PathContext } from '@/app/providers';
+import { fetcher } from '@/libs/request';
+import { addFiles, addFolders } from '@/libs/redux/my-files.reducer';
+import { useDispatch } from 'react-redux';
 
 interface IProps {
     onCreateFolder: () => void;
@@ -16,14 +20,16 @@ interface IProps {
 }
 
 export const Sidebar = ({
-    onCreateFolder,
-    onUploadFile,
+    // onCreateFolder,
+    // onUploadFile,
 }: PropsWithChildren<IProps>) => {
     const filesInput = useRef<HTMLInputElement>(null);
     const dropzoneRef = useRef<HTMLDivElement>(null);
 
     const [filesLoaded, setFilesLoaded] = useState<File[]>([]);
     const [dropzoneActive, setDropzoneActive] = useState(false);
+
+    const dispatch = useDispatch();
 
     function addFile(file: File) {
         setFilesLoaded((prev) => {
@@ -55,6 +61,39 @@ export const Sidebar = ({
 
         // TODO: clear
     });
+
+    function handleCreateFolder() {
+        const folderName = prompt('Folder name:');
+
+        if (folderName !== null) {
+            const parentFolderId = openedFolder!.id;
+
+            fetcher
+                .postCreateFolder(folderName, parentFolderId)
+                .then(({ folders }) => {
+                    // setFolders(folders);
+
+                    dispatch(addFolders(folders))
+                });
+        }
+    }
+
+    function onUploadFile(data: FormData) {
+        if (openedFolder) {
+            fetcher
+                .uploadFiles(data, openedFolder?.id)
+                .then(({ folders, currentFolder, files }) => {
+                    dispatch(addFiles(files))
+                    dispatch(addFolders(folders))
+                    // setFiles(files);
+                    // setFolders(folders);
+                    setOpenedFolder?.(currentFolder);
+                });
+        }
+    }
+
+
+    const { openedFolder, setOpenedFolder } = useContext(PathContext);
 
     const uploadFileInBox = (e: React.MouseEvent<HTMLElement>) => {
         const data = new FormData();
@@ -141,7 +180,7 @@ export const Sidebar = ({
                     variant="contained"
                     color="secondary"
                     endIcon={<CreateNewFolderIcon />}
-                    onClick={onCreateFolder}
+                    onClick={() => handleCreateFolder()}
                 >
                     Create
                 </Button>

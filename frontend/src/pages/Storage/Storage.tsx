@@ -95,10 +95,10 @@ export function Storage() {
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <Sidebar
+            {/* <Sidebar
                 onCreateFolder={handleCreateFolder}
                 onUploadFile={handleFileUpload}
-            />
+            /> */}
             <div>
                 <Typography variant="h6">Storage</Typography>
                 <Box

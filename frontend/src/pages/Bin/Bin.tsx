@@ -158,10 +158,10 @@ export function Bin() {
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <Sidebar
+            {/* <Sidebar
                 onCreateFolder={handleCreateFolder}
                 onUploadFile={handleFileUpload}
-            />
+            /> */}
             <div>
                 <Typography variant="h6">Recycle bin</Typography>
                 <Breadcrumbs list={path} onClick={openFolder} />
