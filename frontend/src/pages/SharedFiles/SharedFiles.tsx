@@ -2,7 +2,6 @@
 
 import { PathContext, ProfileContext } from '@/app/providers';
 import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
-import { Sidebar } from '@/shared';
 import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
 import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -28,63 +27,18 @@ export const VARIANT = {
 
 export function SharedFiles() {
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
-    const { loggedUser } = useContext(ProfileContext);
+
 
     const [folders, setFolders] = useState<TFoldersList>([]);
     const [files, setFiles] = useState<TFile[]>([]);
-    const [path, setPath] = useState<TPath[]>(null);
+    const [path, setPath] = useState<TPath[]>([]);
 
     const [variant, setVariant] = useState<string>(VARIANT.MINE);
 
-    const router = useRouter();
-
-    const filesInput = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        // if (openedFolder) {
-        //     const folderId = openedFolder!.id;
-        //     fetcher
-        //         .getChildren(folderId)
-        //         .then(({ currentPath, folders, files }) => {
-        //             setPath(currentPath);
-        //             setFolders(folders);
-        //             setFiles(files);
-        //             console.log(folders.length);
-        //         });
-        //     console.log('СЭР ДА СЭР');
-        // } else {
-        //     updatePage();
-        // }
-    }, []);
-
-    useEffect(() => {
-        /**
-         * TODO: move this logic in template or layout
-         */
-        if (loggedUser === null) {
-            router.push('/login');
-        }
-    }, [loggedUser]);
 
     useEffect(() => {
         updatePage();
     }, [variant]);
-
-    useEffect(() => {
-        // if (openedFolder) {
-        //     const folderId = openedFolder!.id;
-        //     fetcher
-        //         .getChildren(folderId)
-        //         .then(({ currentPath, folders, files }) => {
-        //             setPath(currentPath);
-        //             setFolders(folders);
-        //             setFiles(files);
-        //             console.log(folders.length);
-        //         });
-        // } else {
-        //     updatePage();
-        // }
-    }, [openedFolder]);
 
     function updatePage() {
         if (variant == VARIANT.MINE) {
@@ -125,7 +79,7 @@ export function SharedFiles() {
     function handleRename(item: TFSItem, name: string) {
         //folder
 
-        let newItem: TFolder = null,
+        let newItem: TFolder | null = null,
             arr = [];
 
         for (let i = 0; i < folders.length; i++) {
@@ -208,10 +162,11 @@ export function SharedFiles() {
                 <Breadcrumbs list={path} onClick={openFolder} />
                 <Box sx={{ margin: 2 }}>
                     <Browser
-                        items={[...folders, ...files]}
+                        files={files}
+                        folders={folders}
                         openFolder={openFolder}
-                        onRename={handleRename}
-                        onDelete={handleDelete}
+                        // onRename={handleRename}
+                        // onDelete={handleDelete}
                     />
                 </Box>
             </div>

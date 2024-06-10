@@ -1,38 +1,38 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { TFile, TFolder, TPath } from '../request';
 
-export type TMyFilesInitialState = {
+export type TSharedFilesInitialState = {
     files: TFile[];
     folders: TFolder[];
     path: TPath[];
     openedFolder: TFolder | null;
 };
 
-const initialState: TMyFilesInitialState = {
+const initialState: TSharedFilesInitialState = {
     files: [],
     folders: [],
     path: [],
     openedFolder: null
 };
-export const myFilesSlice = createSlice({
-    name: 'myFiles',
+export const sharedFilesSlice = createSlice({
+    name: 'sharedFiles',
     initialState,
     reducers: {
-        setMyFolders: (state, action) => {
+        setSharedFolders: (state, action) => {
             state.folders = action.payload;
         },
-        setMyFiles: (state, action) => {
+        setSharedFiles: (state, action) => {
             state.files = action.payload;
         },
-        setMyPath: (state, action) => {
+        setSharedPath: (state, action) => {
             state.path = action.payload;
         },
-        setMyOpenedFolder: (state, action) => {
+        setSharedOpenedFolder: (state, action) => {
             state.openedFolder = action.payload;
         },
     },
 });
 
-export const { setMyFolders, setMyFiles, setMyPath, setMyOpenedFolder } = myFilesSlice.actions;
+export const { setSharedFolders, setSharedFiles, setSharedPath } = sharedFilesSlice.actions;
 
-export const myFilesReducer = myFilesSlice.reducer;
+export const sharedFilesReducer = sharedFilesSlice.reducer;

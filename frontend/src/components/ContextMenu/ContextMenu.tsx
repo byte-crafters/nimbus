@@ -1,7 +1,8 @@
 'use client';
 import { useOperations } from '@/hooks';
 import { TFSItem, fetcher } from '@/libs/request';
-import { Delete, Download, Edit, Share } from '@mui/icons-material';
+import { Delete, Edit, Share } from '@mui/icons-material';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import {
     Divider,
     ListItemIcon,
@@ -11,7 +12,6 @@ import {
 } from '@mui/material';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
-import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import styles from './ContextMenu.module.scss';
 
 interface IProps {
@@ -33,13 +33,8 @@ export const ContextMenu = ({
     onRename,
     onDelete,
 }: PropsWithChildren<IProps>) => {
-    const { canDelete, canRename, canDownload, canShare } =
-        useOperations(selectedItems);
+    const { canDelete, canRename, canDownload, canShare } = useOperations(selectedItems);
     const [showRename, setShowRename] = useState(false);
-
-    function handleSmth() {
-        console.log('smth');
-    }
 
     useEffect(() => {
         if (selectedItems.length == 1) {
@@ -68,13 +63,13 @@ export const ContextMenu = ({
     const showShareModal = () => {
         showModal(MODAL_TYPE.SHARE, {
             items: selectedItems,
-            handler: () => {},
+            handler: () => { },
         });
     };
 
     const downloadFile = () => {
         for (const item of selectedItems) {
-            if (item?.extension) {
+            if ("extension" in item) {
                 Promise.all([
                     fetcher.downloadFile(item.id),
                     fetcher.getFileInfo(item.id),

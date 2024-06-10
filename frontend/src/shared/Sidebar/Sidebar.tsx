@@ -11,25 +11,28 @@ import './main.css';
 import { DragEvent } from 'react';
 import { PathContext } from '@/app/providers';
 import { fetcher } from '@/libs/request';
-import { addFiles, addFolders } from '@/libs/redux/my-files.reducer';
+import { setMyFiles, setMyFolders } from '@/libs/redux/my-files.reducer';
 import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/libs/redux/store';
 
 interface IProps {
     onCreateFolder: () => void;
     onUploadFile: (data: FormData) => void;
 }
 
-export const Sidebar = ({
-    // onCreateFolder,
-    // onUploadFile,
-}: PropsWithChildren<IProps>) => {
+export const Sidebar = (
+    {
+        // onCreateFolder,
+        // onUploadFile,
+    }: PropsWithChildren<IProps>
+) => {
     const filesInput = useRef<HTMLInputElement>(null);
     const dropzoneRef = useRef<HTMLDivElement>(null);
 
     const [filesLoaded, setFilesLoaded] = useState<File[]>([]);
     const [dropzoneActive, setDropzoneActive] = useState(false);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     function addFile(file: File) {
         setFilesLoaded((prev) => {
@@ -73,7 +76,7 @@ export const Sidebar = ({
                 .then(({ folders }) => {
                     // setFolders(folders);
 
-                    dispatch(addFolders(folders))
+                    dispatch(setMyFolders(folders));
                 });
         }
     }
@@ -83,15 +86,14 @@ export const Sidebar = ({
             fetcher
                 .uploadFiles(data, openedFolder?.id)
                 .then(({ folders, currentFolder, files }) => {
-                    dispatch(addFiles(files))
-                    dispatch(addFolders(folders))
+                    dispatch(setMyFiles(files));
+                    dispatch(setMyFolders(folders));
                     // setFiles(files);
                     // setFolders(folders);
                     setOpenedFolder?.(currentFolder);
                 });
         }
     }
-
 
     const { openedFolder, setOpenedFolder } = useContext(PathContext);
 

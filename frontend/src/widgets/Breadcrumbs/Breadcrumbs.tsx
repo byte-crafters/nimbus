@@ -20,7 +20,8 @@ export function Breadcrumbs({ list, onClick }: IProps) {
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                             if (onClick) {
-                                onClick(item);
+                                /** TODO fix: we dont use TFolder all data */
+                                onClick(item as TFolder);
                             }
                         }}
                         key={item.id}
