@@ -8,7 +8,7 @@ export const store = configureStore({
     reducer: {
         myFiles: myFilesReducer,
         sharedFiles: sharedFilesReducer,
-        trashFiles: trashFilesReducer
+        trashFiles: trashFilesReducer,
     },
 });
 

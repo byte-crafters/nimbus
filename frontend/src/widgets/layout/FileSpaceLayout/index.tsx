@@ -7,11 +7,14 @@ import '@/app/globals.css';
 
 export function FileSpaceLayout({ children }: { children: React.ReactNode }) {
     return (
-        <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <Header />
             <Box
                 sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
                     width: '1520px',
+                    height: '635px',
                     margin: '0 auto',
                 }}
             >

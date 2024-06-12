@@ -4,13 +4,12 @@ div {
 
 .dropzone {
     border: 1px dashed rgb(0, 0, 0);
-    border-radius: 5px;
+    border-radius: 10px;
     flex-grow: 1;
     margin: 10px;
     padding: 10px;
     display: flex;
     flex-direction: column;
-    /* cursor: pointer; */
 }
 
 .square {
@@ -19,7 +18,7 @@ div {
 }
 
 .dropzone__dragover {
-    border: 1px solid green;
+    border: 5px solid green;
     border-style: dashed;
 }
 

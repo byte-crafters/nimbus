@@ -43,7 +43,7 @@ const theme = createTheme({
 //     setOpenedFolder: null,
 // });
 
-const App = ({ children }: { children: React.ReactNode; }) => {
+const App = ({ children }: { children: React.ReactNode }) => {
     const [loggedUser, setLoggedUser] = useState<string | null>(null);
     const [openedFolder, setOpenedFolder] = useState<TFolder | null>(null);
 

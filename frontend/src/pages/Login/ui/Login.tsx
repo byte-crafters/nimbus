@@ -28,7 +28,7 @@ export function Login() {
                             if (userProfile !== null) {
                                 router.push('/files/my');
                             }
-                        } catch (e: unknown) { }
+                        } catch (e: unknown) {}
                     }}
                 >
                     <div>

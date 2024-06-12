@@ -1,12 +1,11 @@
 [class].container {
-    // text-align: center;
+    height: 100%;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    background-color: rgb(243, 246, 243);
-    flex-grow: 1;
+    background-color: rgb(255, 255, 255);
     border-radius: 10px;
-    max-width: 330px;
+    width: 340px;
 }

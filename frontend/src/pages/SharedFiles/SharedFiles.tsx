@@ -6,7 +6,12 @@ import { Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import styles from './SharedFiles.module.scss';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
-import { setSharedFiles, setSharedFolders, setSharedOpenedFolder, setSharedPath } from '@/libs/redux/shared-files.reducer';
+import {
+    setSharedFiles,
+    setSharedFolders,
+    setSharedOpenedFolder,
+    setSharedPath,
+} from '@/libs/redux/shared-files.reducer';
 import path from 'path';
 
 /**
@@ -27,12 +32,12 @@ export const VARIANT = {
 };
 
 export function SharedFiles() {
-
     const [variant, setVariant] = useState<string>(VARIANT.MINE);
-    const { files, folders, path, openedFolder } = useAppSelector((state) => state.sharedFiles);
+    const { files, folders, path, openedFolder } = useAppSelector(
+        (state) => state.sharedFiles
+    );
 
     const dispatch = useAppDispatch();
-
 
     useEffect(() => {
         updatePage();

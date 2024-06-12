@@ -12,7 +12,7 @@ const initialState: TMyFilesInitialState = {
     files: [],
     folders: [],
     path: [],
-    openedFolder: null
+    openedFolder: null,
 };
 export const myFilesSlice = createSlice({
     name: 'myFiles',
@@ -33,6 +33,7 @@ export const myFilesSlice = createSlice({
     },
 });
 
-export const { setMyFolders, setMyFiles, setMyPath, setMyOpenedFolder } = myFilesSlice.actions;
+export const { setMyFolders, setMyFiles, setMyPath, setMyOpenedFolder } =
+    myFilesSlice.actions;
 
 export const myFilesReducer = myFilesSlice.reducer;

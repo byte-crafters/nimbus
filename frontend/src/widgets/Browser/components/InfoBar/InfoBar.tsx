@@ -19,11 +19,15 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
 
     useEffect(() => {
         if (items.length == 1) {
-            const itemId = items[0].id;
-            fetcher.getFileInfo(itemId).then((info) => {
-                console.log(info);
-                setInfo(info);
-            });
+            const item = items[0];
+            if ('extension' in item) {
+                fetcher.getFileInfo(item.id).then((info) => {
+                    console.log(info);
+                    setInfo(info);
+                });
+            } else {
+                //add for folder
+            }
         } else {
             setInfo(null);
         }
@@ -32,7 +36,7 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
     return (
         <div className={styles.container}>
             {items.length == 1 && (
-                <List sx={{flexGrow: 1}}>
+                <List sx={{ flexGrow: 1 }}>
                     <ListItem>
                         <ListItemText primary="Name" secondary={info?.name} />
                     </ListItem>

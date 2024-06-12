@@ -12,7 +12,7 @@ const initialState: TTrashFilesInitialState = {
     files: [],
     folders: [],
     path: [],
-    openedFolder: null
+    openedFolder: null,
 };
 export const trashFilesSlice = createSlice({
     name: 'trashFiles',
@@ -33,6 +33,11 @@ export const trashFilesSlice = createSlice({
     },
 });
 
-export const { setTrashFolders, setTrashFiles, setTrashPath, setTrashOpenedFolder } = trashFilesSlice.actions;
+export const {
+    setTrashFolders,
+    setTrashFiles,
+    setTrashPath,
+    setTrashOpenedFolder,
+} = trashFilesSlice.actions;
 
 export const trashFilesReducer = trashFilesSlice.reducer;

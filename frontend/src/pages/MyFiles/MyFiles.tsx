@@ -11,6 +11,7 @@ import { Breadcrumbs, Browser } from '@/widgets';
 import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import './style.css';
+import clsx from 'clsx';
 
 export function MyFiles() {
     const { files, folders, path, openedFolder } = useAppSelector(
@@ -41,19 +42,17 @@ export function MyFiles() {
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            {/* <div
+            <div
                 className={clsx(
-                    'dropzone',
-                    dropzoneActive ? 'dropzone__dragover' : undefined
+                    'dropzone'
+                    // dropzoneActive ? 'dropzone__dragover' : undefined
                 )}
                 id="dropzone"
-                ref={dropzoneRef}
-                onDrop={onDrop}
-            > */}
-            <div>
+                // ref={dropzoneRef}
+                // onDrop={onDrop}
+            >
                 <Typography variant="h6">My files</Typography>
                 <Breadcrumbs list={path} onClick={openFolder} />
-
                 <Browser
                     files={files}
                     folders={folders}
