@@ -33,7 +33,8 @@ export const ContextMenu = ({
     onRename,
     onDelete,
 }: PropsWithChildren<IProps>) => {
-    const { canDelete, canRename, canDownload, canShare } = useOperations(selectedItems);
+    const { canDelete, canRename, canDownload, canShare } =
+        useOperations(selectedItems);
     const [showRename, setShowRename] = useState(false);
 
     useEffect(() => {
@@ -63,13 +64,13 @@ export const ContextMenu = ({
     const showShareModal = () => {
         showModal(MODAL_TYPE.SHARE, {
             items: selectedItems,
-            handler: () => { },
+            handler: () => {},
         });
     };
 
     const downloadFile = () => {
         for (const item of selectedItems) {
-            if ("extension" in item) {
+            if ('extension' in item) {
                 Promise.all([
                     fetcher.downloadFile(item.id),
                     fetcher.getFileInfo(item.id),

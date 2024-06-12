@@ -5,19 +5,16 @@ import { fetcher } from '@/libs/request';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { Button, Stack, Toolbar } from '@mui/material';
 import Link from 'next/link';
-import {
-    PropsWithChildren
-} from 'react';
+import { PropsWithChildren } from 'react';
 import { Dropzone } from '../Dropzone/Dropzone';
 import styles from './Sidebar.module.scss';
-import './main.css';
 
 interface IProps {}
 
 export const Sidebar = ({}: PropsWithChildren<IProps>) => {
     const dispatch = useAppDispatch();
     const { openedFolder } = useAppSelector((state) => state.myFiles);
-    
+
     function handleCreateFolder() {
         const folderName = prompt('Folder name:');
 
@@ -34,41 +31,8 @@ export const Sidebar = ({}: PropsWithChildren<IProps>) => {
 
     return (
         <Toolbar className={styles.drawer}>
-            <Stack direction="column" spacing={2}>
+            <Stack direction="column" spacing={2} className={styles.sidebar}>
                 <Dropzone />
-                {/* <Stack direction="column" spacing={2} className={styles.sidebar}>
-                <div
-                    className={[
-                        'dropzone',
-                        'square',
-                        dropzoneActive ? 'dropzone__dragover' : undefined,
-                    ]
-                        .join(' ')
-                        .trim()}
-                    id="dropzone"
-                    onClick={() => {
-                        filesInput.current?.click();
-                    }}
-                    ref={dropzoneRef}
-                    onDrop={onDrop}
-                    onDragOver={(e: DragEvent<HTMLElement>) => {}}
-                >
-                    {filesLoaded.map((f, index) => {
-                        return (
-                            <div className="dropzone_item" key={index}>
-                                {f.name}
-                            </div>
-                        );
-                    })}
-                </div>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    endIcon={<CreateNewFolderIcon />}
-                    onClick={uploadFileInBox}
-                >
-                    Upload DND
-                </Button> */}
                 <Button
                     variant="contained"
                     color="secondary"

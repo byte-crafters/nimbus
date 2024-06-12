@@ -1,43 +1,21 @@
 [class].container {
     display: flex;
     flex-direction: row;
-    flex-grow: 1;
-    flex-grow: 1;
+    height: 100%;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+[class].listContainer {
+    height: 100%;
+    background-color: white;
+    border-radius: 10px;
 }
 
 [class].list {
-    width: 900px;
+    width: 880px;
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+    flex-flow: row wrap;
     justify-content: flex-start;
-    gap: 10px;
-}
-
-[class].card {
-    display: flex;
-    flex-direction: column;
-    width: 100px;
-    height: 140px;
-    cursor: pointer;
-
-    transition: 0.3s;
-
-    &:hover {
-        background-color: rgba(120, 120, 120, 0.2);
-        border-radius: 5px;
-    }
-
-    &__name {
-    }
-
-    &__image {
-        width: 80px;
-        height: 80px;
-    }
-
-    &__selected {
-        background-color: rgba(240, 240, 240, 0.808);
-        border-radius: 5px;
-    }
+    align-items: flex-start;
 }

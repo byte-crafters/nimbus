@@ -1,22 +1,26 @@
-import Button from "@mui/material/Button";
-import { useRef, useState, useEffect } from "react";
-import UploadIcon from '@mui/icons-material/Upload';
-import { setMyFiles, setMyFolders, setMyOpenedFolder } from "@/libs/redux/my-files.reducer";
-import { useAppDispatch, useAppSelector } from "@/libs/redux/store";
-import { fetcher } from "@/libs/request";
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import {
+    setMyFiles,
+    setMyFolders,
+    setMyOpenedFolder,
+} from '@/libs/redux/my-files.reducer';
+import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
+import { fetcher } from '@/libs/request';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import UploadIcon from '@mui/icons-material/Upload';
+import Button from '@mui/material/Button';
+import React, { useEffect, useRef, useState } from 'react';
 
 export type TDropzoneProps = {};
 
-export const Dropzone = ({ }: TDropzoneProps) => {
-
+export const Dropzone = ({}: TDropzoneProps) => {
     const dropzoneRef = useRef<HTMLDivElement>(null);
     const [dropzoneActive, setDropzoneActive] = useState(false);
 
     const filesInput = useRef<HTMLInputElement>(null);
     const [filesLoaded, setFilesLoaded] = useState<File[]>([]);
-    const { files, folders, path, openedFolder } = useAppSelector((state) => state.myFiles);
+    const { files, folders, path, openedFolder } = useAppSelector(
+        (state) => state.myFiles
+    );
 
     const dispatch = useAppDispatch();
 
@@ -94,7 +98,6 @@ export const Dropzone = ({ }: TDropzoneProps) => {
         }
     }
 
-
     const uploadFileInBox = (e: React.MouseEvent<HTMLElement>) => {
         const data = new FormData();
 
@@ -104,7 +107,6 @@ export const Dropzone = ({ }: TDropzoneProps) => {
 
         onUploadFile(data);
     };
-
 
     const onAddFileManually = () => {
         for (const file of filesInput.current!.files!) {
@@ -127,7 +129,7 @@ export const Dropzone = ({ }: TDropzoneProps) => {
                 }}
                 ref={dropzoneRef}
                 onDrop={onDrop}
-                onDragOver={(e: React.DragEvent<HTMLElement>) => { }}
+                onDragOver={(e: React.DragEvent<HTMLElement>) => {}}
             >
                 {filesLoaded.map((f, index) => {
                     return (

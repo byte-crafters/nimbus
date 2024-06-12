@@ -117,49 +117,51 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
     return (
         <>
             <div className={styles.container}>
-                <List className={styles.list}>
-                    {[...folders, ...files].map((item) => {
-                        const selected = selectedItems.includes(item);
-                        return (
-                            <BrowserItem
-                                item={item}
-                                selected={selected}
-                                handleClick={(e) => {
-                                    if (e.ctrlKey) {
-                                        if (selectedItems.includes(item)) {
-                                            setSelectedItems([
-                                                ...selectedItems.filter(
-                                                    (i) => i !== item
-                                                ),
-                                            ]);
+                <div className={styles.listContainer}>
+                    <List className={styles.list}>
+                        {[...folders, ...files].map((item) => {
+                            const selected = selectedItems.includes(item);
+                            return (
+                                <BrowserItem
+                                    item={item}
+                                    selected={selected}
+                                    handleClick={(e) => {
+                                        if (e.ctrlKey) {
+                                            if (selectedItems.includes(item)) {
+                                                setSelectedItems([
+                                                    ...selectedItems.filter(
+                                                        (i) => i !== item
+                                                    ),
+                                                ]);
+                                            } else {
+                                                setSelectedItems([
+                                                    ...selectedItems,
+                                                    item,
+                                                ]);
+                                            }
                                         } else {
-                                            setSelectedItems([
-                                                ...selectedItems,
-                                                item,
-                                            ]);
+                                            setSelectedItems([item]);
                                         }
-                                    } else {
-                                        setSelectedItems([item]);
-                                    }
-                                }}
-                                handleDoubleClick={() => {
-                                    if ('extension' in item === false) {
-                                        openFolder(item);
-                                    } else {
-                                        item;
-                                    }
-                                }}
-                                handleContextMenu={(e) => {
-                                    if (!selected) {
-                                        setSelectedItems([item]);
-                                    }
-                                    handleContextMenu(e);
-                                }}
-                                key={item.id}
-                            />
-                        );
-                    })}
-                </List>
+                                    }}
+                                    handleDoubleClick={() => {
+                                        if ('extension' in item === false) {
+                                            openFolder(item);
+                                        } else {
+                                            item;
+                                        }
+                                    }}
+                                    handleContextMenu={(e) => {
+                                        if (!selected) {
+                                            setSelectedItems([item]);
+                                        }
+                                        handleContextMenu(e);
+                                    }}
+                                    key={item.id}
+                                />
+                            );
+                        })}
+                    </List>
+                </div>
                 <InfoBar items={selectedItems} />
                 <ContextMenu
                     contextMenuRef={contextMenuRef}

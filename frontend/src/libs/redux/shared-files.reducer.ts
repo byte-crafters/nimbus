@@ -12,7 +12,7 @@ const initialState: TSharedFilesInitialState = {
     files: [],
     folders: [],
     path: [],
-    openedFolder: null
+    openedFolder: null,
 };
 export const sharedFilesSlice = createSlice({
     name: 'sharedFiles',
@@ -33,6 +33,11 @@ export const sharedFilesSlice = createSlice({
     },
 });
 
-export const { setSharedFolders, setSharedFiles, setSharedPath, setSharedOpenedFolder } = sharedFilesSlice.actions;
+export const {
+    setSharedFolders,
+    setSharedFiles,
+    setSharedPath,
+    setSharedOpenedFolder,
+} = sharedFilesSlice.actions;
 
 export const sharedFilesReducer = sharedFilesSlice.reducer;

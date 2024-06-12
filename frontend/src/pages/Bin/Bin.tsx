@@ -2,7 +2,11 @@
 
 import { setMyFiles, setMyFolders } from '@/libs/redux/my-files.reducer';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
-import { setTrashFiles, setTrashFolders, setTrashPath } from '@/libs/redux/trash-files.reducer';
+import {
+    setTrashFiles,
+    setTrashFolders,
+    setTrashPath,
+} from '@/libs/redux/trash-files.reducer';
 import { TFile, TFolder, TPath, fetcher } from '@/libs/request';
 import { Breadcrumbs, Browser } from '@/widgets';
 import { Box, Typography } from '@mui/material';
@@ -21,7 +25,9 @@ export type TFolderChildren = {
 };
 
 export function Bin() {
-    const { files, folders, path, openedFolder } = useAppSelector((state) => state.trashFiles);
+    const { files, folders, path, openedFolder } = useAppSelector(
+        (state) => state.trashFiles
+    );
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -30,11 +36,13 @@ export function Bin() {
 
     function updatePage() {
         fetcher.getDeletedFolders().then((folders) => {
-            dispatch(setMyFolders(folders));
+            dispatch(setTrashFolders(folders));
         });
 
+        console.log(1);
         fetcher.getDeletedFiles().then((files) => {
-            dispatch(setMyFiles(files));
+            console.log(files);
+            dispatch(setTrashFiles(files));
         });
     }
 
@@ -53,7 +61,6 @@ export function Bin() {
             updatePage();
         }
     }
-
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>

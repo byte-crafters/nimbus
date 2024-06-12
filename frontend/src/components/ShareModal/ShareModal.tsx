@@ -41,7 +41,7 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
         for (const user of users) {
             const userId = user.id;
             for (const item of items) {
-                if ("extension" in item) {
+                if ('extension' in item) {
                     fetcher.shareFiles(item.id, userId).then((response) => {
                         console.log(response);
                     });
@@ -72,7 +72,7 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
                     limitTags={2}
                     size={'small'}
                     disablePortal
-                    options={users.map((u: { username: any; id: any; }) => {
+                    options={users.map((u: { username: any; id: any }) => {
                         return { label: u.username, id: u.id };
                     })}
                     // getOptionLabel={}

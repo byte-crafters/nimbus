@@ -32,13 +32,18 @@ export function Register() {
                             const username = loginRef.current!.value;
                             const password = passwordRef.current!.value;
 
-                            const userProfile = await register(username, password);
+                            const userProfile = await register(
+                                username,
+                                password
+                            );
 
                             if (userProfile !== null) {
-                                dispatch(setMyOpenedFolder(userProfile.rootFolder));
+                                dispatch(
+                                    setMyOpenedFolder(userProfile.rootFolder)
+                                );
                                 router.push('/files/my');
                             }
-                        } catch (e: unknown) { }
+                        } catch (e: unknown) {}
                     }}
                 >
                     <div>
