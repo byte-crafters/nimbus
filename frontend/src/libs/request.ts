@@ -528,7 +528,7 @@ export class Requester {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
                 },
             }).then(async (response: Response) => {
-                console.log(response);
+                // console.log(response);
                 const res = await response.json();
                 return res;
             });

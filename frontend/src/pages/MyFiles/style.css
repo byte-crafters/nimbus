@@ -3,19 +3,24 @@ div {
 }
 
 .dropzone {
-    border: 5px solid gray;
-    border-style: dashed;
+    border: 1px dashed rgb(0, 0, 0);
     border-radius: 5px;
-    width: 200px;
-    height: 200px;
-    /* background: blueviolet; */
+    flex-grow: 1;
     margin: 10px;
     padding: 10px;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    /* cursor: pointer; */
+}
+
+.square {
+    width: 200px;
+    height: 200px;
 }
 
 .dropzone__dragover {
-    border: 5px solid green;
+    border: 1px solid green;
+    border-style: dashed;
 }
 
 .dropzone_item {
