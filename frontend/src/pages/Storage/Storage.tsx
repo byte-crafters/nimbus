@@ -5,19 +5,17 @@ import { Box, Typography } from '@mui/material';
 import { PieValueType } from '@mui/x-charts';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useEffect, useState } from 'react';
+import { parseDataCharts, parseExtensions } from './utils';
+import { TData } from './utils/parse-extensions';
 import {
     calcGBytesFromBytes,
     calcMBytesFromBytes,
     calcPercentage,
-    parseDataCharts,
-    parseExtensions,
-} from './utils';
-import { TData } from './utils/parse-extensions';
+} from '@/shared/utils';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
  */
-
 export function Storage() {
     const MAX_KBYTES = 5 * 1024 * 1024 * 1024; //
 
@@ -39,7 +37,6 @@ export function Storage() {
     useEffect(() => {
         setCharts(parseDataCharts(storageData));
     }, [storageData]);
-
 
     const size = {
         width: 400,

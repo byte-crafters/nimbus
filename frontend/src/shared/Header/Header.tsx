@@ -21,7 +21,7 @@ export const Header = ({}: PropsWithChildren) => {
     const router = useRouter();
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box>
             <AppBar
                 position="static"
                 // color="secondary"

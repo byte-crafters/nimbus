@@ -1,14 +1,21 @@
 'use client';
-import { setMyFiles, setMyFolders, setMyOpenedFolder, setMyPath } from '@/libs/redux/my-files.reducer';
+import {
+    setMyFiles,
+    setMyFolders,
+    setMyOpenedFolder,
+    setMyPath,
+} from '@/libs/redux/my-files.reducer';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 import { TFolder, fetcher } from '@/libs/request';
 import { Breadcrumbs, Browser } from '@/widgets';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import './style.css';
 
 export function MyFiles() {
-    const { files, folders, path, openedFolder } = useAppSelector((state) => state.myFiles);
+    const { files, folders, path, openedFolder } = useAppSelector(
+        (state) => state.myFiles
+    );
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -34,16 +41,24 @@ export function MyFiles() {
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+            {/* <div
+                className={clsx(
+                    'dropzone',
+                    dropzoneActive ? 'dropzone__dragover' : undefined
+                )}
+                id="dropzone"
+                ref={dropzoneRef}
+                onDrop={onDrop}
+            > */}
             <div>
                 <Typography variant="h6">My files</Typography>
                 <Breadcrumbs list={path} onClick={openFolder} />
-                <Box sx={{ margin: 2 }}>
-                    <Browser
-                        files={files}
-                        folders={folders}
-                        openFolder={openFolder}
-                    />
-                </Box>
+
+                <Browser
+                    files={files}
+                    folders={folders}
+                    openFolder={openFolder}
+                />
             </div>
         </div>
     );

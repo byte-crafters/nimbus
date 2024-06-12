@@ -1,6 +1,15 @@
 [class].container {
     display: flex;
     flex-direction: row;
+    flex-grow: 1;
+    flex-grow: 1;
+}
+
+[class].list {
+    width: 900px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
     justify-content: flex-start;
     gap: 10px;
 }

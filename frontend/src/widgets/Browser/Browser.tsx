@@ -1,12 +1,13 @@
 'use client';
 import { ContextMenu } from '@/components';
+import { setMyFiles, setMyFolders } from '@/libs/redux/my-files.reducer';
+import { useAppDispatch } from '@/libs/redux/store';
 import { TFSItem, TFile, TFolder } from '@/libs/request';
 import { List } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './Browser.module.scss';
+import { InfoBar } from './components';
 import { BrowserItem } from './components/BrowserItem';
-import { setMyFolders, setMyFiles } from '@/libs/redux/my-files.reducer';
-import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 
 interface IBrowserProps {
     files: TFile[];
@@ -115,56 +116,61 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
 
     return (
         <>
-            <List className={styles.container}>
-                {[...folders, ...files].map((item) => {
-                    const selected = selectedItems.includes(item);
-                    return (
-                        <BrowserItem
-                            item={item}
-                            selected={selected}
-                            handleClick={(e) => {
-                                if (e.ctrlKey) {
-                                    if (selectedItems.includes(item)) {
-                                        setSelectedItems([
-                                            ...selectedItems.filter(
-                                                (i) => i !== item
-                                            ),
-                                        ]);
+            <div className={styles.container}>
+                <List className={styles.list}>
+                    {[...folders, ...files].map((item) => {
+                        const selected = selectedItems.includes(item);
+                        return (
+                            <BrowserItem
+                                item={item}
+                                selected={selected}
+                                handleClick={(e) => {
+                                    if (e.ctrlKey) {
+                                        if (selectedItems.includes(item)) {
+                                            setSelectedItems([
+                                                ...selectedItems.filter(
+                                                    (i) => i !== item
+                                                ),
+                                            ]);
+                                        } else {
+                                            setSelectedItems([
+                                                ...selectedItems,
+                                                item,
+                                            ]);
+                                        }
                                     } else {
-                                        setSelectedItems([
-                                            ...selectedItems,
-                                            item,
-                                        ]);
+                                        setSelectedItems([item]);
                                     }
-                                }
-                            }}
-                            handleDoubleClick={() => {
-                                if ("extension" in item === false) {
-                                    openFolder(item);
-                                } else {
-                                    item;
-                                }
-                            }}
-                            handleContextMenu={(e) => {
-                                if (!selected) {
-                                    setSelectedItems([item]);
-                                }
-                                handleContextMenu(e);
-                            }}
-                            key={item.id}
-                        />
-                    );
-                })}
-            </List>
-            <ContextMenu
-                contextMenuRef={contextMenuRef}
-                toggled={contextMenu.toggled}
-                positionX={contextMenu.position.x}
-                positionY={contextMenu.position.y}
-                selectedItems={selectedItems}
-                onRename={handleRename}
-                onDelete={handleDelete}
-            />
+                                }}
+                                handleDoubleClick={() => {
+                                    if ('extension' in item === false) {
+                                        openFolder(item);
+                                    } else {
+                                        item;
+                                    }
+                                }}
+                                handleContextMenu={(e) => {
+                                    if (!selected) {
+                                        setSelectedItems([item]);
+                                    }
+                                    handleContextMenu(e);
+                                }}
+                                key={item.id}
+                            />
+                        );
+                    })}
+                </List>
+                <InfoBar items={selectedItems} />
+                <ContextMenu
+                    contextMenuRef={contextMenuRef}
+                    toggled={contextMenu.toggled}
+                    positionX={contextMenu.position.x}
+                    positionY={contextMenu.position.y}
+                    selectedItems={selectedItems}
+                    onRename={handleRename}
+                    onDelete={handleDelete}
+                />
+            </div>
         </>
     );
 }
