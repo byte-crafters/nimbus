@@ -1,176 +1,47 @@
 'use client';
-import React from 'react';
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import UploadIcon from '@mui/icons-material/Upload';
+import { setMyFolders } from '@/libs/redux/my-files.reducer';
+import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
+import { fetcher } from '@/libs/request';
 import { Button, Stack, Toolbar } from '@mui/material';
-import { PropsWithChildren, useEffect, useRef, useState } from 'react';
-import styles from './Sidebar.module.scss';
 import Link from 'next/link';
+import { PropsWithChildren } from 'react';
+import { Dropzone } from '../Dropzone/Dropzone';
+import styles from './Sidebar.module.scss';
 import './main.css';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
-import { DragEvent } from 'react';
+interface IProps { }
 
-interface IProps {
-    onCreateFolder: () => void;
-    onUploadFile: (data: FormData) => void;
-}
+export const Sidebar = ({ }: PropsWithChildren<IProps>) => {
+    const dispatch = useAppDispatch();
+    const { openedFolder } = useAppSelector((state) => state.myFiles);
 
-export const Sidebar = ({
-    onCreateFolder,
-    onUploadFile,
-}: PropsWithChildren<IProps>) => {
-    const filesInput = useRef<HTMLInputElement>(null);
-    const dropzoneRef = useRef<HTMLDivElement>(null);
+    function handleCreateFolder() {
+        const folderName = prompt('Folder name:');
 
-    const [filesLoaded, setFilesLoaded] = useState<File[]>([]);
-    const [dropzoneActive, setDropzoneActive] = useState(false);
+        if (folderName !== null) {
+            const parentFolderId = openedFolder!.id;
 
-    function addFile(file: File) {
-        setFilesLoaded((prev) => {
-            const newState = [...prev, file];
-            console.log(newState);
-            return newState;
-        });
+            fetcher
+                .postCreateFolder(folderName, parentFolderId)
+                .then(({ folders }) => {
+                    dispatch(setMyFolders(folders));
+                });
+        }
     }
-
-    useEffect(() => {
-        if (dropzoneRef.current) {
-            dropzoneRef.current.addEventListener('dragenter', (e) => {
-                e.preventDefault();
-
-                setDropzoneActive(true);
-            });
-
-            dropzoneRef.current.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-
-                setDropzoneActive(false);
-            });
-
-            dropzoneRef.current.addEventListener('dragover', (e) => {
-                /** Need to preventDefault to let `drop` event fire */
-                e.preventDefault();
-            });
-        }
-
-        // TODO: clear
-    });
-
-    const uploadFileInBox = (e: React.MouseEvent<HTMLElement>) => {
-        const data = new FormData();
-
-        for (const file of filesLoaded) {
-            data.append('files', file, file.name);
-        }
-
-        onUploadFile(data);
-    };
-
-    const onDrop = (e: DragEvent<HTMLElement>) => {
-        e.preventDefault();
-
-        console.log(e.dataTransfer.items);
-        // console.log(e.dataTransfer.files[0].name!)
-
-        if (e.dataTransfer.items) {
-            // Use DataTransferItemList interface to access the file(s)
-            [...e.dataTransfer.items].forEach((item, i) => {
-                // If dropped items aren't files, reject them
-                if (item.kind === 'file') {
-                    const file = item.getAsFile();
-                    if (file !== null) {
-                        console.log(file);
-                        console.log(`… file[${i}].name = ${file!.name}`);
-
-                        addFile(file);
-                    }
-                }
-            });
-        } else {
-            // Use DataTransfer interface to access the file(s)
-            [...e.dataTransfer.files].forEach((file, i) => {
-                console.log(`… file[${i}].name = ${file.name}`);
-            });
-        }
-
-        setDropzoneActive(false);
-        console.log('DROPY');
-    };
-
-    const onAddFileManually = () => {
-        for (const file of filesInput.current!.files!) {
-            addFile(file);
-        }
-    };
 
     return (
         <Toolbar className={styles.drawer}>
             <Stack direction="column" spacing={2}>
-                <div
-                    className={[
-                        'dropzone',
-                        dropzoneActive ? 'dropzone__dragover' : undefined,
-                    ]
-                        .join(' ')
-                        .trim()}
-                    id="dropzone"
-                    onClick={() => {
-                        filesInput.current?.click();
-                    }}
-                    ref={dropzoneRef}
-                    onDrop={onDrop}
-                    onDragOver={(e: DragEvent<HTMLElement>) => {}}
-                >
-                    {filesLoaded.map((f, index) => {
-                        return (
-                            <div className="dropzone_item" key={index}>
-                                {f.name}
-                            </div>
-                        );
-                    })}
-                </div>
+                <Dropzone />
+
                 <Button
                     variant="contained"
                     color="secondary"
                     endIcon={<CreateNewFolderIcon />}
-                    onClick={uploadFileInBox}
-                >
-                    Upload DND
-                </Button>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    endIcon={<CreateNewFolderIcon />}
-                    onClick={onCreateFolder}
+                    onClick={() => handleCreateFolder()}
                 >
                     Create
-                </Button>
-                <Button
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    color="secondary"
-                    endIcon={<UploadIcon />}
-                >
-                    Upload
-                    <input
-                        style={{
-                            clip: 'rect(0 0 0 0)',
-                            clipPath: 'inset(50%)',
-                            height: 1,
-                            overflow: 'hidden',
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            whiteSpace: 'nowrap',
-                            width: 1,
-                        }}
-                        ref={filesInput}
-                        type="file"
-                        name="files"
-                        multiple
-                        onChange={onAddFileManually}
-                    ></input>
                 </Button>
                 <Button
                     variant="text"

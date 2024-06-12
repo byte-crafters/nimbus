@@ -10,14 +10,15 @@ import {
 } from '@/app/providers';
 import { register } from '../lib/register-actions';
 import styles from './Register.module.scss';
+import { setMyOpenedFolder } from '@/libs/redux/my-files.reducer';
+import { useAppDispatch } from '@/libs/redux/store';
 
 export function Register() {
     const loginRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    const { setLoggedUser } = useContext<TSetUserProfileShort>(ProfileContext);
-    const { setOpenedFolder } = useContext<TSetOpenedFolder>(PathContext);
     const router = useRouter();
+    const dispatch = useAppDispatch();
 
     return (
         <div className={styles.container}>
@@ -28,17 +29,16 @@ export function Register() {
                         try {
                             e.preventDefault();
 
-                            const userProfile = await register(
-                                loginRef.current!.value,
-                                passwordRef.current!.value
-                            );
+                            const username = loginRef.current!.value;
+                            const password = passwordRef.current!.value;
+
+                            const userProfile = await register(username, password);
 
                             if (userProfile !== null) {
-                                setLoggedUser?.(userProfile.id);
-                                setOpenedFolder?.(userProfile.rootFolder);
+                                dispatch(setMyOpenedFolder(userProfile.rootFolder));
                                 router.push('/files/my');
                             }
-                        } catch (e: unknown) {}
+                        } catch (e: unknown) { }
                     }}
                 >
                     <div>

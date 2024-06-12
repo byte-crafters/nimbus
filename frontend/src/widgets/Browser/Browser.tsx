@@ -1,20 +1,22 @@
 'use client';
-import { TFolderChildren } from '@/pages/MyFiles';
 import { ContextMenu } from '@/components';
-import { TFSItem, TFolder, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder } from '@/libs/request';
 import { List } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './Browser.module.scss';
 import { BrowserItem } from './components/BrowserItem';
+import { setMyFolders, setMyFiles } from '@/libs/redux/my-files.reducer';
+import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 
-interface IProps {
-    items: TFSItem[];
+interface IBrowserProps {
+    files: TFile[];
+    folders: TFolder[];
     openFolder: (folder: TFolder) => void;
-    onRename: (items: TFSItem[], name: string) => void;
-    onDelete: (items: TFSItem[]) => void;
+    // onRename: (items: TFSItem[], name: string) => void;
+    // onDelete: (items: TFSItem[]) => void;
 }
 
-export function Browser({ items, openFolder, onRename, onDelete }: IProps) {
+export function Browser({ files, folders, openFolder }: IBrowserProps) {
     const contextMenuRef = useRef<any>(null);
     const [contextMenu, setContextMenu] = useState({
         position: { x: 0, y: 0 },
@@ -22,6 +24,46 @@ export function Browser({ items, openFolder, onRename, onDelete }: IProps) {
     });
 
     const [selectedItems, setSelectedItems] = useState<TFSItem[]>([]);
+    // const { files, folders, path } = useAppSelector((state) => state.myFiles);
+    const dispatch = useAppDispatch();
+
+    function handleRename(items: TFSItem[], name: string) {
+        let newItem: TFolder | null = null;
+        const newFolders = [];
+        const item = items[0];
+
+        for (const folder of folders) {
+            if (folder.id == item.id) {
+                newItem = folder;
+                newItem.name = name;
+                newFolders.push(newItem);
+            } else {
+                newFolders.push(folder);
+            }
+        }
+
+        dispatch(setMyFolders(newFolders));
+    }
+
+    function handleDelete(items: TFSItem[]) {
+        let newFiles: TFile[] = [],
+            newFolders: TFolder[] = [];
+
+        for (let i = 0; i < folders.length; i++) {
+            if (!items.find((item) => item.id == folders[i].id)) {
+                newFolders.push(folders[i]);
+            }
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            if (!items.find((item) => item.id == files[i].id)) {
+                newFiles.push(files[i]);
+            }
+        }
+
+        dispatch(setMyFiles(newFiles));
+        dispatch(setMyFolders(newFolders));
+    }
 
     function handleContextMenu(e: React.MouseEvent) {
         e.preventDefault();
@@ -74,7 +116,7 @@ export function Browser({ items, openFolder, onRename, onDelete }: IProps) {
     return (
         <>
             <List className={styles.container}>
-                {items.map((item) => {
+                {[...folders, ...files].map((item) => {
                     const selected = selectedItems.includes(item);
                     return (
                         <BrowserItem
@@ -97,8 +139,10 @@ export function Browser({ items, openFolder, onRename, onDelete }: IProps) {
                                 }
                             }}
                             handleDoubleClick={() => {
-                                if (!item?.extension) {
+                                if ("extension" in item === false) {
                                     openFolder(item);
+                                } else {
+                                    item;
                                 }
                             }}
                             handleContextMenu={(e) => {
@@ -118,8 +162,8 @@ export function Browser({ items, openFolder, onRename, onDelete }: IProps) {
                 positionX={contextMenu.position.x}
                 positionY={contextMenu.position.y}
                 selectedItems={selectedItems}
-                onRename={onRename}
-                onDelete={onDelete}
+                onRename={handleRename}
+                onDelete={handleDelete}
             />
         </>
     );

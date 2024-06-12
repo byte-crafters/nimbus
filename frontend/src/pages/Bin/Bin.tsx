@@ -1,13 +1,12 @@
 'use client';
 
-import { PathContext, ProfileContext } from '@/app/providers';
-import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
-import { Sidebar } from '@/shared';
-import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
+import { setMyFiles, setMyFolders } from '@/libs/redux/my-files.reducer';
+import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
+import { setTrashFiles, setTrashFolders, setTrashPath } from '@/libs/redux/trash-files.reducer';
+import { TFile, TFolder, TPath, fetcher } from '@/libs/request';
+import { Breadcrumbs, Browser } from '@/widgets';
 import { Box, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useRef, useState } from 'react';
-import styles from './Bin.module.scss';
+import { useEffect } from 'react';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
@@ -22,155 +21,50 @@ export type TFolderChildren = {
 };
 
 export function Bin() {
-    const { openedFolder, setOpenedFolder } = useContext(PathContext);
-    const { loggedUser } = useContext(ProfileContext);
-
-    const [folders, setFolders] = useState<TFoldersList>([]);
-    const [files, setFiles] = useState<TFile[]>([]);
-    const [path, setPath] = useState<TPath[]>(null);
-
-    const router = useRouter();
-
-    const filesInput = useRef<HTMLInputElement>(null);
+    const { files, folders, path, openedFolder } = useAppSelector((state) => state.trashFiles);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         updatePage();
     }, []);
 
-    useEffect(() => {
-        /**
-         * TODO: move this logic in template or layout
-         */
-        if (loggedUser === null) {
-            router.push('/login');
-        }
-    }, [loggedUser]);
-
-    useEffect(() => {
-        // if (openedFolder) {
-        //     const folderId = openedFolder!.id;
-        //     fetcher
-        //         .getChildren(folderId)
-        //         .then(({ currentPath, folders, files }) => {
-        //             setPath(currentPath);
-        //             setFolders(folders);
-        //             setFiles(files);
-        //             console.log(folders.length);
-        //         });
-        // } else {
-        //     updatePage();
-        // }
-    }, [openedFolder]);
-
     function updatePage() {
         fetcher.getDeletedFolders().then((folders) => {
-            setFolders(folders);
-            console.log(folders);
+            dispatch(setMyFolders(folders));
         });
+
         fetcher.getDeletedFiles().then((files) => {
-            setFiles(files);
-            console.log(files);
+            dispatch(setMyFiles(files));
         });
     }
 
     function openFolder(folder: TFolder) {
         if (folder) {
-            console.log(folder);
-            setOpenedFolder?.(folder);
+            dispatch(setTrashFolders(folder));
             const folderId = folder!.id;
             fetcher
                 .getChildren(folderId)
                 .then(({ currentPath, folders, files }) => {
-                    setPath(currentPath);
-                    setFolders(folders);
-                    setFiles(files);
-                    console.log(folders.length);
+                    dispatch(setTrashPath(currentPath));
+                    dispatch(setTrashFolders(folders));
+                    dispatch(setTrashFiles(files));
                 });
         } else {
             updatePage();
         }
     }
 
-    function handleRename(item: TFSItem, name: string) {
-        //folder
-
-        let newItem: TFolder = null,
-            arr = [];
-
-        for (let i = 0; i < folders.length; i++) {
-            if (folders[i].id == item.id) {
-                newItem = folders[i];
-                newItem.name = name;
-                arr.push(newItem);
-            } else {
-                arr.push(folders[i]);
-            }
-        }
-
-        setFolders(arr);
-    }
-
-    function handleDelete(items: TFSItem[]) {
-        let newFiles: TFile[] = [],
-            newFolders: TFolder[] = [];
-
-        for (let i = 0; i < folders.length; i++) {
-            if (!items.find((item) => item.id == folders[i].id)) {
-                newFolders.push(folders[i]);
-            }
-        }
-
-        for (let i = 0; i < files.length; i++) {
-            if (!items.find((item) => item.id == files[i].id)) {
-                newFiles.push(files[i]);
-            }
-        }
-
-        setFiles(newFiles);
-        setFolders(newFolders);
-    }
-
-    function handleCreateFolder() {
-        const folderName = prompt('Folder name:');
-
-        if (folderName !== null) {
-            const parentFolderId = openedFolder!.id;
-
-            fetcher
-                .postCreateFolder(folderName, parentFolderId)
-                .then(({ folders }) => {
-                    setFolders(folders);
-                });
-        }
-    }
-
-    function handleFileUpload(data: FormData) {
-        if (openedFolder) {
-            fetcher
-                .uploadFiles(data, openedFolder?.id)
-                .then(({ folders, currentFolder, files }) => {
-                    setFiles(files);
-                    setFolders(folders);
-                    setOpenedFolder?.(currentFolder);
-                });
-        }
-    }
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <Sidebar
-                onCreateFolder={handleCreateFolder}
-                onUploadFile={handleFileUpload}
-            />
             <div>
                 <Typography variant="h6">Recycle bin</Typography>
                 <Breadcrumbs list={path} onClick={openFolder} />
                 <Box sx={{ margin: 2 }}>
                     <Browser
-                        items={[...folders, ...files]}
+                        files={files}
+                        folders={folders}
                         openFolder={openFolder}
-                        onRename={handleRename}
-                        onDelete={handleDelete}
                     />
                 </Box>
             </div>

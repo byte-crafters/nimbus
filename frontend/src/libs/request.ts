@@ -1,9 +1,6 @@
 import { ClientRegistrationError } from '@/app/errors/ClientRegistrationError';
 import { ClientUnauthorizedError } from '@/app/errors/ClientUnauthorizedError';
-import { TFoldersList } from '@/app/files/my/page';
-import { redirect } from 'next/navigation';
-import { NextResponse, NextRequest } from 'next/server'
-
+import { TFoldersList } from '@/pages/SharedFiles/SharedFiles';
 
 export const METHODS = {
     GET: 'GET',
@@ -399,7 +396,7 @@ export class Requester {
             throw new ClientRegistrationError();
         }
     }
-    getStorageInfo(): Promise<TGetUserRootFolderChildren> {
+    getStorageInfo(): Promise<any> {
         return fetch(`${this.host}/api/v1/files/storage`, {
             method: METHODS.GET,
             credentials: 'include',
@@ -581,7 +578,7 @@ export class Requester {
             // console.error(errorMessage);
             if (response.status === 401) {
                 // redirect('/login')
-                
+
                 throw new ClientUnauthorizedError('Uauth');
             } else {
                 throw new Error(errorObject.message);
@@ -591,9 +588,9 @@ export class Requester {
 
     private handleError = async (e: Error) => {
         if (e instanceof ClientUnauthorizedError) {
-            window.location.href = '/login'
+            window.location.href = '/login';
         }
-    }
+    };
 }
 
 export const fetcher = new Requester();

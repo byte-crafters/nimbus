@@ -1,17 +1,14 @@
 'use client';
-import React, { FormEvent, useContext, useRef } from 'react';
-import { login } from '../lib';
-import { ProfileContext, TSetUserProfileShort } from '@/app/providers';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { FormEvent, useRef } from 'react';
+import { login } from '../lib';
 import styles from './Login.module.scss';
 
 export function Login() {
     const loginRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    const { loggedUser, setLoggedUser } =
-        useContext<TSetUserProfileShort>(ProfileContext);
     const router = useRouter();
 
     return (
@@ -20,15 +17,18 @@ export function Login() {
                 <h1>Login</h1>
                 <form
                     onSubmit={async (e: FormEvent<HTMLFormElement>) => {
-                        e.preventDefault();
-                        const userProfile = await login(
-                            loginRef.current!.value,
-                            passwordRef.current!.value
-                        );
-                        if (userProfile.id !== null) {
-                            setLoggedUser?.(userProfile.id);
-                            router.push('/files/my');
-                        }
+                        try {
+                            e.preventDefault();
+
+                            const username = loginRef.current!.value;
+                            const password = passwordRef.current!.value;
+
+                            const userProfile = await login(username, password);
+
+                            if (userProfile !== null) {
+                                router.push('/files/my');
+                            }
+                        } catch (e: unknown) { }
                     }}
                 >
                     <div>

@@ -1,12 +1,10 @@
 'use client';
 
-import { PathContext, ProfileContext } from '@/app/providers';
 import { fetcher } from '@/libs/request';
-import { Sidebar } from '@/shared';
 import { Box, Typography } from '@mui/material';
+import { PieValueType } from '@mui/x-charts';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     calcGBytesFromBytes,
     calcMBytesFromBytes,
@@ -15,17 +13,12 @@ import {
     parseExtensions,
 } from './utils';
 import { TData } from './utils/parse-extensions';
-import { PieValueType } from '@mui/x-charts';
-import { TChartValue } from './utils/parse-data-charts';
 
 /**
  * If context === null - user is NOT logged in. `context` === string when user is logged in.
  */
 
 export function Storage() {
-    const { openedFolder, setOpenedFolder } = useContext(PathContext);
-    const { loggedUser } = useContext(ProfileContext);
-
     const MAX_KBYTES = 5 * 1024 * 1024 * 1024; //
 
     const [storageData, setData] = useState<TData>({
@@ -36,10 +29,6 @@ export function Storage() {
 
     const [chartsData, setCharts] = useState<PieValueType[] | []>([]);
 
-    const router = useRouter();
-
-    const filesInput = useRef<HTMLInputElement>(null);
-
     useEffect(() => {
         fetcher.getStorageInfo().then(({ size }) => {
             const obj = parseExtensions(size);
@@ -48,45 +37,9 @@ export function Storage() {
     }, []);
 
     useEffect(() => {
-        /**
-         * TODO: move this logic in template or layout
-         */
-        if (loggedUser === null) {
-            router.push('/login');
-        }
-    }, [loggedUser]);
-
-    useEffect(() => {
-        console.log('AAAAAAAAAAA');
-        console.log(storageData);
         setCharts(parseDataCharts(storageData));
     }, [storageData]);
 
-    function handleCreateFolder() {
-        const folderName = prompt('Folder name:');
-
-        if (folderName !== null) {
-            const parentFolderId = openedFolder!.id;
-
-            fetcher
-                .postCreateFolder(folderName, parentFolderId)
-                .then(({ folders }) => {
-                    // setFolders(folders);
-                });
-        }
-    }
-
-    function handleFileUpload(data: FormData) {
-        if (openedFolder) {
-            fetcher
-                .uploadFiles(data, openedFolder?.id)
-                .then(({ folders, currentFolder, files }) => {
-                    // setFiles(files);
-                    // setFolders(folders);
-                    setOpenedFolder?.(currentFolder);
-                });
-        }
-    }
 
     const size = {
         width: 400,
@@ -95,10 +48,6 @@ export function Storage() {
 
     return (
         <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <Sidebar
-                onCreateFolder={handleCreateFolder}
-                onUploadFile={handleFileUpload}
-            />
             <div>
                 <Typography variant="h6">Storage</Typography>
                 <Box
@@ -122,9 +71,6 @@ export function Storage() {
                                 cx: 150,
                                 cy: 150,
                                 data: chartsData,
-                                // arcLabel: (item) =>
-                                //     `${item.label} (${item.value})`,
-                                // arcLabelMinAngle: 45,
                             },
                         ]}
                         {...size}
