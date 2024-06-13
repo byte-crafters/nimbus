@@ -117,7 +117,7 @@ describe('File (e2e)', () => {
                     ]
                 });
             });
-        
+
         /** Get file access for user */
     });
 
@@ -200,6 +200,127 @@ describe('File (e2e)', () => {
             });
 
         /** Get file access for user */
+    });
+
+    it('Get uploaded file and folder info', async () => {
+        const user = new User({ username: Date.now() + 'one', password: '123', email: Date.now().toString() });
+
+        /** Register and claim access token */
+        let access_token = null;
+        await request(app.getHttpServer())
+            .post('/auth/register')
+            .send(user)
+            .expect(201)
+            .expect(async (response: request.Response) => {
+                const { access_token: accessToken } = response.body;
+                expect(typeof accessToken).toBe('string');
+                expect(accessToken.length).toBeGreaterThan(200);
+
+                access_token = accessToken;
+            });
+
+        expect(access_token).not.toBeNull();
+
+
+        /** Get user root folder */
+        let userRootFolderId = null;
+        await request(app.getHttpServer())
+            .get('/files/user/folder/root')
+            .set('Cookie', [`access_token=${access_token}`])
+            .send()
+            .expect(200)
+            .expect(async (response: request.Response) => {
+                const result = response.body;
+                // console.log(result)
+
+                expect(result).toMatchObject({
+                    parentFolder: {
+                        path: [],
+                        removed: false,
+                        parentFolderId: null
+                    },
+                    folders: []
+                });
+
+                userRootFolderId = result.parentFolder.id;
+            });
+
+        expect(userRootFolderId).not.toBeNull();
+
+        /** Upload a file for user */
+        let userFileId = null;
+        await request(app.getHttpServer())
+            .post('/files/upload')
+            .set('Cookie', [`access_token=${access_token}`])
+            .attach('files', Buffer.from('test_e2e', 'utf-8'), 'файл.jpeg')
+            .field('folderId', userRootFolderId)
+            .expect(201)
+            .expect(async (response: request.Response) => {
+                const result = response.body;
+                // console.log(result)
+
+                expect(result).toMatchObject({
+                    currentFolder: {
+                        id: userRootFolderId,
+                        owner: {
+                            username: user.username,
+                            rootFolderId: userRootFolderId
+                        },
+                        parentFolder: null,
+                        path: []
+                    },
+                    folders: [],
+                    files: [
+                        {
+                            name: 'файл.jpeg',
+                            extension: 'image/jpeg',
+                            removed: false,
+                            folderId: userRootFolderId,
+                        }
+                    ]
+                });
+
+                userFileId = result.files[0].id;
+            });
+
+        /** Get uploaded file info */
+        await request(app.getHttpServer())
+            .get(`/files/file/info/${userFileId}`)
+            .set('Cookie', [`access_token=${access_token}`])
+            .expect(async (response: request.Response) => {
+                const result = response.body;
+
+                expect(result).toMatchObject({
+                    folderId: userRootFolderId,
+                    id: userFileId,
+                    owner: {
+                        username: user.username,
+                        email: user.email
+                    },
+                    size: 8
+                });
+
+            });
+        
+        
+        /** Get folder info */
+        await request(app.getHttpServer())
+            .get(`/files/folder/info/${userRootFolderId}`)
+            .set('Cookie', [`access_token=${access_token}`])
+            .expect(async (response: request.Response) => {
+                const result = response.body;
+
+                expect(result).toMatchObject({
+                    parentFolder: null,
+                    name: null,
+                    id: userRootFolderId,
+                    owner: {
+                        username: user.username,
+                        email: user.email
+                    }
+                });
+
+            });
     });
 
     afterEach(async () => {
