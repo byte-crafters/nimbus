@@ -520,10 +520,29 @@ export class Requester {
 
     async getFileInfo(fileId: string): Promise<TFile> {
         try {
-            return fetch(`${this.host}/api/v1/files/info/${fileId}`, {
+            return fetch(`${this.host}/api/v1/files/file/info/${fileId}`, {
                 method: METHODS.GET,
                 credentials: 'include',
                 // body: data,
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                },
+            }).then(async (response: Response) => {
+                // console.log(response);
+                const res = await response.json();
+                return res;
+            });
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
+    async getFolderInfo(folderId: string): Promise<TFolder> {
+        try {
+            return fetch(`${this.host}/api/v1/files/folder/info/${folderId}`, {
+                method: METHODS.GET,
+                credentials: 'include',
                 headers: {
                     [HEADER.Accept]: HEADERS_VALUE.JSON,
                 },

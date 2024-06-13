@@ -1,4 +1,4 @@
-import { TFSItem, TFile, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
 import { getFormattedDate } from '@/shared/utils';
 import {
     Divider,
@@ -15,18 +15,22 @@ interface IProps {
 }
 
 export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
-    const [info, setInfo] = useState<TFile | null>();
+    const [info, setInfo] = useState<TFile | TFolder | null>();
 
     useEffect(() => {
         if (items.length == 1) {
             const item = items[0];
+            console.log(item.id);
             if ('extension' in item) {
                 fetcher.getFileInfo(item.id).then((info) => {
                     console.log(info);
                     setInfo(info);
                 });
             } else {
-                //add for folder
+                fetcher.getFolderInfo(item.id).then((info) => {
+                    console.log(info);
+                    setInfo(info);
+                });
             }
         } else {
             setInfo(null);
@@ -41,24 +45,36 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
                         <ListItemText primary="Name" secondary={info?.name} />
                     </ListItem>
                     <ListItem>
-                        <ListItemText primary="Owner" secondary={info?.owner} />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemText primary="Size" secondary={info?.size} />
-                    </ListItem>
-                    <ListItem>
                         <ListItemText
-                            primary="Extension"
-                            secondary={info?.extension}
+                            primary="Owner"
+                            secondary={info?.owner.username}
                         />
                     </ListItem>
+                    {info?.size && (
+                        <ListItem>
+                            <ListItemText
+                                primary="Size"
+                                secondary={info?.size}
+                            />
+                        </ListItem>
+                    )}
+                    {info?.extension && (
+                        <ListItem>
+                            <ListItemText
+                                primary="Extension"
+                                secondary={info?.extension}
+                            />
+                        </ListItem>
+                    )}
                     <Divider variant="inset" component="li" />
-                    <ListItem>
-                        <ListItemText
-                            primary="Created"
-                            secondary={getFormattedDate(info?.createdDate)}
-                        />
-                    </ListItem>
+                    {info?.createdDate && (
+                        <ListItem>
+                            <ListItemText
+                                primary="Created"
+                                secondary={getFormattedDate(info?.createdDate)}
+                            />
+                        </ListItem>
+                    )}
                 </List>
             )}
             {items.length == 0 && (
