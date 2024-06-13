@@ -7,7 +7,7 @@ import {
     // TFileRepository,
 } from '../../file-structure/data.repository';
 import { IFileSystemService } from '../../file-system/file-system.service';
-import { IDataRepository, TFileId, TFileRepository, TFolderId } from '../../file-structure/file-structure.type';
+import { IDataRepository, TFileId, TFileRepository, TFolder, TFolderId, TFolderRepository } from '../../file-structure/file-structure.type';
 import { AccessService } from './access.service';
 
 export interface IFileService { }
@@ -116,6 +116,18 @@ export class FileService implements IFileService {
             return fileStream;
         } catch (e: unknown) { }
     }
+
+    async getFolderInfoById(folderId: TFolderId): Promise<TFolder> {
+        try {
+            /**
+             * TODO
+             * Run this code only as a transaction
+             */
+            const file = await this.dataRepo.getFolderById(folderId);
+            return file;
+        } catch (e: unknown) { }
+    }
+
 
     async getFileInfoById(fileId: TFileId): Promise<TFileRepository> {
         try {

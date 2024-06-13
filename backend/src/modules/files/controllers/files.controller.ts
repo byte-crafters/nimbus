@@ -200,7 +200,17 @@ export class FilesController {
 
 
 
-
+    @ApiOperation({
+        summary: 'Get folder info by id.',
+        description: 'Return full folder info.',
+    })
+    @ApiTags('files')
+    @Get('folder/info/:folderId')
+    async getFolderInfo(@Req() request: any, @Param('fileId') fileId: TApiFileId): Promise<any> {
+        const userId = request.user.sub;
+        const fileInfo = await this.fileService.getFolderInfoById(fileId);
+        return fileInfo;
+    }
 
     @ApiOperation({
         summary: 'Get file info by id.',

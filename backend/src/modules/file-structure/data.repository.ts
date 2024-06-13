@@ -639,7 +639,7 @@ export class DataRepository implements IDataRepository {
                     id: true,
                     name: true,
                     owner: true,
-                    ownerId: true,
+                    // ownerId: true,
                     // parentId: true,
                     parentFolder: true,
                     path: true,
