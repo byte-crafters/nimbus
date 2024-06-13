@@ -4,11 +4,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TYPES, authServiceDefaultProvider, userServiceDefaultProvider } from '@src/dependencies/providers';
 import { jwtConstants } from './constants';
 import { IAuthService } from './auth.service';
-import { DataRepository } from '@src/modules/file-structure/file-structure.service';
+// import { DataRepository } from '@src/modules/file-structure/file-structure.service';
 import { FilesStructureModule } from '@src/modules/file-structure/file-structure.module';
 import { FileSystemService } from '@src/modules/file-system/file-system.service';
 import { FilesSystemModule } from '@src/modules/file-system/file-system.module';
 import { TestConfigService } from '@src/modules/config/test.config.service';
+import { DataRepository } from '@src/modules/file-structure/data.repository';
 
 describe('AuthService', () => {
     let service: IAuthService;

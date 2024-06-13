@@ -1,0 +1,14 @@
+{
+
+    "rootDir": "./",
+    "testEnvironment": "node",
+    "testRegex": "pass.spec.ts",
+    "transform": {
+        "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "preset": "ts-jest",
+    "moduleDirectories": [
+        "node_modules",
+        "<rootDir>"
+    ]
+}

@@ -237,7 +237,6 @@ describe('FileService: share file', () => {
 
         const extensions = await dataRepo.getExtensionsInfo(user.id);
         const sizes = await dataRepo.getStorageInfo(user.id);
-        console.log(extensions, sizes);
 
         expect(extensions).toHaveLength(2);
         expect(sizes).toHaveLength(2);

@@ -26,7 +26,7 @@ describe('AppServiceController (e2e)', () => {
     });
 
     it('Register new user and login afterwards', async () => {
-        const user = new User({ username: Date.now() + 'one', password: '123' });
+        const user = new User({ username: Date.now() + 'one', password: '123', email: Date.now() + '@gmail.com' });
         await request(app.getHttpServer())
             .post('/auth/register')
             .send(user)
