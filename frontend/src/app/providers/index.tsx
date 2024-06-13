@@ -1,10 +1,10 @@
 'use client';
 import { ModalProvider } from '@/components/Modal';
 import { store } from '@/libs/redux/store';
-import { TFolder, fetcher } from '@/libs/request';
+import { TFolder } from '@/libs/request';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 
 export type TSetUserProfileShort = {

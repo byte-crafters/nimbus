@@ -10,7 +10,7 @@ import {
     Select,
     TextField,
 } from '@mui/material';
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { useModalContext } from '../Modal/ModalProvider';
 
 export const ACCESS_RIGHTS = {
@@ -54,13 +54,20 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
         }
     };
 
-    function handleChange(val: string) {
-        fetcher
-            .getPossibleUsers(val)
-            .then((users) => {
-                setUsers(users);
-            })
-            .catch((e) => console.log(e));
+    useEffect(() => {
+        handleChange();
+    }, []);
+
+    function handleChange(val: string = '') {
+        fetcher.getUserProfile().then(({ username }) => {
+            fetcher
+                .getPossibleUsers(val)
+                .then((users) => {
+                    console.log(users)
+                    setUsers(users.filter((user) => user.username != username));
+                })
+                .catch((e) => console.log(e));
+        });
     }
 
     return (
@@ -75,7 +82,6 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
                     options={users.map((u: { username: any; id: any }) => {
                         return { label: u.username, id: u.id };
                     })}
-                    // getOptionLabel={}
                     sx={{ width: 280 }}
                     renderInput={(params) => (
                         <TextField
