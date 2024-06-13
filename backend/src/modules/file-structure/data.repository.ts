@@ -378,6 +378,9 @@ export class DataRepository implements IDataRepository {
                 where: {
                     id: fileId,
                 },
+                include: {
+                    owner: true
+                }
             });
         } catch (e: unknown) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {

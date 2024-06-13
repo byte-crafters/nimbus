@@ -207,13 +207,17 @@ export class FilesController {
         description: 'Return full file info.',
     })
     @ApiTags('files')
-    @Get('info/:fileId')
+    @Get('file/info/:fileId')
     async getFileInfo(@Req() request: any, @Param('fileId') fileId: TApiFileId): Promise<any> {
         const userId = request.user.sub;
-        const fileInfo = await this.fileService.getFileInfoById(fileId, userId);
+        const fileInfo = await this.fileService.getFileInfoById(fileId);
         return fileInfo;
     }
 
+    @Get('info/:fileId')
+    async _getFileInfo(@Req() request: any, @Param('fileId') fileId: TApiFileId): Promise<any> {
+        throw new InternalServerErrorException('This api moved to /files/folder/remove/:folderId.');
+    }
 
     @ApiOperation({
         summary: 'Get user storage info.',

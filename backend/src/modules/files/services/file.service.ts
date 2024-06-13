@@ -117,7 +117,7 @@ export class FileService implements IFileService {
         } catch (e: unknown) { }
     }
 
-    async getFileInfoById(fileId: TFileId, userId: string): Promise<TFileRepository> {
+    async getFileInfoById(fileId: TFileId): Promise<TFileRepository> {
         try {
             /**
              * TODO
