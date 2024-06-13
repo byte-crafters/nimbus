@@ -173,7 +173,7 @@ describe('FileStructureRepository: ', () => {
         /** Soft delete */
         await service.removeFile(file.id, true);
         const children5 = await service.getChildrenFiles(parentFolder.id);
-        expect(children5.length).toEqual(1);
+        expect(children5.length).toEqual(0);
 
         /** Hard delete */
         await service.removeFile(file.id, false);

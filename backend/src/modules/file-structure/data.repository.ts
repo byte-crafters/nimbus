@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { DbFileRecordDoesNotExist } from '../errors/db/DbFileRecordDoesNotExistError';
 import { NoFolderWithThisIdError } from '../errors/logic/NoFolderWithThisIdError';
@@ -8,10 +8,10 @@ import { CreateUserRootFolderStructure, IDataRepository, TExtensionCountInfo, TE
 
 @Injectable()
 export class DataRepository implements IDataRepository {
-    private connection: PostgresConnection;
+    // private connection: PostgresConnection;
 
-    constructor() {
-        this.connection = new PostgresConnection();
+    constructor(@Inject(PostgresConnection) private connection: PostgresConnection) {
+        // this.connection = new PostgresConnection();
     }
 
     async getExtensionsInfo(userId: string): Promise<TExtensionCountInfo[]> {

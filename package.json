@@ -6,7 +6,8 @@
         "be:test": "npm run --prefix backend be:test:dev",
         "be:test:e2e": "npm run --prefix backend be:test:e2e",
         "be:test:unit": "npm run --prefix backend test:unit",
-        "be:test:all": "npm run be:test && npm run be:test:e2e",
+        "be:test:fake": "npm run --prefix backend be:test:fake",
+        "be:test:all": "npm run be:test && npm run be:test:e2e && npm run be:test:fake",
         "be:lint": "npm run --prefix backend lint",
         "be:lint:fix": "npm run --prefix backend lint:fix",
         "fe:dev": "npm run --prefix frontend fe:dev"

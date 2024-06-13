@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotImplementedException } from '@nestjs/common';
 import { User } from '../models/User';
-import { PrismaClient as PostgresClient, Prisma } from '@prsm/generated/prisma-postgres-client-js';
+import { Prisma } from '@prsm/generated/prisma-postgres-client-js';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDTO } from './mock.users.service';
 import { DbUserUniqueConstraintError } from '@src/modules/errors/ErrorUniqueConstaint';
@@ -136,10 +136,7 @@ export class UsersRepository implements IUserService {
         username: string;
         password: string;
     }> {
-        // const user = mockUsersCollection.find((user) => user.id.toString() === userId);
-        const postgresClient = new PostgresClient();
-
-        const user = await postgresClient.user.findUnique({
+        const user = await this.connection.user.findUnique({
             where: {
                 id: userId,
             },
