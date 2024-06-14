@@ -26,13 +26,13 @@ export function FileSpaceLayout({ children }: { children: React.ReactNode; }) {
                     <Sidebar />
                     {children}
                 </Box>
-                {
-                    createPortal(
-                        <LoadedFiles />,
-                        document.body
-                    )
-                }
             </Box>
+            {
+                createPortal(
+                    <LoadedFiles />,
+                    document.body
+                )
+            }
         </UploadFilesProvider>
     );
 }
