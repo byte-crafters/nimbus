@@ -68,8 +68,9 @@ export const ActiveDropzone = forwardRef(function ActiveDropzone(
 
         /** TODO: clear other handlers */
         return () => {
-            fileAreaRef.current.removeEventListener('drop', onDropHandler)
-        }
+            if (fileAreaRef !== null && fileAreaRef.current !== null)
+                fileAreaRef.current.removeEventListener('drop', onDropHandler);
+        };
     }, []);
 
     const component = <>
