@@ -6,7 +6,7 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { Button, Stack, Toolbar } from '@mui/material';
 import Link from 'next/link';
 import { PropsWithChildren } from 'react';
-import { Dropzone } from '../Dropzone/Dropzone';
+import { AttachFilesControl } from '../AttachFilesControl/AttachFilesControl';
 import styles from './Sidebar.module.scss';
 
 interface IProps {}
@@ -32,7 +32,7 @@ export const Sidebar = ({}: PropsWithChildren<IProps>) => {
     return (
         <Toolbar className={styles.drawer}>
             <Stack direction="column" spacing={2} className={styles.sidebar}>
-                <Dropzone />
+                <AttachFilesControl />
                 <Button
                     variant="contained"
                     color="secondary"
