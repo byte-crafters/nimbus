@@ -18,6 +18,8 @@ until [ $TRY_CONNECT_CODE -eq 0 -o $TRY_COUNT -eq 10 ]; do
     sleep 1
 done
 
+docker ps
+docker exec mongo_container mongosh -u root -p root --eval "rs.initiate();"
 npm run be:migrate
 
 GREEN='\033[0;32m'
