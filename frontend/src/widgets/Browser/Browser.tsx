@@ -1,7 +1,7 @@
 'use client';
 import { ContextMenu } from '@/components';
 import { setMyFiles, setMyFolders } from '@/libs/redux/my-files.reducer';
-import { useAppDispatch } from '@/libs/redux/store';
+import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 import { TFSItem, TFile, TFolder } from '@/libs/request';
 import { List } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
@@ -24,6 +24,8 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
 
     const [selectedItems, setSelectedItems] = useState<TFSItem[]>([]);
     const dispatch = useAppDispatch();
+
+    const { value: searchValue } = useAppSelector(({ search }) => search);
 
     function handleRename(items: TFSItem[], name: string) {
         let newItem: TFolder | null = null;
@@ -111,12 +113,19 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
         };
     });
 
+    const filtered = searchValue.toLowerCase().trim() === ''
+        ? [...folders, ...files]
+        : [
+            ...folders.filter((f) => f.name.toLowerCase().includes(searchValue.toLowerCase())),
+            ...files.filter((f) => f.name.toLowerCase().includes(searchValue.toLowerCase()))
+        ];
+
     return (
         <>
             <div className={`${styles.container} browser_container`} >
                 <div className={`${styles.listContainer} browserList_container`}>
                     <List className={styles.list}>
-                        {[...folders, ...files].map((item) => {
+                        {filtered.map((item) => {
                             const selected = selectedItems.includes(item);
                             return (
                                 <BrowserItem
