@@ -13,8 +13,6 @@ interface IBrowserProps {
     files: TFile[];
     folders: TFolder[];
     openFolder: (folder: TFolder) => void;
-    // onRename: (items: TFSItem[], name: string) => void;
-    // onDelete: (items: TFSItem[]) => void;
 }
 
 export function Browser({ files, folders, openFolder }: IBrowserProps) {
@@ -25,7 +23,6 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
     });
 
     const [selectedItems, setSelectedItems] = useState<TFSItem[]>([]);
-    // const { files, folders, path } = useAppSelector((state) => state.myFiles);
     const dispatch = useAppDispatch();
 
     function handleRename(items: TFSItem[], name: string) {
@@ -116,8 +113,8 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
 
     return (
         <>
-            <div className={styles.container}>
-                <div className={styles.listContainer}>
+            <div className={`${styles.container} browser_container`} >
+                <div className={`${styles.listContainer} browserList_container`}>
                     <List className={styles.list}>
                         {[...folders, ...files].map((item) => {
                             const selected = selectedItems.includes(item);
@@ -175,4 +172,4 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
             </div>
         </>
     );
-}
+};

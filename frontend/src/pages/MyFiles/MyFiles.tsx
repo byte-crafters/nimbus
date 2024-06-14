@@ -9,14 +9,15 @@ import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 import { TFolder, fetcher } from '@/libs/request';
 import { Breadcrumbs, Browser } from '@/widgets';
 import { Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ActiveDropzone } from '../../shared/ActiveDropzone/ActiveDropzone';
 import './style.css';
-import clsx from 'clsx';
 
 export function MyFiles() {
-    const { files, folders, path, openedFolder } = useAppSelector(
-        (state) => state.myFiles
-    );
+    const [dropzoneActive, setDropzoneActive] = useState(false);
+    const browserContainerRef = useRef<HTMLDivElement>(null);
+
+    const { files, folders, path, openedFolder } = useAppSelector(({ myFiles }) => myFiles);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -41,24 +42,28 @@ export function MyFiles() {
     }
 
     return (
-        <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <div
-                className={clsx(
-                    'dropzone'
-                    // dropzoneActive ? 'dropzone__dragover' : undefined
-                )}
-                id="dropzone"
-                // ref={dropzoneRef}
-                // onDrop={onDrop}
-            >
-                <Typography variant="h6">My files</Typography>
-                <Breadcrumbs list={path} onClick={openFolder} />
-                <Browser
-                    files={files}
-                    folders={folders}
-                    openFolder={openFolder}
+        <div
+            className="myFiles_container"
+            style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}
+        >
+            <Typography variant="h6">My files</Typography>
+            <Breadcrumbs list={path} onClick={openFolder} />
+            <div className="myFiles_activeZone" ref={browserContainerRef}>
+                <ActiveDropzone
+                    active={dropzoneActive}
+                    setActive={setDropzoneActive}
+                    ref={browserContainerRef}
                 />
+                {dropzoneActive
+                    ? null
+                    : <Browser
+                        files={files}
+                        folders={folders}
+                        openFolder={openFolder}
+                    />
+                }
             </div>
+
         </div>
     );
 }

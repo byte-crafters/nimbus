@@ -32,3 +32,21 @@ div {
     border-radius: 3px;
     margin-bottom: 3px;
 }
+
+.myFiles_container {
+    position: relative
+}
+
+.myFiles_activeZone {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    position: relative;
+}
+
+.fileSpaceLayout {
+    position: relative
+}
