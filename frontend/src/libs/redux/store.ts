@@ -3,12 +3,14 @@ import { myFilesReducer } from './my-files.reducer';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { sharedFilesReducer } from './shared-files.reducer';
 import { trashFilesReducer } from './trash-files.reducer';
+import { searchFilesReducer } from './search.reducer';
 
 export const store = configureStore({
     reducer: {
         myFiles: myFilesReducer,
         sharedFiles: sharedFilesReducer,
         trashFiles: trashFilesReducer,
+        search: searchFilesReducer
     },
 });
 
