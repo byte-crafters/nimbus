@@ -1,27 +1,40 @@
 'use client';
-import { ContextMenu } from '@/components';
 import { setMyFiles, setMyFolders } from '@/libs/redux/my-files.reducer';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
+import {
+    setTrashFiles,
+    setTrashFolders,
+} from '@/libs/redux/trash-files.reducer';
 import { TFSItem, TFile, TFolder } from '@/libs/request';
-import { List } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import { FileMenu } from '@/shared/FileMenu/FileMenu';
+import { List, Menu } from '@mui/material';
+import React, { PropsWithChildren, useRef, useState } from 'react';
 import styles from './Browser.module.scss';
 import { InfoBar } from './components';
 import { BrowserItem } from './components/BrowserItem';
+
+interface IPosition {
+    x: number;
+    y: number;
+}
 
 interface IBrowserProps {
     files: TFile[];
     folders: TFolder[];
     openFolder: (folder: TFolder) => void;
+    restoreGroup?: boolean;
+    defaultGroup?: boolean;
+    shareGroup?: boolean;
 }
 
-export function Browser({ files, folders, openFolder }: IBrowserProps) {
-    const contextMenuRef = useRef<any>(null);
-    const [contextMenu, setContextMenu] = useState({
-        position: { x: 0, y: 0 },
-        toggled: false,
-    });
-
+export function Browser({
+    files,
+    folders,
+    openFolder,
+    restoreGroup,
+    defaultGroup,
+    shareGroup,
+}: PropsWithChildren<IBrowserProps>) {
     const [selectedItems, setSelectedItems] = useState<TFSItem[]>([]);
     const dispatch = useAppDispatch();
 
@@ -34,7 +47,7 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
 
         for (const folder of folders) {
             if (folder.id == item.id) {
-                newItem = folder;
+                newItem = { ...folder };
                 newItem.name = name;
                 newFolders.push(newItem);
             } else {
@@ -43,8 +56,8 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
         }
 
         dispatch(setMyFolders(newFolders));
+        handleClose();
     }
-
     function handleDelete(items: TFSItem[]) {
         let newFiles: TFile[] = [],
             newFolders: TFolder[] = [];
@@ -63,67 +76,62 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
 
         dispatch(setMyFiles(newFiles));
         dispatch(setMyFolders(newFolders));
-    }
-
-    function handleContextMenu(e: React.MouseEvent) {
-        e.preventDefault();
-
-        const contextMenuAttr = contextMenuRef.current?.getBoundingClientRect();
-        console.log(contextMenuAttr);
-
-        const isLeft = e.clientX < window?.innerWidth / 2;
-        let x = e.clientX - contextMenuAttr.width,
-            y = e.clientY - 15;
-
-        if (isLeft) {
-            x = e.clientX;
-        }
-
-        setContextMenu({
-            position: { x, y },
-            toggled: true,
-        });
-    }
-
-    function resetContextMenu() {
-        setContextMenu({
-            position: { x: 0, y: 0 },
-            toggled: false,
-        });
-    }
-
-    function resetSelection() {
         setSelectedItems([]);
+        handleClose();
     }
 
-    useEffect(() => {
-        function handler(e: any): void {
-            if (contextMenuRef?.current) {
-                if (!contextMenuRef.current?.contains(e.target)) {
-                    resetContextMenu();
-                    resetSelection();
-                }
+    function handleDeleteRestore(items: TFSItem[]) {
+        let newFiles: TFile[] = [],
+            newFolders: TFolder[] = [];
+
+        for (let i = 0; i < folders.length; i++) {
+            if (!items.find((item) => item.id == folders[i].id)) {
+                newFolders.push(folders[i]);
             }
         }
 
-        document.addEventListener('click', handler);
+        for (let i = 0; i < files.length; i++) {
+            if (!items.find((item) => item.id == files[i].id)) {
+                newFiles.push(files[i]);
+            }
+        }
 
-        return () => {
-            document.removeEventListener('click', handler);
-        };
-    });
+        dispatch(setTrashFiles(newFiles));
+        dispatch(setTrashFolders(newFolders));
+        setSelectedItems([]);
+        handleClose();
+    }
 
-    const filtered = searchValue.toLowerCase().trim() === ''
-        ? [...folders, ...files]
-        : [
-            ...folders.filter((f) => f.name.toLowerCase().includes(searchValue.toLowerCase())),
-            ...files.filter((f) => f.name.toLowerCase().includes(searchValue.toLowerCase()))
-        ];
+    const [position, setPosition] = useState<IPosition | null>(null);
+    const open = Boolean(position);
+
+    const handleContextMenu = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        setPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleClose = () => {
+        setPosition(null);
+    };
+
+    const filtered =
+        searchValue.toLowerCase().trim() === ''
+            ? [...folders, ...files]
+            : [
+                  ...folders.filter((f) =>
+                      f.name.toLowerCase().includes(searchValue.toLowerCase())
+                  ),
+                  ...files.filter((f) =>
+                      f.name.toLowerCase().includes(searchValue.toLowerCase())
+                  ),
+              ];
 
     return (
         <>
-            <div className={`${styles.container} browser_container`} >
-                <div className={`${styles.listContainer} browserList_container`}>
+            <div className={`${styles.container} browser_container`}>
+                <div
+                    className={`${styles.listContainer} browserList_container`}
+                >
                     <List className={styles.list}>
                         {filtered.map((item) => {
                             const selected = selectedItems.includes(item);
@@ -169,16 +177,26 @@ export function Browser({ files, folders, openFolder }: IBrowserProps) {
                     </List>
                 </div>
                 <InfoBar items={selectedItems} />
-                <ContextMenu
-                    contextMenuRef={contextMenuRef}
-                    toggled={contextMenu.toggled}
-                    positionX={contextMenu.position.x}
-                    positionY={contextMenu.position.y}
-                    selectedItems={selectedItems}
-                    onRename={handleRename}
-                    onDelete={handleDelete}
-                />
+                <Menu
+                    open={open}
+                    onClose={handleClose}
+                    anchorReference="anchorPosition"
+                    anchorPosition={{
+                        left: position?.x ?? 0,
+                        top: position?.y ?? 0,
+                    }}
+                >
+                    <FileMenu
+                        selectedItems={selectedItems}
+                        onRename={handleRename}
+                        onDelete={handleDelete}
+                        onDeleteRestore={handleDeleteRestore}
+                        defaultGroup={defaultGroup}
+                        restoreGroup={restoreGroup}
+                        shareGroup={shareGroup}
+                    />
+                </Menu>
             </div>
         </>
     );
-};
+}

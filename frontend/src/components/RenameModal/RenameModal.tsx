@@ -1,7 +1,5 @@
-import React, { PropsWithChildren, useState } from 'react';
-import styles from './Dialog.module.scss';
-import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
-import { MODAL_TYPE, useModalContext } from '../Modal/ModalProvider';
+import { TFSItem, fetcher } from '@/libs/request';
+import { PropsWithChildren } from 'react';
 import { StringDialog } from '../StringDialog';
 
 interface IProps {}
@@ -9,7 +7,8 @@ interface IProps {}
 export const RenameModal = ({}: PropsWithChildren<IProps>) => {
     const handleRename = (items: TFSItem[], newName: string) => {
         const item = items[0];
-        if (!item?.extension) {
+        if ('extension' in item) {
+        } else {
             fetcher.renameFolder(item.id, newName).then(({ folder }) => {
                 console.log('RENAMED');
                 console.log(folder);
@@ -19,6 +18,3 @@ export const RenameModal = ({}: PropsWithChildren<IProps>) => {
 
     return <StringDialog onSubmit={handleRename} />;
 };
-
-//stringConfirmation
-//confirmation

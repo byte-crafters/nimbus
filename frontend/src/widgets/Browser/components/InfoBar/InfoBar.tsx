@@ -18,6 +18,7 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
     const [info, setInfo] = useState<TFile | TFolder | null>();
 
     useEffect(() => {
+        console.log(1111);
         if (items.length == 1) {
             const item = items[0];
             console.log(item.id);

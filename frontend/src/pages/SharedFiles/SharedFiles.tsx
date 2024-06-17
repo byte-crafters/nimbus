@@ -99,6 +99,8 @@ export function SharedFiles() {
                         files={files}
                         folders={folders}
                         openFolder={openFolder}
+                        defaultGroup
+                        shareGroup
                     />
                 </Box>
             </div>

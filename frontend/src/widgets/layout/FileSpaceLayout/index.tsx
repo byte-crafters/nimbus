@@ -8,10 +8,13 @@ import { Box } from '@mui/material';
 import React from 'react';
 import { createPortal } from 'react-dom';
 
-export function FileSpaceLayout({ children }: { children: React.ReactNode; }) {
+export function FileSpaceLayout({ children }: { children: React.ReactNode }) {
     return (
         <UploadFilesProvider>
-            <Box className="fileSpaceLayout" sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box
+                className="fileSpaceLayout"
+                sx={{ display: 'flex', flexDirection: 'column' }}
+            >
                 <Header />
                 <Box
                     className="fileSpaceLayout_content"
@@ -27,12 +30,7 @@ export function FileSpaceLayout({ children }: { children: React.ReactNode; }) {
                     {children}
                 </Box>
             </Box>
-            {
-                createPortal(
-                    <LoadedFiles />,
-                    document.body
-                )
-            }
+            {createPortal(<LoadedFiles />, document.body)}
         </UploadFilesProvider>
     );
 }

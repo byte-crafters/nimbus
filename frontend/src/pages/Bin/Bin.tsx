@@ -72,6 +72,7 @@ export function Bin() {
                         files={files}
                         folders={folders}
                         openFolder={openFolder}
+                        restoreGroup
                     />
                 </Box>
             </div>

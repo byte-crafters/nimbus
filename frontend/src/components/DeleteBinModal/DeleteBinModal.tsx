@@ -4,22 +4,20 @@ import { ConfirmationDialog } from '../ConfirmationDialog';
 
 interface IProps {}
 
-export const DeleteModal = ({}: PropsWithChildren<IProps>) => {
+export const DeleteBinModal = ({}: PropsWithChildren<IProps>) => {
     const handleDelete = (items: TFSItem[]) => {
         items.map((item) => {
             if ('extension' in item) {
                 fetcher
-                    .removeFile(item.id, true)
-                    .then(({ folders, files, currentFolder }) => {
-                        // setShowFolders(folders);
-                        // setOpenedFolder?.(currentFolder);
-                        // setFiles(files);
-                    });
+                    .removeFile(item.id, false)
+                    .then((obj) => {
+                        console.log(obj);
+                    })
+                    .catch((e) => console.log(e));
             } else {
                 fetcher
-                    .deleteFolder(item.id, true)
+                    .deleteFolder(item.id, false)
                     .then((obj) => {
-                        // console.log('RENAMED');
                         console.log(obj);
                     })
                     .catch((e) => console.log(e));
@@ -29,7 +27,7 @@ export const DeleteModal = ({}: PropsWithChildren<IProps>) => {
 
     return (
         <ConfirmationDialog
-            message={'You want to remove this file?'}
+            message={'You want to remove this file from bin?'}
             onSubmit={handleDelete}
         />
     );

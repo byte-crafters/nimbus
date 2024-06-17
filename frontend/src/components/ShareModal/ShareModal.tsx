@@ -63,7 +63,7 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
             fetcher
                 .getPossibleUsers(val)
                 .then((users) => {
-                    console.log(users)
+                    console.log(users);
                     setUsers(users.filter((user) => user.username != username));
                 })
                 .catch((e) => console.log(e));
