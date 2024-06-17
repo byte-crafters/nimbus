@@ -208,7 +208,7 @@ export class FileService implements IFileService {
             const access = await this.accessService.getAccessForFolder(folderId, requesterId);
             const folder = await this.dataRepo.getFolderById(folderId) as any;
 
-            if (access === null && folder.ownerId !== requesterId) {
+            if (access === null && folder.owner.id !== requesterId) {
                 throw new Error('You have no access to delete this folder.');
             } else {
                 console.log('s');
