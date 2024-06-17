@@ -41,21 +41,37 @@ export function Browser({
     const { value: searchValue } = useAppSelector(({ search }) => search);
 
     function handleRename(items: TFSItem[], name: string) {
-        let newItem: TFolder | null = null;
-        const newFolders = [];
+        let newItem: TFolder | null | TFile = null;
+        const newFolders = [],
+            newFiles = [];
         const item = items[0];
 
-        for (const folder of folders) {
-            if (folder.id == item.id) {
-                newItem = { ...folder };
-                newItem.name = name;
-                newFolders.push(newItem);
-            } else {
-                newFolders.push(folder);
+        if ('extension' in item) {
+            for (const file of files) {
+                if (file.id == item.id) {
+                    newItem = { ...file };
+                    newItem.name = name;
+                    newFiles.push(newItem);
+                } else {
+                    newFiles.push(file);
+                }
             }
+
+            dispatch(setMyFiles(newFiles));
+        } else {
+            for (const folder of folders) {
+                if (folder.id == item.id) {
+                    newItem = { ...folder };
+                    newItem.name = name;
+                    newFolders.push(newItem);
+                } else {
+                    newFolders.push(folder);
+                }
+            }
+
+            dispatch(setMyFolders(newFolders));
         }
 
-        dispatch(setMyFolders(newFolders));
         handleClose();
     }
     function handleDelete(items: TFSItem[]) {

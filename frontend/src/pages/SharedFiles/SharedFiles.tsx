@@ -49,7 +49,7 @@ export function SharedFiles() {
                 dispatch(setSharedFolders(folders));
             });
             fetcher.getMySharedFiles().then((files) => {
-                console.log(files)
+                console.log(files);
                 dispatch(setSharedFiles(files));
             });
         } else {

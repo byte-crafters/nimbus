@@ -57,6 +57,10 @@ export type TRenameFolder = {
     folder: TFolder;
 };
 
+export type TRenameFile = {
+    file: TFile;
+};
+
 export type TFile = {
     extension: string;
     folderId: string;
@@ -283,6 +287,23 @@ export class Requester {
         return jsonResponse;
     }
 
+    async getFolderShares(folderId: string) {
+        const response = await fetch(
+            `${this.host}/api/v1/files/share/folder/${folderId}`,
+            {
+                method: METHODS.GET,
+                credentials: 'include',
+                headers: {
+                    [HEADER.Accept]: HEADERS_VALUE.JSON,
+                    [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                },
+            }
+        );
+
+        const jsonResponse = await this.handleResponse(response);
+        return jsonResponse;
+    }
+
     async signout() {
         try {
             return await fetch(`${this.host}/api/v1/auth/logout`, {
@@ -408,6 +429,34 @@ export class Requester {
 
             const jsonResponse = await this.handleResponse(response);
             console.log(jsonResponse);
+            return jsonResponse;
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
+    async renameFile(
+        fileId: string,
+        newFileName: string
+    ): Promise<TRenameFile> {
+        try {
+            const response = await fetch(
+                `${this.host}/api/v1/files/file/rename/${fileId}`,
+                {
+                    method: METHODS.POST,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                    body: JSON.stringify({
+                        newFileName: newFileName,
+                    }),
+                }
+            );
+
+            const jsonResponse = await this.handleResponse(response);
             return jsonResponse;
         } catch (e: unknown) {
             // console.error(e);
