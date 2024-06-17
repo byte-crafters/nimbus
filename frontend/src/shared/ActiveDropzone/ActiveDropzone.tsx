@@ -1,5 +1,12 @@
 'use client';
-import { Dispatch, SetStateAction, forwardRef, useContext, useEffect, useRef } from 'react';
+import {
+    Dispatch,
+    SetStateAction,
+    forwardRef,
+    useContext,
+    useEffect,
+    useRef,
+} from 'react';
 import { UploadedFilesContext } from '../UploadFilesProvider/UploadFilesProvider';
 import style from './ActiveDropzone.module.scss';
 
@@ -73,14 +80,14 @@ export const ActiveDropzone = forwardRef(function ActiveDropzone(
         };
     }, []);
 
-    const component = <>
-        <div
-            className={`${style.activeDropzone} ${dropzoneActive ? 'dropzone__dragover' : undefined}`}
-            ref={dropzoneRef}>
-        </div>
-    </>;
+    const component = (
+        <>
+            <div
+                className={`${style.activeDropzone} ${dropzoneActive ? 'dropzone__dragover' : undefined}`}
+                ref={dropzoneRef}
+            ></div>
+        </>
+    );
 
-    return <>
-        {dropzoneActive ? component : null}
-    </>;
+    return <>{dropzoneActive ? component : null}</>;
 });

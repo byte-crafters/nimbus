@@ -7,7 +7,7 @@ export type TDropzoneProps = {};
 
 export const AttachFilesControl = ({}: TDropzoneProps) => {
     const filesInput = useRef<HTMLInputElement>(null);
-    const [, setFilesLoaded] = useContext(UploadedFilesContext)
+    const [, setFilesLoaded] = useContext(UploadedFilesContext);
 
     const onAddFileManually = () => {
         for (const file of filesInput.current!.files!) {

@@ -4,11 +4,11 @@ import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 import SearchIcon from '@mui/icons-material/Search';
 import { AppBar, Box, Input, Toolbar, Typography } from '@mui/material';
 import clsx from 'clsx';
-import { PropsWithChildren } from 'react';
+import React, { PropsWithChildren } from 'react';
 import styles from './Header.module.scss';
 import { Navigation } from './components';
 
-export const Header = ({ }: PropsWithChildren) => {
+export const Header = ({}: PropsWithChildren) => {
     const dispatch = useAppDispatch();
     const { value: searchValue } = useAppSelector(({ search }) => search);
 

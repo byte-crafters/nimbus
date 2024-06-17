@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import { TFile, TFolder, TPath } from '../request';
 
 export type TSearchInitialState = {
-    value: string
+    value: string;
 };
 
 const initialState: TSearchInitialState = {
-    value: ''
+    value: '',
 };
 export const searchSlice = createSlice({
     name: 'search',
@@ -14,7 +14,7 @@ export const searchSlice = createSlice({
     reducers: {
         setSearch: (state, action) => {
             state.value = action.payload;
-        }
+        },
     },
 });
 

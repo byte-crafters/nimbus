@@ -1,16 +1,20 @@
 'use client';
-import { setMyFiles, setMyFolders, setMyOpenedFolder } from '@/libs/redux/my-files.reducer';
+import {
+    setMyFiles,
+    setMyFolders,
+    setMyOpenedFolder,
+} from '@/libs/redux/my-files.reducer';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 import { fetcher } from '@/libs/request';
 import UploadIcon from '@mui/icons-material/Upload';
 import Button from '@mui/material/Button';
-import { PropsWithChildren, useContext } from 'react';
+import { MouseEvent, PropsWithChildren, useContext } from 'react';
 import { UploadedFilesContext } from '../UploadFilesProvider/UploadFilesProvider';
 import styles from './LoadedFiles.module.scss';
 
-interface IProps { }
+interface IProps {}
 
-export const LoadedFiles = ({ }: PropsWithChildren<IProps>) => {
+export const LoadedFiles = ({}: PropsWithChildren<IProps>) => {
     const { openedFolder } = useAppSelector((state) => state.myFiles);
     const dispatch = useAppDispatch();
 
@@ -42,7 +46,7 @@ export const LoadedFiles = ({ }: PropsWithChildren<IProps>) => {
         }
     }
 
-    const uploadFileInBox = (e: React.MouseEvent<HTMLElement>) => {
+    const uploadFileInBox = (e: MouseEvent<HTMLElement>) => {
         const data = new FormData();
 
         for (const file of files) {
@@ -55,27 +59,30 @@ export const LoadedFiles = ({ }: PropsWithChildren<IProps>) => {
 
     return (
         <>
-            {files.length === 0 ? null :
+            {files.length === 0 ? null : (
                 <div className={styles.loadedFilesContainer}>
                     <div className={styles.loadedFiles}>
-                        {
-                            files.map((f, index) => {
-                                return (
+                        {files.map((f, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <div>{f.name}</div>
                                     <div
-                                        key={index}
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between'
-                                        }}>
-                                        <div>
-                                            {f.name}
-                                        </div>
-                                        <div onClick={() => onFileRemoveFromCandidates(f)}>x</div>
+                                        onClick={() =>
+                                            onFileRemoveFromCandidates(f)
+                                        }
+                                    >
+                                        x
                                     </div>
-                                );
-                            })
-                        }
+                                </div>
+                            );
+                        })}
                     </div>
                     <Button
                         className={styles.buttonUpload}
@@ -87,7 +94,7 @@ export const LoadedFiles = ({ }: PropsWithChildren<IProps>) => {
                         Upload
                     </Button>
                 </div>
-            }
+            )}
         </>
     );
 };

@@ -34,7 +34,7 @@ div {
 }
 
 .myFiles_container {
-    position: relative
+    position: relative;
 }
 
 .myFiles_activeZone {
@@ -48,5 +48,5 @@ body {
 }
 
 .fileSpaceLayout {
-    position: relative
+    position: relative;
 }

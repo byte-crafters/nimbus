@@ -10,7 +10,7 @@ export const store = configureStore({
         myFiles: myFilesReducer,
         sharedFiles: sharedFilesReducer,
         trashFiles: trashFilesReducer,
-        search: searchFilesReducer
+        search: searchFilesReducer,
     },
 });
 

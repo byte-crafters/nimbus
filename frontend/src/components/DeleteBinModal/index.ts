@@ -1,0 +1,1 @@
+export { DeleteBinModal } from './DeleteBinModal';

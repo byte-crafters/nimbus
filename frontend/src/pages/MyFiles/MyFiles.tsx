@@ -6,9 +6,9 @@ import {
     setMyPath,
 } from '@/libs/redux/my-files.reducer';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
-import { TFolder, fetcher } from '@/libs/request';
+import { TFSItem, TFolder, fetcher } from '@/libs/request';
 import { Breadcrumbs, Browser } from '@/widgets';
-import { Typography } from '@mui/material';
+import { Menu, MenuItem, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { ActiveDropzone } from '../../shared/ActiveDropzone/ActiveDropzone';
 import './style.css';
@@ -17,8 +17,28 @@ export function MyFiles() {
     const [dropzoneActive, setDropzoneActive] = useState(false);
     const browserContainerRef = useRef<HTMLDivElement>(null);
 
-    const { files, folders, path, openedFolder } = useAppSelector(({ myFiles }) => myFiles);
+    const { files, folders, path, openedFolder } = useAppSelector(
+        ({ myFiles }) => myFiles
+    );
     const dispatch = useAppDispatch();
+
+    function handleRename(items: TFSItem[], name: string) {
+        let newItem: TFolder | null = null;
+        const newFolders = [];
+        const item = items[0];
+
+        for (const folder of folders) {
+            if (folder.id == item.id) {
+                newItem = folder;
+                newItem.name = name;
+                newFolders.push(newItem);
+            } else {
+                newFolders.push(folder);
+            }
+        }
+
+        dispatch(setMyFolders(newFolders));
+    }
 
     useEffect(() => {
         if (openedFolder !== null) {
@@ -44,7 +64,12 @@ export function MyFiles() {
     return (
         <div
             className="myFiles_container"
-            style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                height: '100%',
+            }}
         >
             <Typography variant="h6">My files</Typography>
             <Breadcrumbs list={path} onClick={openFolder} />
@@ -54,16 +79,15 @@ export function MyFiles() {
                     setActive={setDropzoneActive}
                     ref={browserContainerRef}
                 />
-                {dropzoneActive
-                    ? null
-                    : <Browser
+                {!dropzoneActive && (
+                    <Browser
                         files={files}
                         folders={folders}
                         openFolder={openFolder}
+                        defaultGroup
                     />
-                }
+                )}
             </div>
-
         </div>
     );
 }
