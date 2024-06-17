@@ -369,6 +369,52 @@ export class Requester {
         }
     }
 
+    async recoverFolder(folderId: string): Promise<TRenameFolder> {
+        try {
+            const response = await fetch(
+                `${this.host}/api/v1/files/folder/recover/${folderId}`,
+                {
+                    method: METHODS.POST,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                }
+            );
+
+            const jsonResponse = await this.handleResponse(response);
+            console.log(jsonResponse);
+            return jsonResponse;
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
+    async recoverFile(fileId: string): Promise<TRenameFolder> {
+        try {
+            const response = await fetch(
+                `${this.host}/api/v1/files/file/recover/${fileId}`,
+                {
+                    method: METHODS.POST,
+                    credentials: 'include',
+                    headers: {
+                        [HEADER.Accept]: HEADERS_VALUE.JSON,
+                        [HEADER.ContentType]: HEADERS_VALUE.JSON,
+                    },
+                }
+            );
+
+            const jsonResponse = await this.handleResponse(response);
+            console.log(jsonResponse);
+            return jsonResponse;
+        } catch (e: unknown) {
+            // console.error(e);
+            throw new ClientRegistrationError();
+        }
+    }
+
     async renameFolder(
         folderId: string,
         newFolderName: string

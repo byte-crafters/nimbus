@@ -9,14 +9,14 @@ export const RestoreModal = ({}: PropsWithChildren<IProps>) => {
         items.map((item) => {
             if ('extension' in item) {
                 fetcher
-                    .removeFile(item.id, false)
+                    .recoverFile(item.id)
                     .then((obj) => {
                         console.log(obj);
                     })
                     .catch((e) => console.log(e));
             } else {
                 fetcher
-                    .deleteFolder(item.id, false)
+                    .recoverFolder(item.id)
                     .then((obj) => {
                         console.log(obj);
                     })
