@@ -144,10 +144,8 @@ export function Browser({
 
     return (
         <>
-            <div className={`${styles.container} browser_container`}>
-                <div
-                    className={`${styles.listContainer} browserList_container`}
-                >
+            <div className={styles.container}>
+                <div className={styles.listContainer}>
                     <List className={styles.list}>
                         {filtered.map((item) => {
                             const selected = selectedItems.includes(item);

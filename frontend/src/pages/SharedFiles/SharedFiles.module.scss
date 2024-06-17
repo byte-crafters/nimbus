@@ -3,4 +3,17 @@
     flex-direction: row;
     justify-content: flex-start;
     gap: 300px;
+    align-items: center;
+}
+
+[class].container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+[class].browserContainer {
+    position: relative;
+    height: 100%;
+    width: 100%;
 }

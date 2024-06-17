@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from 'react';
 import styles from './BrowserItem.module.scss';
 import Image from 'next/image';
-import { ListItem } from '@mui/material';
+import { ListItem, Typography } from '@mui/material';
 import clsx from 'clsx';
 import { TFile, TFolder } from '@/libs/request';
 
@@ -34,23 +34,23 @@ export const BrowserItem = ({
             onContextMenu={handleContextMenu}
         >
             <Image
-                src={item?.extension ? FILE_IMG : FOLDER_IMG}
+                src={'extension' in item ? FILE_IMG : FOLDER_IMG}
                 alt=""
                 className={styles.card__image}
                 width={70}
                 height={80}
             />
-            <p
-                style={{
+            <Typography
+                sx={{
                     fontSize: '13px',
-                    maxWidth: '80px',
                     overflowWrap: 'anywhere',
                     textAlign: 'center',
                     overflow: 'hidden',
+                    fontWeight: 'normal',
                 }}
             >
                 {item.name}
-            </p>
+            </Typography>
         </ListItem>
     );
 };

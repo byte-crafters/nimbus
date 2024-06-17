@@ -1,22 +1,17 @@
 'use client';
 
-import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
-import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
-import { Box, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import styles from './SharedFiles.module.scss';
-import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
 import {
     setSharedFiles,
     setSharedFolders,
     setSharedOpenedFolder,
     setSharedPath,
 } from '@/libs/redux/shared-files.reducer';
-import path from 'path';
-
-/**
- * If context === null - user is NOT logged in. `context` === string when user is logged in.
- */
+import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
+import { TFile, TFolder, TPath, fetcher } from '@/libs/request';
+import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
+import { Box, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import styles from './SharedFiles.module.scss';
 
 export type TFoldersList = TFolder[];
 
@@ -60,23 +55,26 @@ export function SharedFiles() {
                 dispatch(setSharedFiles(files));
             });
         }
+        dispatch(setSharedPath([{}]));
     }
 
     function openFolder(folder: TFolder) {
-        if (folder) {
+        console.log(folder);
+        if (!folder || !folder.id) {
+            updatePage();
+        } else {
             console.log(folder);
             dispatch(setSharedOpenedFolder(folder));
             const folderId = folder!.id;
             fetcher
                 .getChildren(folderId)
                 .then(({ currentPath, folders, files }) => {
-                    dispatch(setSharedPath(currentPath));
+                    const path = currentPath;
+                    path[0].id = '';
+                    dispatch(setSharedPath(path));
                     dispatch(setSharedFolders(folders));
                     dispatch(setSharedFiles(files));
-                    console.log(folders.length);
                 });
-        } else {
-            updatePage();
         }
     }
 
@@ -85,26 +83,24 @@ export function SharedFiles() {
     }
 
     return (
-        <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            <div>
-                <div className={styles.topContainer}>
-                    <Typography variant="h6">Shared files</Typography>
-                    <SharedToggleGroup
-                        variant={variant}
-                        onClick={handleVariantChange}
-                    />
-                </div>
-                <Breadcrumbs list={path} onClick={openFolder} />
-                <Box sx={{ margin: 2 }}>
-                    <Browser
-                        files={files}
-                        folders={folders}
-                        openFolder={openFolder}
-                        defaultGroup
-                        shareGroup
-                    />
-                </Box>
+        <div className={styles.container}>
+            <div className={styles.topContainer}>
+                <Typography variant="h6">Shared files</Typography>
+                <SharedToggleGroup
+                    variant={variant}
+                    onClick={handleVariantChange}
+                />
             </div>
+            <Breadcrumbs list={path} onClick={openFolder} />
+            <Box className={styles.browserContainer}>
+                <Browser
+                    files={files}
+                    folders={folders}
+                    openFolder={openFolder}
+                    defaultGroup
+                    shareGroup
+                />
+            </Box>
         </div>
     );
 }

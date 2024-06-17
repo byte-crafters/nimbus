@@ -31,14 +31,17 @@ export const Navigation = ({}: PropsWithChildren<IProps>) => {
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <Link
                 component="button"
-                variant="body1"
+                variant="body2"
                 onClick={handleOpenUserMenu}
-                sx={{ color: 'black', textDecoration: 'hover' }}
+                sx={{
+                    color: 'black',
+                    textDecoration: 'hover',
+                }}
             >
                 {name}
             </Link>
             <Menu
-                sx={{ mt: '25px' }}
+                sx={{ mt: '35px' }}
                 id="menu-appbar"
                 anchorEl={anchorElUser}
                 anchorOrigin={{
@@ -59,7 +62,9 @@ export const Navigation = ({}: PropsWithChildren<IProps>) => {
                         router.push('/login');
                     }}
                 >
-                    <Typography textAlign="center">Logout</Typography>
+                    <Typography textAlign="center" variant="body2">
+                        Logout
+                    </Typography>
                 </MenuItem>
             </Menu>
         </Box>

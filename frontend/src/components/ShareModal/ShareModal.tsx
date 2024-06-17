@@ -48,13 +48,17 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
             const userId = user.id;
             for (const item of items) {
                 if ('extension' in item) {
-                    fetcher.shareFiles(item.id, userId).then((response) => {
-                        console.log(response);
-                    });
+                    fetcher
+                        .shareFiles(item.id, userId, Number(access))
+                        .then((response) => {
+                            console.log(response);
+                        });
                 } else {
-                    fetcher.shareFolders(item.id, userId).then((response) => {
-                        console.log(response);
-                    });
+                    fetcher
+                        .shareFolders(item.id, userId, Number(access))
+                        .then((response) => {
+                            console.log(response);
+                        });
                 }
             }
         }
@@ -102,6 +106,7 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
                     if (!obj[id]) {
                         obj[id] = {
                             name: id,
+                            name: el.user.username,
                             items: [],
                             rights: [],
                         };
@@ -181,7 +186,7 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
                     }}
                 >
                     {Object.keys(userList).map((key) => {
-                        const { rights } = userList[key];
+                        const { rights, name } = userList[key];
                         const equal = allEqual(rights);
 
                         const value =
@@ -191,7 +196,7 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
 
                         return (
                             <ListItem key={key}>
-                                <ListItemText primary={key} />
+                                <ListItemText primary={name} />
                                 <Select
                                     value={value}
                                     // onChange={(e) => setAccess(e.target.value)}

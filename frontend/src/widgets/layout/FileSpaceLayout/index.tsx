@@ -24,6 +24,7 @@ export function FileSpaceLayout({ children }: { children: React.ReactNode }) {
                         width: '1520px',
                         height: '635px',
                         margin: '0 auto',
+                        gap: '10px',
                     }}
                 >
                     <Sidebar />

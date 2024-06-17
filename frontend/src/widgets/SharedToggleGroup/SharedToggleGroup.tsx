@@ -1,5 +1,6 @@
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import React from 'react';
+import styles from './SharedToggleGroup.module.scss';
 
 interface IProps {
     variant: string;
@@ -19,12 +20,12 @@ export function SharedToggleGroup({ variant, onClick }: IProps) {
 
     return (
         <ToggleButtonGroup
-            sx={{ height: '30px' }}
             color="secondary"
             value={variant}
             exclusive
             onChange={handleChange}
             aria-label="Platform"
+            className={styles.button}
         >
             <ToggleButton value="1">I shared</ToggleButton>
             <ToggleButton value="2">Shared with me</ToggleButton>

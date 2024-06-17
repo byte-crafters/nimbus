@@ -21,23 +21,15 @@ export const Header = ({}: PropsWithChildren) => {
         <Box>
             <AppBar position="static" className={styles.bar}>
                 <Toolbar className={styles.container}>
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component="div"
-                        className={clsx(styles.name)}
-                    >
-                        Nimbus
-                    </Typography>
+                    <Typography variant="h4">Nimbus</Typography>
                     <div className={styles.search}>
-                        <SearchIcon />
+                        <SearchIcon sx={{ margin: '5px' }} />
                         <Input
                             placeholder="Search files"
                             value={searchValue}
-                            // disableUnderline
                             onChange={onChange}
                             fullWidth
-                            className={styles.input}
+                            sx={{ fontSize: 20 }}
                         />
                     </div>
                     <Navigation />

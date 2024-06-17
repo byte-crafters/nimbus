@@ -81,6 +81,11 @@ export type TRemoveFileResult = {
     currentFolder: TFolder;
 };
 
+export type TRights = {
+    view: boolean;
+    edit: boolean;
+};
+
 export type TFSItem = TFolder | TFile;
 
 export type TDownloadFile = void;
@@ -196,7 +201,12 @@ export class Requester {
         }
     }
 
-    async shareFiles(fileId: string, userId: string) {
+    async shareFiles(fileId: string, userId: string, rights: number) {
+        const value = {
+            view: rights >= 1 ? true : false,
+            edit: rights >= 2 ? true : false,
+        };
+
         try {
             return await fetch(`${this.host}/api/v1/files/share/files`, {
                 body: JSON.stringify({
@@ -204,9 +214,7 @@ export class Requester {
                         {
                             userId,
                             fileId,
-                            value: {
-                                view: true,
-                            },
+                            value,
                         },
                     ],
                 }),
@@ -223,7 +231,12 @@ export class Requester {
         }
     }
 
-    async shareFolders(folderId: string, userId: string) {
+    async shareFolders(folderId: string, userId: string, rights: number) {
+        const value = {
+            view: rights >= 1 ? true : false,
+            edit: rights >= 2 ? true : false,
+        };
+
         try {
             return await fetch(`${this.host}/api/v1/files/share/folders`, {
                 body: JSON.stringify({
@@ -231,9 +244,7 @@ export class Requester {
                         {
                             userId,
                             folderId,
-                            value: {
-                                view: true,
-                            },
+                            value,
                         },
                     ],
                 }),
