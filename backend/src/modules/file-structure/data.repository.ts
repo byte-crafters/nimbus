@@ -63,10 +63,13 @@ export class DataRepository implements IDataRepository {
                 }
             });
 
+            /** TODO: clarify what order of paths is */
+            const path = [...requestedFolder.path, folderId]
+
             const nearestSharedFolder = await this.connection.folder.findFirst({
                 where: {
                     id: {
-                        in: requestedFolder.path
+                        in: path
                     },
                     folderAccess: {
                         some: {
@@ -541,7 +544,7 @@ export class DataRepository implements IDataRepository {
 
     async recoverFolder(folderId: TFileId, userId: string): Promise<any> {
         try {
-            return await this.connection.folder.update({
+            const result = await this.connection.folder.update({
                 where: {
                     id: folderId,
                     owner: {
@@ -555,6 +558,8 @@ export class DataRepository implements IDataRepository {
                     id: true
                 }
             });
+
+            return result
         } catch (e: unknown) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
                 if (e.code === 'P2025') {

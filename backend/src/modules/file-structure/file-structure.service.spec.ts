@@ -230,7 +230,38 @@ describe('FileStructureRepository: ', () => {
         expect(children3.length).toEqual(1);
     });
 
-    it('Remove existing folder (hard and soft delete).', async () => { });
+    it('Remove existing folder (hard and soft delete)', async () => {
+        /** Fixtures */
+        const user = new User({ password: '', username: 'maksimbell', email: 'email' });
+
+        const userSaved = await userService.createOne({
+            password: user.password,
+            username: user.username,
+            email: user.email
+        });
+        const parentFolder = userSaved.rootFolder;
+
+        const nestedFolder1 = await service.createFolder(userSaved.id, 'nested1', parentFolder.id);
+        expect(nestedFolder1).toMatchObject<Omit<CreateUserRootFolderStructure, 'id'>>({
+            name: 'nested1',
+            parentFolderId: parentFolder.id,
+        });
+
+        const children3 = await service.getChildrenFolders(parentFolder.id);
+        expect(children3.length).toEqual(1)
+
+        await service.removeFolder(nestedFolder1.id, true);
+        const ch4 = await service.getChildrenFolders(parentFolder.id)
+        expect(ch4.length).toEqual(0)
+
+        await service.recoverFolder(nestedFolder1.id, userSaved.id)
+        const ch5 = await service.getChildrenFolders(parentFolder.id)
+        expect(ch5.length).toEqual(1)
+
+        await service.removeFolder(nestedFolder1.id, false);
+        const ch6 = await service.getChildrenFolders(parentFolder.id);
+        expect(ch6.length).toEqual(0)
+    });
 
     it('Remove not existing folder.', async () => { });
 
