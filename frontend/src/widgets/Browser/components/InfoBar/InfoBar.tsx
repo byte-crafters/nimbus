@@ -1,6 +1,7 @@
 import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
 import { getFormattedDate } from '@/shared/utils';
 import {
+    Box,
     Divider,
     List,
     ListItem,
@@ -18,7 +19,6 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
     const [info, setInfo] = useState<TFile | TFolder | null>();
 
     useEffect(() => {
-        console.log(1111);
         if (items.length == 1) {
             const item = items[0];
             console.log(item.id);
@@ -41,50 +41,66 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
     return (
         <div className={styles.container}>
             {items.length == 1 && (
-                <List sx={{ flexGrow: 1 }}>
-                    <ListItem>
-                        <ListItemText primary="Name" secondary={info?.name} />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemText
-                            primary="Owner"
-                            secondary={info?.owner.username}
-                        />
-                    </ListItem>
-                    {info?.size && (
+                <Box className={styles.box}>
+                    <Typography variant="subtitle1" align="center">
+                        {info?.name}
+                    </Typography>
+                    <List sx={{ flexGrow: 1 }}>
                         <ListItem>
                             <ListItemText
-                                primary="Size"
-                                secondary={info?.size}
+                                primary="Owner"
+                                primaryTypographyProps={{
+                                    fontWeight: 'bold',
+                                }}
+                                secondary={info?.owner.username}
                             />
                         </ListItem>
-                    )}
-                    {info?.extension && (
-                        <ListItem>
-                            <ListItemText
-                                primary="Extension"
-                                secondary={info?.extension}
-                            />
-                        </ListItem>
-                    )}
-                    <Divider variant="inset" component="li" />
-                    {info?.createdDate && (
-                        <ListItem>
-                            <ListItemText
-                                primary="Created"
-                                secondary={getFormattedDate(info?.createdDate)}
-                            />
-                        </ListItem>
-                    )}
-                </List>
+                        {info?.size && (
+                            <ListItem>
+                                <ListItemText
+                                    primary="Size"
+                                    primaryTypographyProps={{
+                                        fontWeight: 'bold',
+                                    }}
+                                    secondary={info?.size}
+                                />
+                            </ListItem>
+                        )}
+                        {info?.extension && (
+                            <ListItem>
+                                <ListItemText
+                                    primary="Extension"
+                                    primaryTypographyProps={{
+                                        fontWeight: 'bold',
+                                    }}
+                                    secondary={info?.extension}
+                                />
+                            </ListItem>
+                        )}
+                        {/* <Divider variant="inset" component="li" /> */}
+                        {info?.createdDate && (
+                            <ListItem>
+                                <ListItemText
+                                    primary="Created"
+                                    primaryTypographyProps={{
+                                        fontWeight: 'bold',
+                                    }}
+                                    secondary={getFormattedDate(
+                                        info?.createdDate
+                                    )}
+                                />
+                            </ListItem>
+                        )}
+                    </List>
+                </Box>
             )}
             {items.length == 0 && (
-                <Typography variant="body1">
+                <Typography variant="body2">
                     Select an item to see the details
                 </Typography>
             )}
             {items.length > 1 && (
-                <Typography variant="body1">
+                <Typography variant="body2">
                     {items.length} items selected
                 </Typography>
             )}

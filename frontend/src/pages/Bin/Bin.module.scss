@@ -1,6 +1,11 @@
-[class].topContainer {
+[class].container {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 300px;
+    flex-direction: column;
+    width: 100%;
+}
+
+[class].browserContainer {
+    position: relative;
+    height: 100%;
+    width: 100%;
 }

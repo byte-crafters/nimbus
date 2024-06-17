@@ -3,8 +3,7 @@ import { ModalProvider } from '@/components/Modal';
 import { store } from '@/libs/redux/store';
 import { TFolder } from '@/libs/request';
 import { ThemeProvider, createTheme } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 
 export type TSetUserProfileShort = {
@@ -32,40 +31,48 @@ const theme = createTheme({
             light: '#F5EBFF',
         },
     },
+    typography: {
+        h4: {
+            fontSize: 30,
+            paddingLeft: '50px',
+            fontWeight: 'bold',
+            fontStyle: 'oblique',
+            fontFamily: 'sans-serif',
+            letterSpacing: 2,
+        },
+        h6: {
+            fontSize: 24,
+            padding: '10px',
+            fontWeight: 'bold',
+            fontFamily: 'sans-serif',
+        },
+        body1: { fontSize: 16, fontWeight: 'normal' },
+        body2: {
+            fontSize: 18,
+        },
+        subtitle1: {
+            fontSize: 20,
+        },
+        subtitle2: {
+            fontSize: 20,
+            cursor: 'pointer',
+        },
+        fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+    },
 });
 
-// export const ProfileContext = createContext<TSetUserProfileShort>({
-//     loggedUser: null,
-//     setLoggedUser: null,
-// });
-// export const PathContext = createContext<TSetOpenedFolder>({
-//     openedFolder: null,
-//     setOpenedFolder: null,
-// });
-
 const App = ({ children }: { children: React.ReactNode }) => {
-    const [loggedUser, setLoggedUser] = useState<string | null>(null);
-    const [openedFolder, setOpenedFolder] = useState<TFolder | null>(null);
-
-    const router = useRouter();
-
-    useEffect(() => {
-        (async () => {
-            // try {
-            //     if (loggedUser === null) {
-            //         fetcher.getUserProfile().then((profile) => {
-            //             console.log(profile);
-            //             setLoggedUser(profile.id);
-            //             setOpenedFolder(profile.rootFolder);
-            //             // router.push('/files/my');
-            //         });
-            //     }
-            // } catch (e: unknown) {
-            //     throw e;
-            // }
-        })();
-    }, []);
-
     return (
         <Provider store={store}>
             <ThemeProvider theme={theme}>

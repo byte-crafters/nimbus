@@ -2,6 +2,7 @@ import { MODAL_TYPE, useModalContext } from '@/components/Modal/ModalProvider';
 import { TFSItem, fetcher } from '@/libs/request';
 import { MenuItem } from '@mui/material';
 import { PropsWithChildren } from 'react';
+import styles from './FileMenu.module.scss';
 
 interface IMenuProps {
     selectedItems: TFSItem[];
@@ -82,7 +83,7 @@ export function FileMenu({
     };
 
     return (
-        <>
+        <div className={styles.normal}>
             {/* {options &&
                 Object.keys(options).map((item) => {
                     const { name, handler } = options[item];
@@ -115,6 +116,6 @@ export function FileMenu({
                     <MenuItem onClick={showDeleteBinModal}>Delete</MenuItem>
                 </>
             )}
-        </>
+        </div>
     );
 }

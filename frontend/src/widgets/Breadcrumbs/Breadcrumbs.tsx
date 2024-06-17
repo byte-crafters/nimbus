@@ -1,4 +1,4 @@
-import { Breadcrumbs as MUIBreadcrumbs } from '@mui/material';
+import { Breadcrumbs as MUIBreadcrumbs, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { TFolder, TPath } from '@/libs/request';
 
@@ -12,12 +12,13 @@ export function Breadcrumbs({ list, onClick }: IProps) {
         <MUIBreadcrumbs
             sx={{ margin: 2 }}
             aria-label="breadcrumb"
-            separator={<NavigateNextIcon fontSize="small" />}
+            separator={<NavigateNextIcon fontSize="medium" />}
         >
-            {list ? (
+            {list &&
                 list.map((item, index) => (
-                    <div
-                        style={{ cursor: 'pointer' }}
+                    <Typography
+                        variant="body2"
+                        sx={{ cursor: 'pointer' }}
                         onClick={() => {
                             if (onClick) {
                                 /** TODO fix: we dont use TFolder all data */
@@ -27,11 +28,8 @@ export function Breadcrumbs({ list, onClick }: IProps) {
                         key={item.id}
                     >
                         {index ? item.name : 'Home'}
-                    </div>
-                ))
-            ) : (
-                <div>Home</div>
-            )}
+                    </Typography>
+                ))}
         </MUIBreadcrumbs>
     );
 }

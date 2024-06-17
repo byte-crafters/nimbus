@@ -62,15 +62,7 @@ export function MyFiles() {
     }
 
     return (
-        <div
-            className="myFiles_container"
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-                height: '100%',
-            }}
-        >
+        <div className="myFiles_container">
             <Typography variant="h6">My files</Typography>
             <Breadcrumbs list={path} onClick={openFolder} />
             <div className="myFiles_activeZone" ref={browserContainerRef}>
