@@ -48,6 +48,7 @@ export interface IDataRepository {
     getUserRootFolder(userId: string): Promise<TFolderRepository>;
     getFolderById(folderId: TFolderId): Promise<TFolder | null>;
     renameFolder(newFolderName: string, folderId: TFolderId): Promise<TFolderRepository>;
+    renameFile(newName: string, fileId: TFileId): Promise<any>;
     deleteFolder(folderId: TFolderId): Promise<TFolderRepository>;
     getFolderPath(folderId: TFolderId): Promise<Pick<TFolder, "id" | "name">[]>;
     changeFolderRemovedState(folderId: TFolderId, removedState: boolean): Promise<TFolderRepository>;

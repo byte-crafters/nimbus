@@ -84,7 +84,22 @@ export class FilesController {
         };
     }
 
+    @ApiTags('files')
+    @Post('file/rename/:fileId')
+    async renameFile(
+        @Body() renameFileDTO: { newFileName: string; },
+        @Req() request: any,
+        @Param('fileId') fileId: TApiFolderId,
+    ) {
+        const { newFileName } = renameFileDTO;
+        const userId = request.user.sub;
 
+        const renamedFile = await this.fileStructureRepository.renameFile(newFileName, fileId);
+
+        return {
+            file: renamedFile,
+        };
+    }
 
     @ApiResponse({
         status: 200,
