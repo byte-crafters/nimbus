@@ -93,6 +93,9 @@ export class AccessRepository {
         const result = await this.connection.fileAccess.findMany({
             where: {
                 fileId
+            },
+            include: {
+                user: true
             }
         });
 
@@ -103,6 +106,9 @@ export class AccessRepository {
         const result = await this.connection.folderAccess.findMany({
             where: {
                 folderId
+            },
+            include: {
+                user: true
             }
         });
 
