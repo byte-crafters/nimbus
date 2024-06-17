@@ -670,6 +670,19 @@ export class DataRepository implements IDataRepository {
         return folder;
     }
 
+    async renameFile(newName: string, fileId: TFileId): Promise<any> {
+        const folder = await this.connection.file.update({
+            where: {
+                id: fileId,
+            },
+            data: {
+                name: newName,
+            },
+        });
+
+        return folder;
+    }
+
     async changeFolderRemovedState(folderId: TFolderId, removedState: boolean): Promise<TFolderRepository> {
         const folder = await this.connection.folder.update({
             where: { id: folderId },
