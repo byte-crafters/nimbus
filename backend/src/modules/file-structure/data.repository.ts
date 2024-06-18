@@ -110,6 +110,7 @@ export class DataRepository implements IDataRepository {
                             }
                         }
                     },
+                    removed: false
                 },
                 include: {
                     fileAccess: {
@@ -142,6 +143,7 @@ export class DataRepository implements IDataRepository {
                             }
                         }
                     },
+                    removed: false
                 },
                 include: {
                     fileAccess: {
