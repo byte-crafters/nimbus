@@ -12,10 +12,8 @@ import {
     calcMBytesFromBytes,
     calcPercentage,
 } from '@/shared/utils';
+import styles from './Storage.module.scss';
 
-/**
- * If context === null - user is NOT logged in. `context` === string when user is logged in.
- */
 export function Storage() {
     const MAX_KBYTES = 5 * 1024 * 1024 * 1024; //
 
@@ -39,23 +37,14 @@ export function Storage() {
     }, [storageData]);
 
     const size = {
-        width: 400,
-        height: 300,
+        width: 450,
     };
 
     return (
-        <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+        <div style={{ display: 'flex', width: '100%' }}>
             <div>
                 <Typography variant="h6">Storage</Typography>
-                <Box
-                    sx={{
-                        margin: 2,
-                        width: 900,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
+                <Box className={styles.container}>
                     <PieChart
                         series={[
                             {
@@ -65,22 +54,28 @@ export function Storage() {
                                 cornerRadius: 0,
                                 startAngle: 0,
                                 endAngle: 360,
-                                cx: 150,
-                                cy: 150,
                                 data: chartsData,
                             },
                         ]}
                         {...size}
                     />
-                    <Typography variant="h6">
-                        {calcPercentage(storageData.value, storageData.max)}% of
-                        storage used ({calcMBytesFromBytes(storageData.value)}{' '}
-                        MB of {calcGBytesFromBytes(MAX_KBYTES)} GB)
-                    </Typography>
-                    <Typography variant="body1">
-                        Make room for your photos, files, and more by cleaning
-                        up space
-                    </Typography>
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            top: '-100px',
+                        }}
+                    >
+                        <Typography variant="h6">
+                            {calcPercentage(storageData.value, storageData.max)}
+                            % of storage used (
+                            {calcMBytesFromBytes(storageData.value)} MB of{' '}
+                            {calcGBytesFromBytes(MAX_KBYTES)} GB)
+                        </Typography>
+                        <Typography variant="body1">
+                            Make room for your photos, files, and more by
+                            cleaning up space
+                        </Typography>
+                    </Box>
                 </Box>
             </div>
         </div>

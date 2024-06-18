@@ -11,6 +11,8 @@ import Button from '@mui/material/Button';
 import { MouseEvent, PropsWithChildren, useContext } from 'react';
 import { UploadedFilesContext } from '../UploadFilesProvider/UploadFilesProvider';
 import styles from './LoadedFiles.module.scss';
+import { IconButton, List, ListItem, Typography } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface IProps {}
 
@@ -60,30 +62,7 @@ export const LoadedFiles = ({}: PropsWithChildren<IProps>) => {
     return (
         <>
             {files.length === 0 ? null : (
-                <div className={styles.loadedFilesContainer}>
-                    <div className={styles.loadedFiles}>
-                        {files.map((f, index) => {
-                            return (
-                                <div
-                                    key={index}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <div>{f.name}</div>
-                                    <div
-                                        onClick={() =>
-                                            onFileRemoveFromCandidates(f)
-                                        }
-                                    >
-                                        x
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                <>
                     <Button
                         className={styles.buttonUpload}
                         variant="contained"
@@ -93,7 +72,38 @@ export const LoadedFiles = ({}: PropsWithChildren<IProps>) => {
                     >
                         Upload
                     </Button>
-                </div>
+                    <div className={styles.loadedFilesContainer}>
+                        <List className={styles.loadedFiles}>
+                            {files.map((f, index) => {
+                                return (
+                                    <ListItem
+                                        key={index}
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            padding: 0,
+                                        }}
+                                    >
+                                        <Typography variant="body1">
+                                            {f.name}
+                                        </Typography>
+                                        <IconButton
+                                            size="small"
+                                            className={styles.buttonClose}
+                                            aria-label="delete"
+                                            onClick={() =>
+                                                onFileRemoveFromCandidates(f)
+                                            }
+                                        >
+                                            <CloseIcon />
+                                        </IconButton>
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    </div>
+                </>
             )}
         </>
     );

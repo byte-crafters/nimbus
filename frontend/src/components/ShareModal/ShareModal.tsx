@@ -64,6 +64,37 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
         }
     };
 
+    const setRightsById = (userId: string, rights: number) => {
+        if (rights == 3) return;
+        console.log(rights);
+
+        for (const item of items) {
+            if ('extension' in item) {
+                fetcher
+                    .shareFiles(item.id, userId, Number(rights))
+                    .then((response) => {
+                        console.log(response);
+                    });
+            } else {
+                fetcher
+                    .shareFolders(item.id, userId, Number(rights))
+                    .then((response) => {
+                        console.log(response);
+                    });
+            }
+        }
+
+        const arr = [];
+        for (let i = 0; i < userList[userId].items.length; i++) {
+            arr.push(rights);
+        }
+
+        const obj = { ...userList };
+        obj[userId].rights = arr;
+
+        setList(obj);
+    };
+
     useEffect(() => {
         getItemsShares();
         handleChange();
@@ -105,7 +136,6 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
 
                     if (!obj[id]) {
                         obj[id] = {
-                            name: id,
                             name: el.user.username,
                             items: [],
                             rights: [],
@@ -141,7 +171,7 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
         <Dialog onClose={hideModal} open={true}>
             <DialogTitle>{modalType}</DialogTitle>
             <DialogContent>
-                <Typography variant="h6">Add people</Typography>
+                <Typography variant="body2">Add people</Typography>
                 <Box sx={{ width: 400, display: 'flex' }}>
                     <Autocomplete
                         multiple
@@ -178,15 +208,17 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
                         </MenuItem>
                     </Select>
                 </Box>
-                <Typography variant="h6">People with access</Typography>
+                {Object.keys(userList).length > 0 && (
+                    <Typography variant="body2">People with access</Typography>
+                )}
                 <List
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
                     }}
                 >
-                    {Object.keys(userList).map((key) => {
-                        const { rights, name } = userList[key];
+                    {Object.keys(userList).map((userId) => {
+                        const { rights, name } = userList[userId];
                         const equal = allEqual(rights);
 
                         const value =
@@ -195,11 +227,13 @@ export const ShareModal = ({}: PropsWithChildren<IProps>) => {
                                 : rights[0];
 
                         return (
-                            <ListItem key={key}>
+                            <ListItem key={userId}>
                                 <ListItemText primary={name} />
                                 <Select
                                     value={value}
-                                    // onChange={(e) => setAccess(e.target.value)}
+                                    onChange={(e) =>
+                                        setRightsById(userId, e.target.value)
+                                    }
                                     inputProps={{
                                         'aria-label': 'Without label',
                                     }}
