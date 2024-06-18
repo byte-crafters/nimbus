@@ -6,7 +6,7 @@ import {
     setMyPath,
 } from '@/libs/redux/my-files.reducer';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
-import { TFSItem, TFolder, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, fetcher } from '@/libs/request';
 import { Breadcrumbs, Browser } from '@/widgets';
 import { Menu, MenuItem, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
@@ -21,24 +21,6 @@ export function MyFiles() {
         ({ myFiles }) => myFiles
     );
     const dispatch = useAppDispatch();
-
-    function handleRename(items: TFSItem[], name: string) {
-        let newItem: TFolder | null = null;
-        const newFolders = [];
-        const item = items[0];
-
-        for (const folder of folders) {
-            if (folder.id == item.id) {
-                newItem = folder;
-                newItem.name = name;
-                newFolders.push(newItem);
-            } else {
-                newFolders.push(folder);
-            }
-        }
-
-        dispatch(setMyFolders(newFolders));
-    }
 
     useEffect(() => {
         if (openedFolder !== null) {
@@ -61,6 +43,84 @@ export function MyFiles() {
         dispatch(setMyOpenedFolder(folder));
     }
 
+    function handleRename(items: TFSItem[], name: string) {
+        let newItem: TFolder | null | TFile = null;
+        const newFolders = [],
+            newFiles = [];
+        const item = items[0];
+
+        if ('extension' in item) {
+            for (const file of files) {
+                if (file.id == item.id) {
+                    newItem = { ...file };
+                    newItem.name = name;
+                    newFiles.push(newItem);
+                } else {
+                    newFiles.push(file);
+                }
+            }
+
+            dispatch(setMyFiles(newFiles));
+        } else {
+            for (const folder of folders) {
+                if (folder.id == item.id) {
+                    newItem = { ...folder };
+                    newItem.name = name;
+                    newFolders.push(newItem);
+                } else {
+                    newFolders.push(folder);
+                }
+            }
+
+            dispatch(setMyFolders(newFolders));
+        }
+
+        // handleClose();
+    }
+    function handleDelete(items: TFSItem[]) {
+        let newFiles: TFile[] = [],
+            newFolders: TFolder[] = [];
+
+        for (let i = 0; i < folders.length; i++) {
+            if (!items.find((item) => item.id == folders[i].id)) {
+                newFolders.push(folders[i]);
+            }
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            if (!items.find((item) => item.id == files[i].id)) {
+                newFiles.push(files[i]);
+            }
+        }
+
+        dispatch(setMyFiles(newFiles));
+        dispatch(setMyFolders(newFolders));
+        // setSelectedItems([]);
+        // handleClose();
+    }
+
+    function handleDeleteRestore(items: TFSItem[]) {
+        let newFiles: TFile[] = [],
+            newFolders: TFolder[] = [];
+
+        for (let i = 0; i < folders.length; i++) {
+            if (!items.find((item) => item.id == folders[i].id)) {
+                newFolders.push(folders[i]);
+            }
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            if (!items.find((item) => item.id == files[i].id)) {
+                newFiles.push(files[i]);
+            }
+        }
+
+        // dispatch(setTrashFiles(newFiles));
+        // dispatch(setTrashFolders(newFolders));
+        // setSelectedItems([]);
+        // handleClose();
+    }
+
     return (
         <div className="myFiles_container">
             <Typography variant="h6">My files</Typography>
@@ -76,6 +136,8 @@ export function MyFiles() {
                         files={files}
                         folders={folders}
                         openFolder={openFolder}
+                        onRename={handleRename}
+                        onDelete={handleDelete}
                         defaultGroup
                     />
                 )}
