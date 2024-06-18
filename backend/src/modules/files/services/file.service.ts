@@ -109,7 +109,7 @@ export class FileService implements IFileService {
              * Run this code only as a transaction
              */
             const file = await this.dataRepo.getFileById(fileId);
-            const realFolderPath = this.getRealPath(userId);
+            const realFolderPath = this.getRealPath(file.folderId);
             const realFilePath = path.join(realFolderPath, file.id.toString());
 
             const fileStream = this.fs.getFileStream(realFilePath);
