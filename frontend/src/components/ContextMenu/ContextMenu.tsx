@@ -80,7 +80,7 @@ export const ContextMenu = ({
                         var url = window.URL.createObjectURL(blob);
                         var a = document.createElement('a');
                         a.href = url;
-                        a.download = 'temp+' + fileInfo.name;
+                        a.download = fileInfo.name;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
