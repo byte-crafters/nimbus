@@ -1,13 +1,27 @@
 [class].loadedFilesContainer {
-    position: relative;
+    position: fixed;
     bottom: 0;
-    right: 0;
+    left: 30px;
     width: 500px;
-    height: 100px;
-    background-color: rgb(74, 171, 255);
+    height: 195px;
+    background-color: rgb(255, 255, 255);
+    border: 2px solid rgb(0, 0, 0);
+    // border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-bottom: none;
+    overflow-y: auto;
 }
 
 [class].buttonUpload {
-    position: absolute;
-    top: -50px;
+    position: fixed;
+    bottom: 200px;
+    margin: 10px 30px;
+}
+
+[class].buttonClose {
+}
+
+[class].loadedFiles {
+    display: block;
+    padding: 11px 30px;
 }

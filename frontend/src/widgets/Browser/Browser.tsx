@@ -7,7 +7,7 @@ import {
 } from '@/libs/redux/trash-files.reducer';
 import { TFSItem, TFile, TFolder } from '@/libs/request';
 import { FileMenu } from '@/shared/FileMenu/FileMenu';
-import { List, Menu } from '@mui/material';
+import { Box, List, Menu, Typography } from '@mui/material';
 import React, { PropsWithChildren, useRef, useState } from 'react';
 import styles from './Browser.module.scss';
 import { InfoBar } from './components';
@@ -188,6 +188,13 @@ export function Browser({
                                 />
                             );
                         })}
+                        {filtered.length == 0 && (
+                            <Box sx={{ width: '100%' }}>
+                                <Typography variant='body2' textAlign="center">
+                                    No Files
+                                </Typography>
+                            </Box>
+                        )}
                     </List>
                 </div>
                 <InfoBar items={selectedItems} />
