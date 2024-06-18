@@ -6,7 +6,7 @@ import {
     setTrashFolders,
     setTrashPath,
 } from '@/libs/redux/trash-files.reducer';
-import { TFile, TFolder, TPath, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
 import { Breadcrumbs, Browser } from '@/widgets';
 import { Box, Typography } from '@mui/material';
 import { useEffect } from 'react';
@@ -60,6 +60,26 @@ export function Bin() {
         }
     }
 
+    function handleDeleteRestore(items: TFSItem[]) {
+        let newFiles: TFile[] = [],
+            newFolders: TFolder[] = [];
+
+        for (let i = 0; i < folders.length; i++) {
+            if (!items.find((item) => item.id == folders[i].id)) {
+                newFolders.push(folders[i]);
+            }
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            if (!items.find((item) => item.id == files[i].id)) {
+                newFiles.push(files[i]);
+            }
+        }
+
+        dispatch(setTrashFiles(newFiles));
+        dispatch(setTrashFolders(newFolders));
+    }
+
     return (
         <div className={styles.container}>
             <Typography variant="h6">Recycle bin</Typography>
@@ -69,6 +89,7 @@ export function Bin() {
                     files={files}
                     folders={folders}
                     openFolder={openFolder}
+                    onDeleteRestore={handleDeleteRestore}
                     restoreGroup
                 />
             </Box>

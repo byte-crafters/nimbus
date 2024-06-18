@@ -1,14 +1,9 @@
 'use client';
-import { setMyFiles, setMyFolders } from '@/libs/redux/my-files.reducer';
-import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
-import {
-    setTrashFiles,
-    setTrashFolders,
-} from '@/libs/redux/trash-files.reducer';
+import { useAppSelector } from '@/libs/redux/store';
 import { TFSItem, TFile, TFolder } from '@/libs/request';
 import { FileMenu } from '@/shared/FileMenu/FileMenu';
 import { Box, List, Menu, Typography } from '@mui/material';
-import React, { PropsWithChildren, useRef, useState } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 import styles from './Browser.module.scss';
 import { InfoBar } from './components';
 import { BrowserItem } from './components/BrowserItem';
@@ -22,6 +17,9 @@ interface IBrowserProps {
     files: TFile[];
     folders: TFolder[];
     openFolder: (folder: TFolder) => void;
+    onRename?: (items: TFSItem[], name: string) => void;
+    onDelete?: (items: TFSItem[]) => void;
+    onDeleteRestore?: (items: TFSItem[]) => void;
     restoreGroup?: boolean;
     defaultGroup?: boolean;
     shareGroup?: boolean;
@@ -31,92 +29,16 @@ export function Browser({
     files,
     folders,
     openFolder,
+    onRename,
+    onDelete,
+    onDeleteRestore,
     restoreGroup,
     defaultGroup,
     shareGroup,
 }: PropsWithChildren<IBrowserProps>) {
     const [selectedItems, setSelectedItems] = useState<TFSItem[]>([]);
-    const dispatch = useAppDispatch();
 
     const { value: searchValue } = useAppSelector(({ search }) => search);
-
-    function handleRename(items: TFSItem[], name: string) {
-        let newItem: TFolder | null | TFile = null;
-        const newFolders = [],
-            newFiles = [];
-        const item = items[0];
-
-        if ('extension' in item) {
-            for (const file of files) {
-                if (file.id == item.id) {
-                    newItem = { ...file };
-                    newItem.name = name;
-                    newFiles.push(newItem);
-                } else {
-                    newFiles.push(file);
-                }
-            }
-
-            dispatch(setMyFiles(newFiles));
-        } else {
-            for (const folder of folders) {
-                if (folder.id == item.id) {
-                    newItem = { ...folder };
-                    newItem.name = name;
-                    newFolders.push(newItem);
-                } else {
-                    newFolders.push(folder);
-                }
-            }
-
-            dispatch(setMyFolders(newFolders));
-        }
-
-        handleClose();
-    }
-    function handleDelete(items: TFSItem[]) {
-        let newFiles: TFile[] = [],
-            newFolders: TFolder[] = [];
-
-        for (let i = 0; i < folders.length; i++) {
-            if (!items.find((item) => item.id == folders[i].id)) {
-                newFolders.push(folders[i]);
-            }
-        }
-
-        for (let i = 0; i < files.length; i++) {
-            if (!items.find((item) => item.id == files[i].id)) {
-                newFiles.push(files[i]);
-            }
-        }
-
-        dispatch(setMyFiles(newFiles));
-        dispatch(setMyFolders(newFolders));
-        setSelectedItems([]);
-        handleClose();
-    }
-
-    function handleDeleteRestore(items: TFSItem[]) {
-        let newFiles: TFile[] = [],
-            newFolders: TFolder[] = [];
-
-        for (let i = 0; i < folders.length; i++) {
-            if (!items.find((item) => item.id == folders[i].id)) {
-                newFolders.push(folders[i]);
-            }
-        }
-
-        for (let i = 0; i < files.length; i++) {
-            if (!items.find((item) => item.id == files[i].id)) {
-                newFiles.push(files[i]);
-            }
-        }
-
-        dispatch(setTrashFiles(newFiles));
-        dispatch(setTrashFolders(newFolders));
-        setSelectedItems([]);
-        handleClose();
-    }
 
     const [position, setPosition] = useState<IPosition | null>(null);
     const open = Boolean(position);
@@ -190,7 +112,7 @@ export function Browser({
                         })}
                         {filtered.length == 0 && (
                             <Box sx={{ width: '100%' }}>
-                                <Typography variant='body2' textAlign="center">
+                                <Typography variant="body2" textAlign="center">
                                     No Files
                                 </Typography>
                             </Box>
@@ -209,12 +131,13 @@ export function Browser({
                 >
                     <FileMenu
                         selectedItems={selectedItems}
-                        onRename={handleRename}
-                        onDelete={handleDelete}
-                        onDeleteRestore={handleDeleteRestore}
+                        onRename={onRename}
+                        onDelete={onDelete}
+                        onDeleteRestore={onDeleteRestore}
                         defaultGroup={defaultGroup}
                         restoreGroup={restoreGroup}
                         shareGroup={shareGroup}
+                        onMenuClose={handleClose}
                     />
                 </Menu>
             </div>

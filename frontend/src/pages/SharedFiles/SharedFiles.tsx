@@ -7,7 +7,7 @@ import {
     setSharedPath,
 } from '@/libs/redux/shared-files.reducer';
 import { useAppDispatch, useAppSelector } from '@/libs/redux/store';
-import { TFile, TFolder, TPath, fetcher } from '@/libs/request';
+import { TFSItem, TFile, TFolder, TPath, fetcher } from '@/libs/request';
 import { Breadcrumbs, Browser, SharedToggleGroup } from '@/widgets';
 import { Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -78,6 +78,62 @@ export function SharedFiles() {
         }
     }
 
+    function handleRename(items: TFSItem[], name: string) {
+        let newItem: TFolder | null | TFile = null;
+        const newFolders = [],
+            newFiles = [];
+        const item = items[0];
+
+        if ('extension' in item) {
+            for (const file of files) {
+                if (file.id == item.id) {
+                    newItem = { ...file };
+                    newItem.name = name;
+                    newFiles.push(newItem);
+                } else {
+                    newFiles.push(file);
+                }
+            }
+
+            dispatch(setSharedFiles(newFiles));
+        } else {
+            for (const folder of folders) {
+                if (folder.id == item.id) {
+                    newItem = { ...folder };
+                    newItem.name = name;
+                    newFolders.push(newItem);
+                } else {
+                    newFolders.push(folder);
+                }
+            }
+
+            dispatch(setSharedFolders(newFolders));
+        }
+
+        // handleClose();
+    }
+    function handleDelete(items: TFSItem[]) {
+        let newFiles: TFile[] = [],
+            newFolders: TFolder[] = [];
+
+        for (let i = 0; i < folders.length; i++) {
+            if (!items.find((item) => item.id == folders[i].id)) {
+                newFolders.push(folders[i]);
+            }
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            if (!items.find((item) => item.id == files[i].id)) {
+                newFiles.push(files[i]);
+            }
+        }
+
+        dispatch(setSharedFiles(newFiles));
+        dispatch(setSharedFolders(newFolders));
+        // setSelectedItems([]);
+        // handleClose();
+    }
+
     function handleVariantChange(newVariant: string) {
         setVariant(newVariant);
     }
@@ -97,6 +153,8 @@ export function SharedFiles() {
                     files={files}
                     folders={folders}
                     openFolder={openFolder}
+                    onRename={handleRename}
+                    onDelete={handleDelete}
                     defaultGroup
                     shareGroup
                 />

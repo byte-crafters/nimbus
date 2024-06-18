@@ -6,12 +6,13 @@ import styles from './FileMenu.module.scss';
 
 interface IMenuProps {
     selectedItems: TFSItem[];
-    onRename: (items: TFSItem[], name: string) => void;
-    onDelete: (items: TFSItem[]) => void;
-    onDeleteRestore: (items: TFSItem[]) => void;
+    onRename?: (items: TFSItem[], name: string) => void;
+    onDelete?: (items: TFSItem[]) => void;
+    onDeleteRestore?: (items: TFSItem[]) => void;
     defaultGroup?: boolean;
     restoreGroup?: boolean;
     shareGroup?: boolean;
+    onMenuClose: () => void;
 }
 
 export function FileMenu({
@@ -22,6 +23,7 @@ export function FileMenu({
     restoreGroup,
     defaultGroup,
     shareGroup,
+    onMenuClose,
 }: PropsWithChildren<IMenuProps>) {
     const { showModal } = useModalContext();
 
@@ -61,6 +63,8 @@ export function FileMenu({
     };
 
     const downloadFile = () => {
+        console.log(selectedItems);
+
         for (const item of selectedItems) {
             if ('extension' in item) {
                 Promise.all([
@@ -84,21 +88,6 @@ export function FileMenu({
 
     return (
         <div className={styles.normal}>
-            {/* {options &&
-                Object.keys(options).map((item) => {
-                    const { name, handler } = options[item];
-
-                    return (
-                        <MenuItem
-                            key={item}
-                            onClick={() => {
-                                console.log(handler);
-                            }}
-                        >
-                            {name}
-                        </MenuItem>
-                    );
-                })} */}
             {defaultGroup && (
                 <>
                     <MenuItem onClick={showRenameModal}>Rename</MenuItem>
