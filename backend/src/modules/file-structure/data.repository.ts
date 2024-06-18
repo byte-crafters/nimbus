@@ -19,7 +19,8 @@ export class DataRepository implements IDataRepository {
             const result = await this.connection.file.groupBy({
                 by: ['extension'],
                 where: {
-                    ownerId: userId
+                    ownerId: userId,
+                    removed: false
                 },
                 _count: {
                     extension: true
@@ -38,7 +39,8 @@ export class DataRepository implements IDataRepository {
             const result = await this.connection.file.groupBy({
                 by: ['extension'],
                 where: {
-                    ownerId: userId
+                    ownerId: userId,
+                    removed: false
                 },
                 _sum: {
                     size: true
@@ -205,6 +207,7 @@ export class DataRepository implements IDataRepository {
                             }
                         }
                     },
+                    removed: false
                 },
                 include: {
                     folderAccess: {
@@ -239,6 +242,7 @@ export class DataRepository implements IDataRepository {
                             }
                         }
                     },
+                    removed: false
                 },
                 include: {
                     folderAccess: {
