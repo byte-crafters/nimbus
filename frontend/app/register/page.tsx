@@ -1,1 +1,2 @@
+import '@/app/globals.css';
 export { Register as default } from '@/pages/Register';
