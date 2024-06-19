@@ -43,21 +43,21 @@ export function Bin() {
     }
 
     function openFolder(folder: TFolder) {
-        if (!folder || !folder.id) {
-            updatePage();
-        } else {
-            dispatch(setTrashFolders(folder));
-            const folderId = folder!.id;
-            fetcher
-                .getChildren(folderId)
-                .then(({ currentPath, folders, files }) => {
-                    const path = currentPath;
-                    path[0].id = '';
-                    dispatch(setTrashPath(path));
-                    dispatch(setTrashFolders(folders));
-                    dispatch(setTrashFiles(files));
-                });
-        }
+        // if (!folder || !folder.id) {
+        //     updatePage();
+        // } else {
+        //     dispatch(setTrashFolders(folder));
+        //     const folderId = folder!.id;
+        //     fetcher
+        //         .getChildren(folderId)
+        //         .then(({ currentPath, folders, files }) => {
+        //             const path = currentPath;
+        //             path[0].id = '';
+        //             dispatch(setTrashPath(path));
+        //             dispatch(setTrashFolders(folders));
+        //             dispatch(setTrashFiles(files));
+        //         });
+        // }
     }
 
     function handleDeleteRestore(items: TFSItem[]) {

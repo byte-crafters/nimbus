@@ -8,12 +8,18 @@ import Link from 'next/link';
 import { PropsWithChildren } from 'react';
 import { AttachFilesControl } from '../AttachFilesControl/AttachFilesControl';
 import styles from './Sidebar.module.scss';
+import { usePathname } from 'next/navigation';
+import { setSharedFolders } from '@/libs/redux/shared-files.reducer';
 
 interface IProps {}
 
 export const Sidebar = ({}: PropsWithChildren<IProps>) => {
     const dispatch = useAppDispatch();
-    const { openedFolder } = useAppSelector((state) => state.myFiles);
+    const pathname = usePathname();
+    const { openedFolder } =
+        pathname == '/files/shared'
+            ? useAppSelector((state) => state.sharedFiles)
+            : useAppSelector((state) => state.myFiles);
 
     function handleCreateFolder() {
         const folderName = prompt('Folder name:');
@@ -24,7 +30,11 @@ export const Sidebar = ({}: PropsWithChildren<IProps>) => {
             fetcher
                 .postCreateFolder(folderName, parentFolderId)
                 .then(({ folders }) => {
-                    dispatch(setMyFolders(folders));
+                    if (pathname == '/files/shared') {
+                        dispatch(setSharedFolders(folders));
+                    } else {
+                        dispatch(setMyFolders(folders));
+                    }
                 });
         }
     }
