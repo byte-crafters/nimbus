@@ -13,11 +13,22 @@ import { UploadedFilesContext } from '../UploadFilesProvider/UploadFilesProvider
 import styles from './LoadedFiles.module.scss';
 import { IconButton, List, ListItem, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { usePathname } from 'next/navigation';
+import {
+    setSharedFiles,
+    setSharedFolders,
+    setSharedOpenedFolder,
+} from '@/libs/redux/shared-files.reducer';
 
 interface IProps {}
 
 export const LoadedFiles = ({}: PropsWithChildren<IProps>) => {
-    const { openedFolder } = useAppSelector((state) => state.myFiles);
+    const pathname = usePathname();
+    const { openedFolder } =
+        pathname == '/files/shared'
+            ? useAppSelector((state) => state.sharedFiles)
+            : useAppSelector((state) => state.myFiles);
+
     const dispatch = useAppDispatch();
 
     const [files, setFilesLoaded] = useContext(UploadedFilesContext);
@@ -41,9 +52,15 @@ export const LoadedFiles = ({}: PropsWithChildren<IProps>) => {
             fetcher
                 .uploadFiles(data, openedFolder?.id)
                 .then(({ folders, currentFolder, files }) => {
-                    dispatch(setMyFiles(files));
-                    dispatch(setMyFolders(folders));
-                    dispatch(setMyOpenedFolder(currentFolder));
+                    if (pathname == '/files/shared') {
+                        dispatch(setSharedFiles(files));
+                        dispatch(setSharedFolders(folders));
+                        dispatch(setSharedOpenedFolder(currentFolder));
+                    } else {
+                        dispatch(setMyFiles(files));
+                        dispatch(setMyFolders(folders));
+                        dispatch(setMyOpenedFolder(currentFolder));
+                    }
                 });
         }
     }

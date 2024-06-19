@@ -38,6 +38,21 @@ export function SharedFiles() {
         updatePage();
     }, [variant]);
 
+    useEffect(() => {
+        if (openedFolder !== null) {
+            const folderId = openedFolder!.id;
+            fetcher
+                .getChildren(folderId)
+                .then(({ currentPath, folders, files }) => {
+                    dispatch(setSharedPath(currentPath));
+                    dispatch(setSharedFiles(files));
+                    dispatch(setSharedFolders(folders));
+                });
+        } else {
+            updatePage()
+        }
+    }, [openedFolder]);
+
     function updatePage() {
         if (variant == VARIANT.MINE) {
             fetcher.getMySharedFolders().then((folders) => {
@@ -60,7 +75,7 @@ export function SharedFiles() {
 
     function openFolder(folder: TFolder) {
         console.log(folder);
-        if (!folder || !folder.id) {
+        if (!folder || !folder.id || !folder.name) {
             updatePage();
         } else {
             console.log(folder);
@@ -109,8 +124,6 @@ export function SharedFiles() {
 
             dispatch(setSharedFolders(newFolders));
         }
-
-        // handleClose();
     }
     function handleDelete(items: TFSItem[]) {
         let newFiles: TFile[] = [],
@@ -130,8 +143,6 @@ export function SharedFiles() {
 
         dispatch(setSharedFiles(newFiles));
         dispatch(setSharedFolders(newFolders));
-        // setSelectedItems([]);
-        // handleClose();
     }
 
     function handleVariantChange(newVariant: string) {
@@ -155,6 +166,7 @@ export function SharedFiles() {
                     openFolder={openFolder}
                     onRename={handleRename}
                     onDelete={handleDelete}
+                    shareType={variant}
                     defaultGroup
                     shareGroup
                 />

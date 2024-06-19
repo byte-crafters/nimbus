@@ -7,6 +7,7 @@ import React, { PropsWithChildren, useState } from 'react';
 import styles from './Browser.module.scss';
 import { InfoBar } from './components';
 import { BrowserItem } from './components/BrowserItem';
+import { VARIANT } from '@/pages/SharedFiles/SharedFiles';
 
 interface IPosition {
     x: number;
@@ -23,6 +24,7 @@ interface IBrowserProps {
     restoreGroup?: boolean;
     defaultGroup?: boolean;
     shareGroup?: boolean;
+    shareType?: string;
 }
 
 export function Browser({
@@ -35,6 +37,7 @@ export function Browser({
     restoreGroup,
     defaultGroup,
     shareGroup,
+    shareType,
 }: PropsWithChildren<IBrowserProps>) {
     const [selectedItems, setSelectedItems] = useState<TFSItem[]>([]);
 
@@ -63,6 +66,9 @@ export function Browser({
                       f.name.toLowerCase().includes(searchValue.toLowerCase())
                   ),
               ];
+
+    const canShare = !shareType || shareType == VARIANT.MINE;
+    const canEdit = false
 
     return (
         <>
@@ -138,6 +144,8 @@ export function Browser({
                         restoreGroup={restoreGroup}
                         shareGroup={shareGroup}
                         onMenuClose={handleClose}
+                        canShare={canShare}
+                        canEdit={canEdit}
                     />
                 </Menu>
             </div>
