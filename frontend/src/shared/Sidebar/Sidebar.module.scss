@@ -1,3 +1,5 @@
+@import '@/app';
+
 [class].drawer {
     background-color: rgb(255, 255, 255);
     align-items: flex-start;
@@ -8,4 +10,8 @@
 
 [class].sidebar {
     width: 200px;
+
+    @media (max-width: $layout-breakpoint-half) {
+        width: 110px;
+    }
 }

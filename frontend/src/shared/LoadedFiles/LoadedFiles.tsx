@@ -70,7 +70,7 @@ export const LoadedFiles = ({}: PropsWithChildren<IProps>) => {
                         endIcon={<UploadIcon />}
                         onClick={uploadFileInBox}
                     >
-                        Upload
+                        Add
                     </Button>
                     <div className={styles.loadedFilesContainer}>
                         <List className={styles.loadedFiles}>

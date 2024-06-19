@@ -1,15 +1,26 @@
+@import '@/app';
+
 [class].topContainer {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     gap: 300px;
     align-items: center;
+
+    @media (max-width: $layout-breakpoint-half) {
+        gap: 100px;
+    }
 }
 
 [class].container {
     display: flex;
     flex-direction: column;
     width: 100%;
+    overflow: hidden;
+
+    @media (max-width: $layout-breakpoint-half) {
+        width: 765px;
+    }
 }
 
 [class].browserContainer {

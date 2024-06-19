@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import styles from './InfoBar.module.scss';
+import { getCalculatedUnits } from '@/shared/utils/get-calculated-units';
 
 interface IProps {
     items: TFSItem[];
@@ -42,10 +43,15 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
         <div className={styles.container}>
             {items.length == 1 && (
                 <Box className={styles.box}>
-                    <Typography variant="subtitle1" align="center">
+                    <Typography
+                        className={styles.title}
+                        noWrap={true}
+                        variant="subtitle1"
+                        align="center"
+                    >
                         {info?.name}
                     </Typography>
-                    <List sx={{ flexGrow: 1 }}>
+                    <List className={styles.list}>
                         <ListItem>
                             <ListItemText
                                 primary="Owner"
@@ -62,7 +68,7 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
                                     primaryTypographyProps={{
                                         fontWeight: 'bold',
                                     }}
-                                    secondary={info?.size}
+                                    secondary={getCalculatedUnits(info?.size)}
                                 />
                             </ListItem>
                         )}
@@ -95,12 +101,22 @@ export const InfoBar = ({ items }: PropsWithChildren<IProps>) => {
                 </Box>
             )}
             {items.length == 0 && (
-                <Typography variant="body2">
+                <Typography
+                    className={styles.title}
+                    variant="body2"
+                    textAlign="center"
+                    marginTop={25}
+                >
                     Select an item to see the details
                 </Typography>
             )}
             {items.length > 1 && (
-                <Typography variant="body2">
+                <Typography
+                    className={styles.title}
+                    variant="body2"
+                    textAlign="center"
+                    marginTop={25}
+                >
                     {items.length} items selected
                 </Typography>
             )}

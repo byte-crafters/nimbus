@@ -11,7 +11,7 @@ import { Breadcrumbs, Browser } from '@/widgets';
 import { Menu, MenuItem, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { ActiveDropzone } from '../../shared/ActiveDropzone/ActiveDropzone';
-import './style.css';
+import styles from './MyFiles.module.scss';
 
 export function MyFiles() {
     const [dropzoneActive, setDropzoneActive] = useState(false);
@@ -122,10 +122,13 @@ export function MyFiles() {
     }
 
     return (
-        <div className="myFiles_container">
+        <div className={styles.myFiles_container}>
             <Typography variant="h6">My files</Typography>
             <Breadcrumbs list={path} onClick={openFolder} />
-            <div className="myFiles_activeZone" ref={browserContainerRef}>
+            <div
+                className={styles.myFiles_activeZone}
+                ref={browserContainerRef}
+            >
                 <ActiveDropzone
                     active={dropzoneActive}
                     setActive={setDropzoneActive}

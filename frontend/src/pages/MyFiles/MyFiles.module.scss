@@ -1,0 +1,32 @@
+@import '@/app';
+
+[class].dropzone_item {
+    background: #d7d7d7;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 3px;
+    border-radius: 3px;
+    margin-bottom: 3px;
+}
+
+[class].myFiles_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @media (max-width: $layout-breakpoint-half) {
+        width: 765px;
+    }
+}
+
+[class].myFiles_activeZone {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+[class].fileSpaceLayout {
+    position: relative;
+}

@@ -5,3 +5,8 @@
     right: 0;
     bottom: 0;
 }
+
+[class].dropzone__dragover {
+    border: 5px solid green;
+    border-style: dashed;
+}
