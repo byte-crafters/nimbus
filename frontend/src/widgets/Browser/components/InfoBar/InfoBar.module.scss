@@ -1,13 +1,26 @@
+@import '@/app';
+
 [class].container {
     height: 100%;
     border-radius: 10px;
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     width: 340px;
+
+    @media (max-width: $layout-breakpoint-half) {
+        min-width: 225px;
+    }
+}
+
+[class].list {
     display: flex;
-    // flex-direction: column;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
+}
+
+[class].title {
+    padding: 20px 0;
 }
 
 [class].box {

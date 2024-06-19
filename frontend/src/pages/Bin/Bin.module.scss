@@ -1,7 +1,13 @@
+@import '@/app';
+
 [class].container {
     display: flex;
     flex-direction: column;
     width: 100%;
+
+    @media (max-width: $layout-breakpoint-half) {
+        width: 765px;
+    }
 }
 
 [class].browserContainer {

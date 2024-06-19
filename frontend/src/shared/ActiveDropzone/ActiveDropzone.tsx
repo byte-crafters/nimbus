@@ -8,7 +8,7 @@ import {
     useRef,
 } from 'react';
 import { UploadedFilesContext } from '../UploadFilesProvider/UploadFilesProvider';
-import style from './ActiveDropzone.module.scss';
+import styles from './ActiveDropzone.module.scss';
 
 export type TDropzoneProps = {
     active: boolean;
@@ -83,7 +83,7 @@ export const ActiveDropzone = forwardRef(function ActiveDropzone(
     const component = (
         <>
             <div
-                className={`${style.activeDropzone} ${dropzoneActive ? 'dropzone__dragover' : undefined}`}
+                className={`${styles.activeDropzone} ${dropzoneActive ? styles.dropzone__dragover : undefined}`}
                 ref={dropzoneRef}
             ></div>
         </>

@@ -28,7 +28,7 @@ export const AttachFilesControl = ({}: TDropzoneProps) => {
                 color="secondary"
                 endIcon={<AttachFileIcon />}
             >
-                Add files
+                Upload
                 <input
                     style={{
                         clip: 'rect(0 0 0 0)',
