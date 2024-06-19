@@ -49,7 +49,7 @@ export function SharedFiles() {
                     dispatch(setSharedFolders(folders));
                 });
         } else {
-            updatePage()
+            updatePage();
         }
     }, [openedFolder]);
 

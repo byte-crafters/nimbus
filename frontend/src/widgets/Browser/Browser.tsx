@@ -68,7 +68,7 @@ export function Browser({
               ];
 
     const canShare = !shareType || shareType == VARIANT.MINE;
-    const canEdit = false
+    const canEdit = false;
 
     return (
         <>

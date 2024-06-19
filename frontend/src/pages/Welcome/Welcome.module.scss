@@ -1,0 +1,89 @@
+@import '@/app';
+
+[class].container {
+    width: 1300px;
+    height: 100%;
+    margin: 0 auto;
+
+    @media (max-width: $layout-breakpoint-half) {
+        width: unset;
+    }
+}
+
+[class].title {
+    padding: 50px;
+    text-align: center;
+}
+
+[class].flexBox {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+
+    @media (max-width: $layout-breakpoint-half) {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+[class].info {
+    width: 560px;
+    // border: 1px solid red;
+}
+
+[class].subtitle1 {
+}
+
+[class].subtitle2 {
+    margin-top: 30px;
+    font-size: 18px;
+    padding: 0;
+    font-weight: 100;
+    font-style: normal;
+    color: rgb(93, 93, 93);
+}
+
+[class].imageContainer {
+    flex-grow: 1;
+}
+
+[class].loginButton {
+    margin-top: 30px;
+    text-transform: none;
+    color: rgb(84, 84, 255);
+    border: 1px solid rgb(189, 189, 189);
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 0px;
+
+    &:hover {
+        background-color: rgb(218, 218, 255);
+        border-color: rgb(210, 210, 255);
+    }
+}
+
+[class].registerBox {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+[class].noAccount {
+    padding: 10px 0;
+    font-size: 18px;
+    font-weight: 400;
+    font-style: normal;
+    color: rgb(93, 93, 93);
+}
+
+[class].registerButton {
+    text-transform: none;
+    padding: 0 30px;
+    font-size: 16px;
+    font-weight: 600;
+    font-style: normal;
+    color: rgb(84, 84, 255);
+}
