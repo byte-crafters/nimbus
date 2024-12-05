@@ -3,18 +3,22 @@ update:
 	cd ./backend && npm install
 
 clear:
-	./commands/clear.sh && ./commands/down.sh
+	./commands/clear.sh && ./commands/down.sh 
+
+down:
+	./commands/down.sh
 
 run:
 	./commands/rewind.sh
 
 win-run:
-	./commands/win-rewind.sh
+	./commands/start.sh
 
 nimbus: run
 win-nimbus: win-run
-nimbus-restart: clear run
-win-nimbus-restart: clear win-run 
+nimbus-restart: clear down run
+win-nimbus-restart: 
+	./commands/clear.sh || true && ./commands/down.sh && ./commands/win.sh
 
 # Running services in docker
 local-start-debug-main-services-docker: 
